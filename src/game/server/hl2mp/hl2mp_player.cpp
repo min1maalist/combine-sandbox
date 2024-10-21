@@ -178,9 +178,6 @@ void CHL2MP_Player::GiveAllItems( void )
 	GiveNamedItem( "weapon_pistol" );
 	GiveNamedItem( "weapon_357" );
 
-	GiveNamedItem("weapon_physgun");
-	GiveNamedItem("weapon_bugbait");
-
 	GiveNamedItem( "weapon_smg1" );
 	GiveNamedItem( "weapon_ar2" );
 	

@@ -1,7 +1,0 @@
-Whats New?
-Combine-HDR Fixes
-Give player all weapons automatically when spawn
-Proton Fixes
-Fixed Crashed on startup issue
-Physics Gun Fixes
-

@@ -532,9 +532,6 @@
     <None Include="..\..\vpc_scripts\protobuf_builder.vpc">
       <Filter>VPC Scripts</Filter>
     </None>
-    <None Include="..\..\vpc_scripts\pysource_base.vpc">
-      <Filter>VPC Scripts</Filter>
-    </None>
     <None Include="..\..\vpc_scripts\source_base.vpc">
       <Filter>VPC Scripts</Filter>
     </None>
