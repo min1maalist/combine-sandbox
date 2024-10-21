@@ -1,5 +1,4 @@
-
-﻿//========= Copyright � 2024-20xx RedBox & Combine Sandbox, All rights reserved. ============//
+//========= Copyright � 2024-20xx RedBox & Combine Sandbox, All rights reserved. ============//
 //
 // Purpose: 
 //

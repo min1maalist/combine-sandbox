@@ -1565,9 +1565,6 @@
     <ClInclude Include="world.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\game\shared\csbox\weapons\weapon_alyxgun.h">
-      <Filter>Source Files\Combine Sandbox</Filter>
-    </ClInclude>
     <ClInclude Include="hl2\ai_behavior_actbusy.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
@@ -1737,9 +1734,6 @@
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
     <ClInclude Include="hl2\vehicle_crane.h">
-      <Filter>Source Files\HL2 DLL</Filter>
-    </ClInclude>
-    <ClInclude Include="hl2\weapon_alyxgun.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
     <ClInclude Include="hl2\weapon_crowbar.h">
@@ -3144,9 +3138,6 @@
     </ClCompile>
     <ClCompile Include="world.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\shared\csbox\weapons\weapon_alyxgun.cpp">
-      <Filter>Source Files\Combine Sandbox</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\csbox\weapons\weapon_physgun.cpp">
       <Filter>Source Files\Combine Sandbox</Filter>

@@ -1925,9 +1925,6 @@
     <ClInclude Include="..\..\game\shared\hl2mp\hl2mp_weapon_parse.h">
       <Filter>Source Files\HL2MP</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\game\shared\csbox\weapons\weapon_alyxgun.h">
-      <Filter>Source Files\HL2MP\Combine Sandbox</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\game\shared\csbox\RTT\worldlight.h">
       <Filter>Source Files\HL2MP\Combine Sandbox</Filter>
     </ClInclude>
@@ -3480,9 +3477,6 @@
     </ClCompile>
     <ClCompile Include="..\..\game\shared\hl2mp\hl2mp_weapon_parse.cpp">
       <Filter>Source Files\HL2MP</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\shared\csbox\weapons\weapon_alyxgun.cpp">
-      <Filter>Source Files\HL2MP\Combine Sandbox</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\csbox\weapons\weapon_physgun.cpp">
       <Filter>Source Files\HL2MP\Combine Sandbox</Filter>
