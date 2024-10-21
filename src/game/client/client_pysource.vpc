@@ -5,11 +5,11 @@
 //-----------------------------------------------------------------------------
 
 $Macro SRCDIR		"..\.."
-$Macro GAMENAME 	"csbox"
+$Macro GAMENAME 	"pysource"
 
 $Include "$SRCDIR\game\client\client_base.vpc"
-$Include "$SRCDIR\vpc_scripts\csbox_base.vpc"
-$Include "$SRCDIR\game\client\client_csbox_autogen.vpc"
+$Include "$SRCDIR\vpc_scripts\pysource_base.vpc"
+$Include "$SRCDIR\game\client\client_pysource_autogen.vpc"
 
 $Configuration
 {
