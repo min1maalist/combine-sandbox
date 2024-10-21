@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{ae678089-5bbb-4488-a764-3022d1130aae}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>test</StartupFile>
+    <SearchPath>..\python</SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <InterpreterId>{82dc33c3-82f9-4c60-babe-18fb9ce8f3f1}</InterpreterId>
+    <InterpreterVersion>3.3</InterpreterVersion>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <CommandLineArguments>
+    </CommandLineArguments>
+    <InterpreterPath>C:\Steam\SteamApps\common\Source SDK Base 2013 Multiplayer\hl2.exe</InterpreterPath>
+    <InterpreterArguments>-sv -noborder -dev -game "C:\development\source-sdk-2013-sandern\mp\game\pysource" -vsptdebug</InterpreterArguments>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
+    <IsWindowsApplication>True</IsWindowsApplication>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <ItemGroup>
+    <Compile Include="core\dispatch\dispatcher.py" />
+    <Compile Include="core\dispatch\saferef.py" />
+    <Compile Include="core\dispatch\__init__.py" />
+    <Compile Include="core\fields.py" />
+    <Compile Include="core\kvdict.py" />
+    <Compile Include="core\networkvar.py" />
+    <Compile Include="core\profiler.py" />
+    <Compile Include="core\signals.py" />
+    <Compile Include="core\usermessages.py" />
+    <Compile Include="core\__init__.py" />
+    <Compile Include="examples\commands.py" />
+    <Compile Include="examples\entity.py" />
+    <Compile Include="examples\gamerules.py" />
+    <Compile Include="examples\networkedentity.py" />
+    <Compile Include="examples\usermessages.py" />
+    <Compile Include="examples\__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="core\dispatch\" />
+    <Folder Include="examples\" />
+    <Folder Include="core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="core\dispatch\license.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="{82dc33c3-82f9-4c60-babe-18fb9ce8f3f1}\3.3" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>
