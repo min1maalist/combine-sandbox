@@ -296,8 +296,8 @@ $Project "Server (csbox)"
 		$Folder "Combine Sandbox"
 		{
 				$File	"$SRCDIR\game\shared\csbox\weapons\weapon_physgun.cpp"
-				$File	"$SRCDIR\game\shared\csbox\weapons\weapon_alyxgun.cpp"
-				$File	"$SRCDIR\game\shared\csbox\weapons\weapon_alyxgun.h"
+				$File	"$SRCDIR\game\shared\csbox\RTT\worldlight.h"
+				$File	"$SRCDIR\game\shared\csbox\RTT\worldlight.cpp"
 		}
 		
 		$Folder	"Python"
