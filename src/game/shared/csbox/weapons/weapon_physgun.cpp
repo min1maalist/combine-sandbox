@@ -5,6 +5,9 @@
 // $NoKeywords: $
 //=============================================================================//
 
+// Enhancement :
+// Replace the HL2Beta Physgun with the ARGG Physgun
+
 #include "cbase.h"
 
 #ifdef GAME_DLL
