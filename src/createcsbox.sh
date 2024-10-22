@@ -1,5 +1,5 @@
 #!/bin/bash
 
 pushd `dirname $0`
-devtools/bin/vpc /csbox +game /mksln games
+devtools/bin/vpc /pysource +game /mksln games
 popd
