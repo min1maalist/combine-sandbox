@@ -5,13 +5,13 @@
 //-----------------------------------------------------------------------------
 
 $Macro SRCDIR		"..\..\..\.."
-$Macro GAMENAME 	"pysource"
+$Macro GAMENAME 	"csbox"
 
 $Macro OUTLIBDIR	"$SRCDIR\lib\public" [$WIN32]
 $Macro OUTLIBDIR	"$SRCDIR\lib\public\osx32" [$OSXALL]
 
 $include "$SRCDIR\vpc_scripts\source_lib_base.vpc"
-$Include "$SRCDIR\vpc_scripts\pysource_base.vpc"
+$Include "$SRCDIR\vpc_scripts\csbox_base.vpc"
 
 $Configuration
 {
