@@ -1,4 +1,4 @@
-//========= Copyright Valve Corporation, All rights reserved. ============//
+//========= Copyright Combine Sandbox, All rights reserved. ============//
 //
 // Purpose: 
 //

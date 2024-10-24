@@ -7,7 +7,7 @@
 
 #include "cbase.h"
 #include "bspfile.h"
-#include "client_factorylist.h" // FactoryList_Retrieve
+#include "..\..\game\client\client_factorylist.h" // Fix for CSM to Function
 #include "eiface.h" // IVEngineServer
 #include "filesystem.h"
 #include "worldlight.h"
