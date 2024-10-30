@@ -3,7 +3,7 @@
 	game	"Combine Sandbox"
 	title	"CSBOX"
 	title2	""
-	type multiplayer_only
+	type "both"
 	nomodels 0
 	nohimodel 1
 	nocrosshair 1

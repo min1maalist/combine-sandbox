@@ -526,6 +526,7 @@ void C_BaseHLPlayer::PerformClientSideObstacleAvoidance( float flFrameTime, CUse
 	//Msg( "POSTCLAMP: forwardmove=%f, sidemove=%f\n", pCmd->forwardmove, pCmd->sidemove );
 }
 
+
 void C_BaseHLPlayer::PerformClientSideNPCSpeedModifiers( float flFrameTime, CUserCmd *pCmd )
 {
 	if ( m_hClosestNPC == NULL )

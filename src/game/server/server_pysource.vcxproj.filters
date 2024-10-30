@@ -13,9 +13,6 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{BA03E055-4FA2-FCE3-8A1C-D348547D379C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Combine Sandbox">
-      <UniqueIdentifier>{936DA572-2778-A944-B7F9-2C007E913A00}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\HL2 DLL">
       <UniqueIdentifier>{3C43D38A-46AF-2183-A5E5-44383B1D2652}</UniqueIdentifier>
     </Filter>
@@ -64,6 +61,9 @@
       <Filter>Link Libraries</Filter>
     </Library>
     <Library Include="..\..\lib\public\choreoobjects.lib">
+      <Filter>Link Libraries</Filter>
+    </Library>
+    <Library Include="..\..\lib\public\discord-rpc.lib">
       <Filter>Link Libraries</Filter>
     </Library>
     <Library Include="..\..\lib\public\dmxloader.lib">
@@ -1565,9 +1565,6 @@
     <ClInclude Include="world.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\game\shared\csbox\RTT\worldlight.h">
-      <Filter>Source Files\Combine Sandbox</Filter>
-    </ClInclude>
     <ClInclude Include="hl2\ai_behavior_actbusy.h">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClInclude>
@@ -1787,6 +1784,12 @@
     <ClInclude Include="..\..\game\shared\hl2mp\weapon_ar2.h">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\game\shared\csbox\cstrike\weapon_csbase.h">
+      <Filter>Source Files\HL2MP\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\csbox\cstrike\weapon_csbasegun.h">
+      <Filter>Source Files\HL2MP\Weapons</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\game\shared\hl2mp\weapon_hl2mpbase.h">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClInclude>
@@ -1794,6 +1797,9 @@
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClInclude>
     <ClInclude Include="..\..\game\shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.h">
+      <Filter>Source Files\HL2MP\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\csbox\cstrike\weapon_knife.h">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClInclude>
     <ClInclude Include="..\..\game\shared\hl2mp\weapon_physcannon.h">
@@ -3145,12 +3151,6 @@
     <ClCompile Include="world.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\game\shared\csbox\weapons\weapon_physgun.cpp">
-      <Filter>Source Files\Combine Sandbox</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\shared\csbox\RTT\worldlight.cpp">
-      <Filter>Source Files\Combine Sandbox</Filter>
-    </ClCompile>
     <ClCompile Include="hl2\ai_allymanager.cpp">
       <Filter>Source Files\HL2 DLL</Filter>
     </ClCompile>
@@ -3517,6 +3517,9 @@
     <ClCompile Include="..\..\game\shared\hl2mp\weapon_357.cpp">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\game\shared\csbox\cstrike\weapon_ak47.cpp">
+      <Filter>Source Files\HL2MP\Weapons</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\game\shared\hl2mp\weapon_ar2.cpp">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
@@ -3524,6 +3527,15 @@
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\hl2mp\weapon_crowbar.cpp">
+      <Filter>Source Files\HL2MP\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\csbox\cstrike\weapon_csbase.cpp">
+      <Filter>Source Files\HL2MP\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\csbox\cstrike\weapon_csbasegun.cpp">
+      <Filter>Source Files\HL2MP\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\csbox\cstrike\weapon_deagle.cpp">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\hl2mp\weapon_frag.cpp">
@@ -3541,7 +3553,13 @@
     <ClCompile Include="..\..\game\shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.cpp">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\game\shared\csbox\cstrike\weapon_knife.cpp">
+      <Filter>Source Files\HL2MP\Weapons</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\game\shared\hl2mp\weapon_physcannon.cpp">
+      <Filter>Source Files\HL2MP\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\csbox\weapon_physgun.cpp">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\hl2mp\weapon_pistol.cpp">
@@ -3560,6 +3578,9 @@
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\hl2mp\weapon_stunstick.cpp">
+      <Filter>Source Files\HL2MP\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\csbox\cstrike\weapon_usp.cpp">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">

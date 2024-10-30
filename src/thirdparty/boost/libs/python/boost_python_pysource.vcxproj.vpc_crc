@@ -1,7 +1,7 @@
 [vpc crc file version 2]
-b9c20ec3 C:\Users\hp\Downloads\src\csbox\src\devtools\bin\vpc.exe
+b9c20ec3 C:\Users\hp\Documents\csbox\src\devtools\bin\vpc.exe
 _Nc_VS2013/vpcgame:pysource_
-73d4b892 boost_pysource.vpc
+36fca992 boost_pysource.vpc
 30577f77 ..\..\..\..\vpc_scripts\source_lib_base.vpc
 d752cf80 ..\..\..\..\vpc_scripts\platform_dirs.vpc
 6c4a5ff1 ..\..\..\..\vpc_scripts\source_base.vpc
