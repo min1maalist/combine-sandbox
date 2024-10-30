@@ -6,14 +6,14 @@
 
 #include "cbase.h"
 #include "weapon_knife.h"
-#include "cs_gamerules.h"
+#include "..\shared\csbox\cstrike\cs_gamerules.h"
 
 #if defined( CLIENT_DLL )
 	#include "c_hl2mp_player.h"
 #else
 	#include "hl2mp_player.h"
-	#include "ilagcompensationmanager.h"
-	#include "cs_gamestats.h"
+	#include "..\shared\csbox\cstrike\ilagcompensationmanager.h"
+	#include "..\shared\csbox\cstrike\cs_gamestats.h"
 #endif
 
 

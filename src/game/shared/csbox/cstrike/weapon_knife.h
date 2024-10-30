@@ -12,12 +12,15 @@
 
 
 #include "weapon_hl2mpbase.h"
-
+// Combine Sandbox addition
+#include "weapon_csbasegun.h"
 
 #if defined( CLIENT_DLL )
 
 	#define CKnife C_Knife
-
+	// Combine Sandbox Addition
+	#define CSWeaponID
+	#define WEAPON_KNIFE
 #endif
 
 
@@ -63,7 +66,7 @@ public:
 
 	void WeaponIdle();
 
-	virtual CSWeaponID GetWeaponID( void ) const		{ return WEAPON_KNIFE; }
+	virtual CSWeaponID int GetWeaponID( void ) const		{ return WEAPON_KNIFE; }
 
 public:
 	
