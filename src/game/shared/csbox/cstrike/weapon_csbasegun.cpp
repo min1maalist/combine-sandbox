@@ -6,7 +6,7 @@
 
 #include "cbase.h"
 #include "weapon_csbasegun.h"
-#include "fx_cs_shared.h"
+#include "..\shared\csbox\cstrike\fx_cs_shared.h"
 
 #ifdef CLIENT_DLL
 	#include "c_hl2mp_player.h"
