@@ -1,8 +1,8 @@
 [vpc crc file version 2]
 b9c20ec3 C:\Users\hp\Documents\csbox\src\devtools\bin\vpc.exe
 _Nc_VS2013/vpcgame:pysource_
-7e67dabc client_pysource.vpc
-92e66859 ..\..\game\client\client_base.vpc
+a6f1b629 client_pysource.vpc
+2e8a6f93 ..\..\game\client\client_base.vpc
 4832e67a ..\..\vpc_scripts\source_dll_base.vpc
 d752cf80 ..\..\vpc_scripts\platform_dirs.vpc
 6c4a5ff1 ..\..\vpc_scripts\source_base.vpc

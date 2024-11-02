@@ -20,14 +20,6 @@ public:
 	DECLARE_SERVERCLASS();
 	DECLARE_DATADESC();
 
-// =======================================
-// PySource Additions
-// =======================================
-	DECLARE_PYSERVERCLASS( CPlayerResource );
-// =======================================
-// END PySource Additions
-// =======================================
-
 	virtual void Spawn( void );
 	virtual	int	 ObjectCaps( void ) { return BaseClass::ObjectCaps() | FCAP_DONT_SAVE; }
 	virtual void ResourceThink( void );

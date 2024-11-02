@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -31,8 +31,6 @@
 
 void Host_Say( edict_t *pEdict, bool teamonly );
 
-ConVar sv_use_portal_gamerules("sv_use_portal_gamerules", "0", FCVAR_REPLICATED | FCVAR_ARCHIVE | FCVAR_NOT_CONNECTED);
-
 extern CBaseEntity*	FindPickerEntityClass( CBasePlayer *pPlayer, char *classname );
 extern bool			g_fGameOver;
 
@@ -47,7 +45,7 @@ void ClientPutInServer( edict_t *pEdict, const char *playername )
 {
 	// Allocate a CBasePlayer for pev, and call spawn
 	CPortal_Player *pPlayer = CPortal_Player::CreatePlayer( "player", pEdict );
-	pPlayer->SetPlayerName( playername );
+	pPlayer->PlayerData()->netname = AllocPooledString( playername );
 }
 
 
@@ -55,11 +53,6 @@ void ClientActive( edict_t *pEdict, bool bLoadGame )
 {
 	CPortal_Player *pPlayer = dynamic_cast< CPortal_Player* >( CBaseEntity::Instance( pEdict ) );
 	Assert( pPlayer );
-
-	if ( !pPlayer )
-	{
-		return;
-	}
 
 	pPlayer->InitialSpawn();
 
@@ -109,12 +102,11 @@ void ClientGamePrecache( void )
 {
 	CBaseEntity::PrecacheModel("models/player.mdl");
 	CBaseEntity::PrecacheModel( "models/gibs/agibs.mdl" );
-	CBaseEntity::PrecacheModel ("models/weapons/v_hands.mdl");
+	CBaseEntity::PrecacheModel("models/weapons/v_hands.mdl");
 
 	CBaseEntity::PrecacheScriptSound( "HUDQuickInfo.LowAmmo" );
 	CBaseEntity::PrecacheScriptSound( "HUDQuickInfo.LowHealth" );
 
-	CBaseEntity::PrecacheScriptSound( "FX_AntlionImpact.ShellImpact" );
 	CBaseEntity::PrecacheScriptSound( "Missile.ShotDown" );
 	CBaseEntity::PrecacheScriptSound( "Bullets.DefaultNearmiss" );
 	CBaseEntity::PrecacheScriptSound( "Bullets.GunshipNearmiss" );
@@ -162,13 +154,23 @@ void GameStartFrame( void )
 //=========================================================
 void InstallGameRules()
 {
-	if (sv_use_portal_gamerules.GetBool())
+	if ( !gpGlobals->deathmatch )
 	{
-		CreateGameRulesObject("CPortalGameRules");
+		CreateGameRulesObject( "CPortalGameRules" );
+		return;
 	}
 	else
 	{
-		CreateGameRulesObject("CHalfLife2");
+		if ( teamplay.GetInt() > 0 )
+		{
+			// teamplay
+			CreateGameRulesObject( "CTeamplayRules" );
+		}
+		else
+		{
+			// vanilla deathmatch
+			CreateGameRulesObject( "CMultiplayRules" );
+		}
 	}
 }
 

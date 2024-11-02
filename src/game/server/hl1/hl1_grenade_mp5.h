@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose:		Projectile shot from the MP5 
 //
@@ -13,9 +13,6 @@
 
 #ifndef	GRENADEMP5_H
 #define	GRENADEMP5_H
-#ifdef _WIN32
-#pragma once
-#endif
 
 #include "hl1_basegrenade.h"
 
@@ -26,15 +23,15 @@ class CWeaponMP5;
 
 class CGrenadeMP5 : public CHL1BaseGrenade
 {
-	DECLARE_CLASS(CGrenadeMP5, CHL1BaseGrenade);
+	DECLARE_CLASS( CGrenadeMP5, CHL1BaseGrenade );
 public:
 
 	float		m_fSpawnTime;
 
-	void		Spawn(void);
-	void		Precache(void);
-	void 		GrenadeMP5Touch(CBaseEntity* pOther);
-	void		Event_Killed(CBaseEntity* pInflictor, CBaseEntity* pAttacker, float flDamage, int bitsDamageType);
+	void		Spawn( void );
+	void		Precache( void );
+	void 		GrenadeMP5Touch( CBaseEntity *pOther );
+	void		Event_Killed( CBaseEntity *pInflictor, CBaseEntity *pAttacker, float flDamage, int bitsDamageType );
 
 public:
 	void EXPORT				Detonate(void);

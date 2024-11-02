@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -30,9 +30,6 @@
 #define PORTALGUN_PORTAL_MUZZLE_GLOW_SPRITE "sprites/portalgun_effects"
 #define PORTALGUN_PORTAL_TUBE_BEAM_SPRITE "sprites/portalgun_effects"
 
-#define	PORTALGUN_FASTEST_REFIRE_TIME		0.1f
-#define	PORTALGUN_FASTEST_DRY_REFIRE_TIME	0.2f
-
 enum
 {
 	EFFECT_NONE,
@@ -40,10 +37,6 @@ enum
 	EFFECT_HOLDING,
 };
 
-#ifndef HL1_CLIENT_DLL
-#ifndef HL1_DLL
 extern ConVar sk_auto_reload_time;
-#endif
-#endif
 
 #endif // WEAPON_PORTALGUN_SHARED_H

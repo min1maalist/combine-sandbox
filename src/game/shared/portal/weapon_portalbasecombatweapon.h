@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -54,9 +54,6 @@ public:
 	static const	WeaponProficiencyInfo_t *GetDefaultProficiencyValues();
 
 	virtual void	ItemHolsterFrame( void );
-
-	int				m_iPrimaryAttacks;		// # of primary attacks performed with this weapon
-	int				m_iSecondaryAttacks;	// # of secondary attacks performed with this weapon
 
 protected:
 

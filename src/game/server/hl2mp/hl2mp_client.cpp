@@ -28,14 +28,6 @@
 
 #include "tier0/vprof.h"
 
-// =======================================
-// PySource Additions
-// =======================================
-#include "srcpy.h"
-// =======================================
-// END PySource Additions
-// =======================================
-
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -71,7 +63,6 @@ void FinishClientPutInServer( CHL2MP_Player *pPlayer )
 		ClientPrint( pPlayer, HUD_PRINTTALK, "You are on team %s1\n", pPlayer->GetTeam()->GetName() );
 	}
 
-#if 0 // DISABLE annoying motd
 	const ConVar *hostname = cvar->FindVar( "hostname" );
 	const char *title = (hostname) ? hostname->GetString() : "MESSAGE OF THE DAY";
 
@@ -84,7 +75,6 @@ void FinishClientPutInServer( CHL2MP_Player *pPlayer )
 	pPlayer->ShowViewPortPanel( PANEL_INFO, true, data );
 
 	data->deleteThis();
-#endif // 0
 }
 
 /*
@@ -109,45 +99,6 @@ void ClientActive( edict_t *pEdict, bool bLoadGame )
 
 	CHL2MP_Player *pPlayer = ToHL2MPPlayer( CBaseEntity::Instance( pEdict ) );
 	FinishClientPutInServer( pPlayer );
-
-// =======================================
-// PySource Additions
-// =======================================
-#if defined(ENABLE_PYTHON) && defined(SRCPY_MOD_ENTITIES)
-	if( SrcPySystem()->IsPythonRunning() )
-	{
-		// Give a full update of the networked python entities
-		FullClientUpdatePyNetworkCls( pPlayer );
-
-		// Send clientactive signal
-#ifdef CLIENT_DLL
-		char pLevelName[_MAX_PATH];
-		V_FileBase(engine->GetLevelName(), pLevelName, _MAX_PATH);
-#else
-		const char *pLevelName = STRING(gpGlobals->mapname);
-#endif
-		
-		try 
-		{
-			boost::python::dict kwargs;
-			kwargs["sender"] = boost::python::object();
-			kwargs["client"] = pPlayer->GetPyHandle();
-			boost::python::object signal = SrcPySystem()->Get( "clientactive", "core.signals", true );
-			SrcPySystem()->CallSignal( signal, kwargs );
-
-			signal = SrcPySystem()->Get( "map_clientactive", "core.signals", true )[pLevelName];
-			SrcPySystem()->CallSignal( signal, kwargs );
-		} 
-		catch( boost::python::error_already_set & ) 
-		{
-			Warning( "Failed to retrieve clientactive signal:\n" );
-			PyErr_Print();
-		}
-	}
-#endif // ENABLE_PYTHON && SRCPY_MOD_ENTITIES
-// =======================================
-// END PySource Additions
-// =======================================
 }
 
 

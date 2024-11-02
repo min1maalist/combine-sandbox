@@ -1,2 +1,2 @@
-devtools\bin\vpc.exe /pysource +game /mksln csbox.sln
+devtools\bin\vpc.exe /pysource /episodic +game /mksln csbox.sln
 pause

@@ -20,8 +20,9 @@ $Project "boost_python"
 
 $Project "client"
 {
-	"game\client\client_hl2mp.vpc"		[($WIN32||$POSIX) && $HL2MP]
+
 	"game\client\client_pysource.vpc"		[($WIN32||$POSIX) && $PYSOURCE]
+
 }
 
 $Project "fgdlib"

@@ -29,16 +29,6 @@ public:
 	CServerNetworkProperty();
 	virtual	~CServerNetworkProperty();
 
-// =======================================
-// PySource Additions
-// =======================================
-#ifdef ENABLE_PYTHON
-	void DestroyNetworkProperty();
-#endif // ENABLE_PYTHON
-// =======================================
-// END PySource Additions
-// =======================================
-
 public:
 // IServerNetworkable implementation.
 	virtual IHandleEntity  *GetEntityHandle( );
@@ -120,8 +110,6 @@ private:
 	void SetTransmit( CCheckTransmitInfo *pInfo );
 
 private:
-	bool m_bDestroyed;
-
 	CBaseEntity *m_pOuter;
 	// CBaseTransmitProxy *m_pTransmitProxy;
 	edict_t	*m_pPev;

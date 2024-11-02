@@ -120,14 +120,6 @@ public:
 	DECLARE_DATADESC();
 	DECLARE_PREDICTABLE();
 
-// =======================================
-// PySource Additions
-// =======================================
-	DECLARE_PYSERVERCLASS( CBaseCombatCharacter );
-// =======================================
-// END PySource Additions
-// =======================================
-
 public:
 
 	virtual void		Spawn( void );

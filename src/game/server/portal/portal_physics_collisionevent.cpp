@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -29,8 +29,6 @@ int CPortal_CollisionEvent::ShouldCollide( IPhysicsObject *pObj0, IPhysicsObject
 		if( (pObj0->GetGameFlags() & pObj1->GetGameFlags()) & FVPHYSICS_IS_SHADOWCLONE )
 			return 0; //both are shadow clones
 
-		// No need for this in HLS since the player can't hold anything in HLS
-#ifndef HL1_DLL
 		if( (pObj0->GetGameFlags() | pObj1->GetGameFlags()) & FVPHYSICS_PLAYER_HELD )
 		{
 			//at least one is held
@@ -42,7 +40,6 @@ int CPortal_CollisionEvent::ShouldCollide( IPhysicsObject *pObj0, IPhysicsObject
 			if( pGameData1 && ((CBaseEntity *)pGameData1)->IsPlayer() && (GetPlayerHeldEntity( (CBasePlayer *)pGameData1 ) == (CBaseEntity *)pGameData0) )
 				return 0;
 		}
-#endif // !HL1_DLL
 	}
 
 
@@ -76,7 +73,7 @@ int CPortal_CollisionEvent::ShouldCollide( IPhysicsObject *pObj0, IPhysicsObject
 		}
 #endif
 
-		if( (pSimulators[0] == pSimulators[1]) ) //same simulator
+		if( pSimulators[0] == pSimulators[1] ) //same simulator
 		{
 			if( pSimulators[0] != NULL ) //and not main world
 			{
@@ -204,8 +201,6 @@ int CPortal_CollisionEvent::ShouldSolvePenetration( IPhysicsObject *pObj0, IPhys
 			pPhysOther = pObj0;
 		}
 
-		// No need for this in HLS since the player can't hold anything in HLS
-#ifndef HL1_DLL
 		//don't let players collide with objects they're holding, they get kinda messed up sometimes
 		if( pOther->IsPlayer() && (GetPlayerHeldEntity( (CBasePlayer *)pOther ) == pHeld) )
 			return 0;
@@ -236,7 +231,6 @@ int CPortal_CollisionEvent::ShouldSolvePenetration( IPhysicsObject *pObj0, IPhys
 			//pPhysOther->Wake();
 			//FindClosestPassableSpace( pOther, Vector( 0.0f, 0.0f, 1.0f ) );
 		}
-#endif // !HL1_DLL
 	}
 
 
@@ -380,11 +374,8 @@ static void ModifyWeight_PreCollision( vcollisionevent_t *pEvent )
 				s_bChangedMass[i] = true;
 				s_fSavedMass[i] = pUnshadowedObjects[i]->GetMass();
 
-				// No need for this in HLS since the player can't hold anything in HLS
-#ifndef HL1_DLL
 				CGrabController *pGrabController = NULL;
 				CBaseEntity *pLookingForEntity = (CBaseEntity*)pEvent->pObjects[i]->GetGameData();
-
 				CBasePlayer *pHoldingPlayer = GetPlayerHoldingEntity( pLookingForEntity );
 				if( pHoldingPlayer )
 					pGrabController = GetGrabControllerForPlayer( pHoldingPlayer );
@@ -402,7 +393,6 @@ static void ModifyWeight_PreCollision( vcollisionevent_t *pEvent )
 
 					pUnshadowedObjects[i]->SetMass( fSavedMass );
 				}
-#endif
 			}
 		}
 	}
@@ -455,13 +445,6 @@ void CPortal_CollisionEvent::PortalPostSimulationFrame( void )
 void CPortal_CollisionEvent::AddDamageEvent( CBaseEntity *pEntity, const CTakeDamageInfo &info, IPhysicsObject *pInflictorPhysics, bool bRestoreVelocity, const Vector &savedVel, const AngularImpulse &savedAngVel )
 {
 	const CTakeDamageInfo *pPassDownInfo = &info;
-
-	if (!pInflictorPhysics) // if this doesn't exist we just let the base class method handle it
-	{
-		BaseClass::AddDamageEvent(pEntity, *pPassDownInfo, pInflictorPhysics, bRestoreVelocity, savedVel, savedAngVel);
-		return;
-	}
-
 	CTakeDamageInfo ReplacementDamageInfo; //only used some of the time
 
 	if( (info.GetDamageType() & DMG_CRUSH) &&

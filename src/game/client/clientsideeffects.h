@@ -32,25 +32,9 @@ public:
 	virtual bool		IsActive( void );
 	// Sets the effect to inactive so it can be destroed
 	virtual void		Destroy( void );
+
 	// Sets the effect name (useful for debugging).
 	virtual void		SetEffectName( const char *pszName );
-	
-// =======================================
-// PySource Additions
-// =======================================
-#if defined(ENABLE_PYTHON) && defined(SRCPY_MOD_TE)
-	friend class CEffectsList;
-
-	// Get python instance
-	boost::python::object	GetPyInstance();
-
-protected:
-	// Python allocated?
-	boost::python::object	m_pyRef;
-#endif // ENABLE_PYTHON && SRCPY_MOD_TE
-// =======================================
-// END PySource Additions
-// =======================================
 
 private:
 	// Name of effect ( static data )

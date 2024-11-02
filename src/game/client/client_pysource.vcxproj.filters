@@ -16,6 +16,12 @@
     <Filter Include="MP3">
       <UniqueIdentifier>{27BCD310-C52F-6445-CF4B-93B90F52F5EF}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Portal">
+      <UniqueIdentifier>{3E9B3AC6-F082-EC46-A2D1-D3F1F1647456}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Portal\Weapons">
+      <UniqueIdentifier>{6BCE7A48-2FE6-99BE-21CB-1AFFBE72CFCA}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Public Header Files">
       <UniqueIdentifier>{680EF60A-F852-B6F6-8E56-5693F8167FE5}</UniqueIdentifier>
     </Filter>
@@ -1118,6 +1124,90 @@
     <ClInclude Include="mp3player.h">
       <Filter>MP3</Filter>
     </ClInclude>
+    <ClInclude Include="portal\c_func_liquidportal.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="portal\c_neurotoxin_countdown.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="portal\c_portal_player.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="portal\C_PortalGhostRenderable.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="portal\c_prop_portal.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="portal\c_prop_portal_stats_display.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="portal\clientmode_portal.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\portal\env_lightrail_endpoint_shared.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\portal\env_portal_path_track_shared.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\Multiplayer\multiplayer_animstate.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\portal\portal_collideable_enumerator.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="portal\Portal_DynamicMeshRenderingUtils.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\portal\portal_gamerules.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="portal\portal_hud_crosshair.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\portal\portal_player_shared.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\portal\portal_playeranimstate.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="portal\portal_render_targets.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\portal\portal_shareddefs.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\portal\portal_util_shared.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="portal\PortalRender.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="portal\portalrenderable_flatbasic.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\portal\PortalSimulation.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\portal\prop_portal_shared.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\portal\StaticCollisionPolyhedronCache.h">
+      <Filter>Portal</Filter>
+    </ClInclude>
+    <ClInclude Include="portal\c_weapon_portalgun.h">
+      <Filter>Portal\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\portal\weapon_portalbase.h">
+      <Filter>Portal\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\portal\weapon_portalbasecombatweapon.h">
+      <Filter>Portal\Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\game\shared\portal\weapon_portalgun_shared.h">
+      <Filter>Portal\Weapons</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\public\mathlib\amd3dx.h">
       <Filter>Public Header Files</Filter>
     </ClInclude>
@@ -1838,6 +1928,9 @@
     <ClInclude Include="commentary_modelviewer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\game\shared\content_mounter.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\game\shared\particle_parse.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -1940,12 +2033,6 @@
     <ClInclude Include="..\..\game\shared\hl2mp\weapon_ar2.h">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\game\shared\csbox\cstrike\weapon_csbase.h">
-      <Filter>Source Files\HL2MP\Weapons</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\game\shared\csbox\cstrike\weapon_csbasegun.h">
-      <Filter>Source Files\HL2MP\Weapons</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\game\shared\hl2mp\weapon_hl2mpbase.h">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClInclude>
@@ -1953,9 +2040,6 @@
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClInclude>
     <ClInclude Include="..\..\game\shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.h">
-      <Filter>Source Files\HL2MP\Weapons</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\game\shared\csbox\cstrike\weapon_knife.h">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClInclude>
     <ClInclude Include="..\..\game\shared\hl2mp\weapon_physcannon.h">
@@ -2205,6 +2289,141 @@
   <ItemGroup>
     <ClCompile Include="mp3player.cpp">
       <Filter>MP3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\achievements_portal.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\c_env_lightraill_endpoint.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\c_env_portal_path_track.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\c_func_liquidportal.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\c_neurotoxin_countdown.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\c_npc_portal_turret_floor.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\c_npc_rocket_turret.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\c_portal_player.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\c_portal_radio.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\C_PortalGhostRenderable.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\c_prop_energy_ball.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\c_prop_portal.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\c_prop_portal_stats_display.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\clientmode_portal.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\fx_portal.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\hud_quickinfo.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\MaterialProxy_Portal_PickAlphaMask.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\materialproxy_portalstatic.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\Multiplayer\multiplayer_animstate.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\portal_collideable_enumerator.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\portal_credits.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\Portal_DynamicMeshRenderingUtils.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\portal_gamemovement.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\portal_gamerules.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\portal_hud_crosshair.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\portal_player_shared.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\portal_playeranimstate.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\portal_render_targets.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\portal_shareddefs.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\portal_usermessages.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\portal_util_shared.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\portal_weapon_parse.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\PortalRender.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\portalrenderable_flatbasic.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\PortalSimulation.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\prop_portal_shared.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\StaticCollisionPolyhedronCache.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\vgui_neurotoxin_countdown_screen.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\vgui_portal_stats_display_screen.cpp">
+      <Filter>Portal</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\c_weapon_physcannon.cpp">
+      <Filter>Portal\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\c_weapon_portalgun.cpp">
+      <Filter>Portal\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="portal\c_weapon_stubs_portal.cpp">
+      <Filter>Portal\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\weapon_portalbase.cpp">
+      <Filter>Portal\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\weapon_portalbasecombatweapon.cpp">
+      <Filter>Portal\Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\portal\weapon_portalgun_shared.cpp">
+      <Filter>Portal\Weapons</Filter>
     </ClCompile>
     <ClCompile Include="replay\cdll_replay.cpp">
       <Filter>Replay</Filter>
@@ -2596,7 +2815,13 @@
     <ClCompile Include="..\..\common\compiledcaptionswap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\game\shared\content_mounter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\public\crtmemdebug.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\csbox\csbox_client_cmds.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\death_pose.cpp">
@@ -3508,9 +3733,6 @@
     <ClCompile Include="..\..\game\shared\hl2mp\weapon_357.cpp">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\game\shared\csbox\cstrike\weapon_ak47.cpp">
-      <Filter>Source Files\HL2MP\Weapons</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\game\shared\hl2mp\weapon_ar2.cpp">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
@@ -3518,15 +3740,6 @@
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\hl2mp\weapon_crowbar.cpp">
-      <Filter>Source Files\HL2MP\Weapons</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\shared\csbox\cstrike\weapon_csbase.cpp">
-      <Filter>Source Files\HL2MP\Weapons</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\shared\csbox\cstrike\weapon_csbasegun.cpp">
-      <Filter>Source Files\HL2MP\Weapons</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\shared\csbox\cstrike\weapon_deagle.cpp">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\hl2mp\weapon_frag.cpp">
@@ -3542,9 +3755,6 @@
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.cpp">
-      <Filter>Source Files\HL2MP\Weapons</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\shared\csbox\cstrike\weapon_knife.cpp">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\hl2mp\weapon_physcannon.cpp">
@@ -3569,9 +3779,6 @@
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\hl2mp\weapon_stunstick.cpp">
-      <Filter>Source Files\HL2MP\Weapons</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\game\shared\csbox\cstrike\weapon_usp.cpp">
       <Filter>Source Files\HL2MP\Weapons</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">

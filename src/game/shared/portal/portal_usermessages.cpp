@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -46,15 +46,19 @@ void RegisterUserMessages()
 	usermessages->Register( "CreditsPortalMsg", 1 );
 	usermessages->Register( "LogoTimeMsg", 4 );
 	usermessages->Register( "AchievementEvent", -1 );
-	usermessages->Register( "UpdateJalopyRadar", -1 );
-
-#ifndef _X360
-	// NVNT register haptic user messages
-	RegisterHapticMessages();
-#endif
 
 
 	//new stuff for portal
 	usermessages->Register( "EntityPortalled", sizeof( long ) + sizeof( long ) + sizeof( Vector ) + sizeof( QAngle ) ); //something got teleported through a portal
-	usermessages->Register( "KillCam", -1 );	
+	usermessages->Register( "KillCam", -1 );
+
+	// Voting
+	usermessages->Register( "CallVoteFailed", 1 );
+	usermessages->Register( "VoteStart", -1 );
+	usermessages->Register( "VotePass", -1 );
+	usermessages->Register( "VoteFailed", 2 );
+	usermessages->Register( "VoteSetup", -1 );  // Initiates client-side voting UI
+
+	// NVNT register haptic user messages
+	RegisterHapticMessages();
 }

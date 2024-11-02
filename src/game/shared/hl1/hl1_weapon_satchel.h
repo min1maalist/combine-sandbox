@@ -1,3 +1,4 @@
+/*
 //========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
@@ -105,3 +106,4 @@ private:
 
 
 #endif // HL1_WEAPON_SATCHEL_H
+*/

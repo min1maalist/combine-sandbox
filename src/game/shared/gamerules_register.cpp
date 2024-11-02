@@ -7,16 +7,6 @@
 #include "cbase.h"
 #include "gamerules_register.h"
 
-// =======================================
-// PySource Additions
-// =======================================
-#if defined(ENABLE_PYTHON) && defined(SRCPY_MOD_GAMERULES)
-#include "srcpy_gamerules.h"
-#endif // ENABLE_PYTHON && SRCPY_MOD_GAMERULES
-// =======================================
-// END PySource Additions
-// =======================================
-
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -39,18 +29,6 @@ CGameRulesRegister::CGameRulesRegister( const char *pClassName, CreateGameRulesF
 void CGameRulesRegister::CreateGameRules()
 {
 	m_pFn();
-// =======================================
-// PySource Additions
-// =======================================
-#if defined(ENABLE_PYTHON) && defined(SRCPY_MOD_GAMERULES)
-	// Add Gamerules as game system here.
-	// Basically we don't do this automatically to prevent 
-	// non cleaned up gamerules from being still registered
-	IGameSystem::Add( g_pGameRules );
-#endif // ENABLE_PYTHON && SRCPY_MOD_GAMERULES
-// =======================================
-// END PySource Additions
-// =======================================
 }
 
 CGameRulesRegister* CGameRulesRegister::FindByName( const char *pName )
@@ -77,21 +55,8 @@ CGameRulesRegister* CGameRulesRegister::FindByName( const char *pName )
 	void OnGameRulesCreationStringChanged( void *object, INetworkStringTable *stringTable, int stringNumber, const char *newString, void const *newData )
 	{
 		// The server has created a new CGameRules object.
-// =======================================
-// PySource Additions
-// =======================================
-#if defined(ENABLE_PYTHON) && defined(SRCPY_MOD_GAMERULES)
-		if( PyGameRules().ptr() != Py_None )
-			ClearPyGameRules();		// Python managed	
-		else 
-#endif // ENABLE_PYTHON && SRCPY_MOD_GAMERULES
-// =======================================
-// END PySource Additions
-// =======================================
-		{
-			delete g_pGameRules;
-			g_pGameRules = NULL;
-		}
+		delete g_pGameRules;
+		g_pGameRules = NULL;
 
 		const char *pClassName = (const char*)newData;
 		CGameRulesRegister *pReg = CGameRulesRegister::FindByName( pClassName );
@@ -141,18 +106,7 @@ CGameRulesRegister* CGameRulesRegister::FindByName( const char *pName )
 	void CreateGameRulesObject( const char *pClassName )
 	{
 		// Delete the old game rules object.
-// =======================================
-// PySource Additions
-// =======================================
-#if defined(ENABLE_PYTHON) && defined(SRCPY_MOD_GAMERULES)
-		if( PyGameRules().ptr() != Py_None )
-			ClearPyGameRules();	
-		else
-#endif // ENABLE_PYTHON && SRCPY_MOD_GAMERULES
-// =======================================
-// END PySource Additions
-// =======================================
-			delete g_pGameRules;
+		delete g_pGameRules;
 		g_pGameRules = NULL;
 
 		// Create a new game rules object.

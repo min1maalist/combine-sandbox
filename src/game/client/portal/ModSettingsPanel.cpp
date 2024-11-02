@@ -5,7 +5,7 @@ using namespace vgui;
 #include <vgui_controls/Frame.h>
 #include <vgui_controls/Button.h>
 #include <vgui_controls/cvartogglecheckbutton.h>
-
+/*
 ConVar cl_showmodsettingspanel("cl_showmodsettingspanel", "0", FCVAR_CLIENTDLL, "Sets the state of ModSettingsPanel <state>");
 
 CON_COMMAND(ToggleModSettingsPanel, "Toggles ModSettingsPanel on or off")
@@ -73,7 +73,7 @@ CModSettingsPanel::CModSettingsPanel(vgui::VPANEL parent) : BaseClass(NULL, "Mod
 	m_pApplyButton->AddActionSignalTarget(this);
 	m_pApplyButton->SetCommand("apply");
 	m_pBetaQuickInfoToggle = dynamic_cast<CvarToggleCheckButton<ConVarRef>*>( FindChildByName("BetaQuickInfoToggle", true) );
-	m_pBetaQuickInfoToggle->SetCvarName("beta_quickinfo");
+	//m_pBetaQuickInfoToggle->SetCvarName("beta_quickinfo");
 	m_pBetaQuickInfoToggle->SizeToContents();
 	m_pBetaQuickInfoDelayToggle = dynamic_cast<CvarToggleCheckButton<ConVarRef>*>( FindChildByName("BetaQuickInfoDelayToggle", true) );
 	m_pBetaQuickInfoDelayToggle->SetCvarName("beta_quickinfo_show_portal_delay");
@@ -171,3 +171,4 @@ void CModSettingsPanel::OnCommand(const char* pcCommand)
 		cl_showmodsettingspanel.SetValue(0);
 	}	
 }
+*/

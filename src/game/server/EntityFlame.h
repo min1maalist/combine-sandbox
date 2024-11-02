@@ -24,7 +24,6 @@ class CEntityFlame : public CBaseEntity
 public:
 	DECLARE_SERVERCLASS();
 	DECLARE_CLASS( CEntityFlame, CBaseEntity );
-	DECLARE_PYCLASS( CEntityFlame ); 
 
 	CEntityFlame( void );
 

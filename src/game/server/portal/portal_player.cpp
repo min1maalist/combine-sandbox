@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose:		Player for Portal.
 //
@@ -167,10 +167,8 @@ SendPropEHandle( SENDINFO( m_pHeldObjectPortal ) ),
 SendPropBool( SENDINFO( m_bPitchReorientation ) ),
 SendPropEHandle( SENDINFO( m_hPortalEnvironment ) ),
 SendPropEHandle( SENDINFO( m_hSurroundingLiquidPortal ) ),
-
+SendPropBool( SENDINFO( m_bSuppressingCrosshair ) ),
 SendPropExclude( "DT_BaseAnimating", "m_flPoseParameter" ),
-
-SendPropBool(SENDINFO(m_bCrosshairSuppressed)),
 
 END_SEND_TABLE()
 
@@ -205,6 +203,7 @@ BEGIN_DATADESC( CPortal_Player )
 	DEFINE_FIELD( m_matLastPortalled, FIELD_VMATRIX_WORLDSPACE ),
 	DEFINE_FIELD( m_vWorldSpaceCenterHolder, FIELD_POSITION_VECTOR ),
 	DEFINE_FIELD( m_hSurroundingLiquidPortal, FIELD_EHANDLE ),
+	DEFINE_FIELD( m_bSuppressingCrosshair, FIELD_BOOLEAN ),
 	//DEFINE_FIELD ( m_PlayerAnimState, CPortalPlayerAnimState ),
 	//DEFINE_FIELD ( m_StatsThisLevel, PortalPlayerStatistics_t ),
 
@@ -213,10 +212,9 @@ BEGIN_DATADESC( CPortal_Player )
 END_DATADESC()
 
 ConVar sv_regeneration_wait_time ("sv_regeneration_wait_time", "1.0", FCVAR_REPLICATED );
-ConVar sv_regeneration_enable("sv_regeneration_enable", "0", FCVAR_REPLICATED | FCVAR_ARCHIVE);
 
 const char *g_pszChellModel = "models/player/chell.mdl";
-const char *g_pszPlayerModel = "models/player.mdl";
+const char *g_pszPlayerModel = g_pszChellModel;
 
 
 #define MAX_COMBINE_MODELS 4
@@ -267,6 +265,7 @@ CPortal_Player::CPortal_Player()
 	m_iszExpressionScene = NULL_STRING;
 	m_hExpressionSceneEnt = NULL;
 	m_flExpressionLoopTime = 0.0f;
+	m_bSuppressingCrosshair = false;
 }
 
 CPortal_Player::~CPortal_Player( void )
@@ -387,7 +386,8 @@ void CPortal_Player::GiveDefaultItems( void )
 {
 	castable_string_t st( "suit_no_sprint" );
 	GlobalEntity_SetState( st, GLOBAL_OFF );
-//	InputDisableFlashlight( inputdata_t() );
+	inputdata_t in;
+	InputDisableFlashlight( in );
 }
 
 
@@ -408,7 +408,7 @@ void CPortal_Player::Spawn(void)
 	RemoveEffects( EF_NODRAW );
 	StopObserverMode();
 
-//	GiveDefaultItems();
+	GiveDefaultItems();
 
 	m_nRenderFX = kRenderNormal;
 
@@ -439,7 +439,6 @@ void CPortal_Player::Activate( void )
 
 void CPortal_Player::NotifySystemEvent(CBaseEntity *pNotify, notify_system_event_t eventType, const notify_system_event_params_t &params )
 {
-	/*
 	// On teleport, we send event for tracking fling achievements
 	if ( eventType == NOTIFY_EVENT_TELEPORT )
 	{
@@ -452,7 +451,7 @@ void CPortal_Player::NotifySystemEvent(CBaseEntity *pNotify, notify_system_event
 			gameeventmanager->FireEvent( event );
 		}
 	}
-	*/
+
 	BaseClass::NotifySystemEvent( pNotify, eventType, params );
 }
 
@@ -522,7 +521,7 @@ void CPortal_Player::SetPlayerModel( void )
 	}
 
 	SetModel( szModelName );
-	m_iPlayerSoundType = PLAYER_SOUNDS_CITIZEN;
+	m_iPlayerSoundType = (int)PLAYER_SOUNDS_CITIZEN;
 }
 
 
@@ -550,15 +549,15 @@ void CPortal_Player::UpdateExpression( void )
 	GetExpresser()->SetOuter( this );
 
 	ClearExpression();
-	AI_Response *result = SpeakFindResponse( g_pszChellConcepts[iConcept] );
+	AI_Response response;
+	bool result = SpeakFindResponse( response, g_pszChellConcepts[iConcept] );
 	if ( !result )
 	{
 		m_flExpressionLoopTime = gpGlobals->curtime + RandomFloat(30,40);
 		return;
 	}
 
-	char szScene[ MAX_PATH ];
-	result->GetResponse( szScene, sizeof( szScene ) );
+	char const *szScene = response.GetResponsePtr();
 
 	// Ignore updates that choose the same scene
 	if ( m_iszExpressionScene != NULL_STRING && stricmp( STRING(m_iszExpressionScene), szScene ) == 0 )
@@ -625,9 +624,8 @@ void CPortal_Player::PostThink( void )
 	angles[PITCH] = 0;
 	SetLocalAngles( angles );
 
-	
 	// Regenerate heath after 3 seconds
-	if (IsAlive() && GetHealth() < GetMaxHealth() && sv_regeneration_enable.GetBool())
+	if ( IsAlive() && GetHealth() < GetMaxHealth() )
 	{
 		// Color to overlay on the screen while the player is taking damage
 		color32 hurtScreenOverlay = {64,0,0,64};
@@ -645,13 +643,9 @@ void CPortal_Player::PostThink( void )
 		else
 		{
 			m_bIsRegenerating = false;
-			if (gpGlobals->curtime < m_fTimeLastHurt + 1.0)
-			{
-				UTIL_ScreenFade(this, hurtScreenOverlay, 1.0f, 0.1f, FFADE_IN | FFADE_PURGE);
-			}
+			UTIL_ScreenFade( this, hurtScreenOverlay, 1.0f, 0.1f, FFADE_IN|FFADE_PURGE );
 		}
 	}
-	
 
 	UpdatePortalPlaneSounds();
 	UpdateWooshSounds();
@@ -724,7 +718,7 @@ void CPortal_Player::PlayerDeathThink(void)
 
 	StopAnimation();
 
-	AddEffects( EF_NOINTERP );
+	IncrementInterpolationFrame();
 	m_flPlaybackRate = 0.0;
 
 	int fAnyButtonDown = (m_nButtons & ~IN_SCORE);
@@ -802,7 +796,7 @@ void CPortal_Player::UpdatePortalPlaneSounds( void )
 					{
 						EmitSound_t ep( params );
 						ep.m_nPitch = 80.0f + vVelocity.Length() * 0.03f;
-						ep.m_flVolume = min( 0.3f + vVelocity.Length() * 0.00075f, 1.0f );
+						ep.m_flVolume = MIN( 0.3f + vVelocity.Length() * 0.00075f, 1.0f );
 
 						EmitSound( filter, entindex(), ep );
 					}
@@ -822,7 +816,7 @@ void CPortal_Player::UpdatePortalPlaneSounds( void )
 					{
 						EmitSound_t ep( params );
 						ep.m_nPitch = 80.0f + vVelocity.Length() * 0.03f;
-						ep.m_flVolume = min( 0.3f + vVelocity.Length() * 0.00075f, 1.0f );
+						ep.m_flVolume = MIN( 0.3f + vVelocity.Length() * 0.00075f, 1.0f );
 
 						EmitSound( filter, entindex(), ep );
 					}
@@ -842,7 +836,7 @@ void CPortal_Player::UpdatePortalPlaneSounds( void )
 			Vector vVelocity;
 			GetVelocity( &vVelocity, NULL );
 			ep.m_nPitch = 80.0f + vVelocity.Length() * 0.03f;
-			ep.m_flVolume = min( 0.3f + vVelocity.Length() * 0.00075f, 1.0f );
+			ep.m_flVolume = MIN( 0.3f + vVelocity.Length() * 0.00075f, 1.0f );
 
 			EmitSound( filter, entindex(), ep );
 		}
@@ -999,7 +993,7 @@ void CPortal_Player::SetupBones( matrix3x4_t *pBoneToWorld, int boneMask )
 		pos, 
 		q, 
 		-1,
-		GetModelScale(),
+		GetModelScale(), // Scaling
 		pBoneToWorld,
 		boneMask );
 }
@@ -1043,7 +1037,6 @@ CAI_Expresser *CPortal_Player::GetExpresser()
 
 
 extern int	gEvilImpulse101;
-extern bool UTIL_ItemCanBeTouchedByPlayer(CBaseEntity *pItem, CBasePlayer *pPlayer);
 //-----------------------------------------------------------------------------
 // Purpose: Player reacts to bumping a weapon. 
 // Input  : pWeapon - the weapon that the player bumped into.
@@ -1066,26 +1059,17 @@ bool CPortal_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 		return false;
 	}
 
-	// Act differently in the episodes
-	if (hl2_episodic.GetBool())
+	// Don't let the player fetch weapons through walls (use MASK_SOLID so that you can't pickup through windows)
+	if( !pWeapon->FVisible( this, MASK_SOLID ) && !(GetFlags() & FL_NOTARGET) )
 	{
-		// Don't let the player touch the item unless unobstructed
-		if (!UTIL_ItemCanBeTouchedByPlayer(pWeapon, this) && !gEvilImpulse101)
-			return false;
-	}
-	else
-	{
-		// Don't let the player fetch weapons through walls (use MASK_SOLID so that you can't pickup through windows)
-		if (pWeapon->FVisible(this, MASK_SOLID) == false && !(GetFlags() & FL_NOTARGET))
-			return false;
+		return false;
 	}
 
 	CWeaponPortalgun *pPickupPortalgun = dynamic_cast<CWeaponPortalgun*>( pWeapon );
 
-	// ----------------------------------------
-	// If I already have it just take the ammo
-	// ----------------------------------------
-	if (Weapon_OwnsThisType(pWeapon->GetClassname(), pWeapon->GetSubType()))
+	bool bOwnsWeaponAlready = !!Weapon_OwnsThisType( pWeapon->GetClassname(), pWeapon->GetSubType());
+
+	if ( bOwnsWeaponAlready == true ) 
 	{
 		// If we picked up a second portal gun set the bool to alow secondary fire
 		if ( pPickupPortalgun )
@@ -1102,13 +1086,12 @@ bool CPortal_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 			return true;
 		}
 
-		if (Weapon_EquipAmmoOnly(pWeapon))
+		//If we have room for the ammo, then "take" the weapon too.
+		if ( Weapon_EquipAmmoOnly( pWeapon ) )
 		{
-			// Only remove me if I have no ammo left
-			if (pWeapon->HasPrimaryAmmo())
-				return false;
+			pWeapon->CheckRespawn();
 
-			UTIL_Remove(pWeapon);
+			UTIL_Remove( pWeapon );
 			return true;
 		}
 		else
@@ -1116,54 +1099,17 @@ bool CPortal_Player::BumpWeapon( CBaseCombatWeapon *pWeapon )
 			return false;
 		}
 	}
-	// -------------------------
-	// Otherwise take the weapon
-	// -------------------------
-	else
+
+	pWeapon->CheckRespawn();
+	Weapon_Equip( pWeapon );
+
+	// If we're holding and object before picking up portalgun, drop it
+	if ( pPickupPortalgun )
 	{
-		pWeapon->CheckRespawn();
-
-		pWeapon->AddSolidFlags(FSOLID_NOT_SOLID);
-		pWeapon->AddEffects(EF_NODRAW);
-
-		Weapon_Equip(pWeapon);
-
-		// If we're holding and object before picking up portalgun, drop it
-		if (pPickupPortalgun)
-		{
-			ForceDropOfCarriedPhysObjects(GetPlayerHeldEntity(this));
-		}
-
-		if (IsInAVehicle())
-		{
-			pWeapon->Holster();
-		}
-		else
-		{
-#ifdef HL2_DLL
-
-			if (IsX360())
-			{
-				CFmtStr hint;
-				hint.sprintf("#valve_hint_select_%s", pWeapon->GetClassname());
-				UTIL_HudHintText(this, hint.Access());
-			}
-
-			// Always switch to a newly-picked up weapon
-			if (!PlayerHasMegaPhysCannon())
-			{
-				// If it uses clips, load it full. (this is the first time you've picked up this type of weapon)
-				if (pWeapon->UsesClipsForAmmo1())
-				{
-					pWeapon->m_iClip1 = pWeapon->GetMaxClip1();
-				}
-
-				Weapon_Switch(pWeapon);
-			}
-#endif
-		}
-		return true;
+		ForceDropOfCarriedPhysObjects( GetPlayerHeldEntity( this ) );
 	}
+
+	return true;
 }
 
 void CPortal_Player::ShutdownUseEntity( void )
@@ -1174,7 +1120,7 @@ void CPortal_Player::ShutdownUseEntity( void )
 const Vector& CPortal_Player::WorldSpaceCenter( ) const
 {
 	m_vWorldSpaceCenterHolder = GetAbsOrigin();
-	m_vWorldSpaceCenterHolder.z += ( (IsDucked()) ? (VEC_DUCK_HULL_MAX.z) : (VEC_HULL_MAX.z) ) * 0.5f;
+	m_vWorldSpaceCenterHolder.z += ( (IsDucked()) ? (VEC_DUCK_HULL_MAX_SCALED( this ).z) : (VEC_HULL_MAX_SCALED( this ).z) ) * 0.5f;
 	return m_vWorldSpaceCenterHolder;
 }
 
@@ -1639,18 +1585,13 @@ void CPortal_Player::CheatImpulseCommands( int iImpulse )
 	switch ( iImpulse )
 	{
 	case 101:
-	{
-		if (sv_cheats->GetBool())
 		{
-			GiveAllItems();
+			if( sv_cheats->GetBool() )
+			{
+				GiveAllItems();
+			}
 		}
-	}
-	break;
-	case 102:
-	{
-		GivePortalGun();
-	}
-	break;
+		break;
 
 	default:
 		BaseClass::CheatImpulseCommands( iImpulse );
@@ -1928,7 +1869,7 @@ int CPortal_Player::OnTakeDamage_Alive( const CTakeDamageInfo &info )
 	if ( event )
 	{
 		event->SetInt("userid", GetUserID() );
-		event->SetInt("health", max(0, m_iHealth) );
+		event->SetInt("health", MAX(0, m_iHealth) );
 		event->SetInt("priority", 5 );	// HLTV event priority, not transmitted
 
 		if ( attacker->IsPlayer() )
@@ -2227,10 +2168,6 @@ void CPortal_Player::SetupVisibility( CBaseEntity *pViewEntity, unsigned char *p
 	PortalSetupVisibility( this, area, pvs, pvssize );
 }
 
-void CPortal_Player::SuppressCrosshair(bool a)
-{
-	m_bCrosshairSuppressed = a;
-}
 
 #ifdef PORTAL_MP
 
@@ -2393,21 +2330,4 @@ CON_COMMAND( startneurotoxins, "Starts the nerve gas timer." )
 
 	if( pPlayer )
 		pPlayer->SetNeuroToxinDamageTime( fCoundownTime );
-}
-
-void CPortal_Player::GivePortalGun(void)
-{
-	//GiveNamedItem( "weapon_physcannon" );
-	CWeaponPortalgun *pPortalGun = static_cast<CWeaponPortalgun*>(GiveNamedItem("weapon_portalgun"));
-
-	if (!pPortalGun)
-	{
-		pPortalGun = static_cast<CWeaponPortalgun*>(Weapon_OwnsThisType("weapon_portalgun"));
-	}
-
-	if (pPortalGun)
-	{
-		pPortalGun->SetCanFirePortal1();
-		pPortalGun->SetCanFirePortal2();
-	}
 }

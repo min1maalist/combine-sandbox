@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2006, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -789,13 +789,7 @@ void CPortalSimulator::TakePhysicsOwnership( CBaseEntity *pEntity )
 			{
 				//bool bHeldByPhyscannon = false;
 				CBaseEntity *pHeldEntity = NULL;
-
-// No need for this in HLS since the player can't hold anything in HLS
-#ifndef HL1_DLL
 				CPortal_Player *pPlayer = (CPortal_Player *)GetPlayerHoldingEntity( pEntity );
-#else
-				CPortal_Player *pPlayer = NULL;
-#endif
 
 				if ( !pPlayer && pEntity->IsPlayer() )
 				{
@@ -804,9 +798,7 @@ void CPortalSimulator::TakePhysicsOwnership( CBaseEntity *pEntity )
 
 				if ( pPlayer )
 				{
-#ifndef HL1_DLL
 					pHeldEntity = GetPlayerHeldEntity( pPlayer );
-#endif
 					/*if ( !pHeldEntity )
 					{
 						pHeldEntity = PhysCannonGetHeldEntity( pPlayer->GetActiveWeapon() );
@@ -986,24 +978,16 @@ void CPortalSimulator::ReleasePhysicsOwnership( CBaseEntity *pEntity, bool bCont
 
 						//bool bHeldByPhyscannon = false;
 						CBaseEntity *pHeldEntity = NULL;
-
-// No need for this in HLS since the player can't hold anything in HLS
-#ifndef HL1_DLL
 						CPortal_Player *pPlayer = (CPortal_Player *)GetPlayerHoldingEntity( pEntity );
 
 						if ( !pPlayer && pEntity->IsPlayer() )
 						{
 							pPlayer = (CPortal_Player *)pEntity;
 						}
-#else
-						CPortal_Player *pPlayer = NULL;
-#endif //HL1_DLL
 
 						if ( pPlayer )
 						{
-#ifndef HL1_DLL
 							pHeldEntity = GetPlayerHeldEntity( pPlayer );
-#endif
 							/*if ( !pHeldEntity )
 							{
 								pHeldEntity = PhysCannonGetHeldEntity( pPlayer->GetActiveWeapon() );
@@ -1959,11 +1943,7 @@ void CPortalSimulator::CreatePolyhedrons( void )
 				ICollideable *pProp = StaticProps[i];
 
 				CPolyhedron *PolyhedronArray[1024];
-				int iPolyhedronCount = 0;
-				if (pProp->GetSolid() != SOLID_NONE)
-				{
-					iPolyhedronCount = g_StaticCollisionPolyhedronCache.GetStaticPropPolyhedrons(pProp, PolyhedronArray, 1024);
-				}
+				int iPolyhedronCount = g_StaticCollisionPolyhedronCache.GetStaticPropPolyhedrons( pProp, PolyhedronArray, 1024 );
 
 				StaticPropPolyhedronGroups_t indices;
 				indices.iStartIndex = m_InternalData.Simulation.Static.World.StaticProps.Polyhedrons.Count();
@@ -2913,7 +2893,8 @@ void CPSCollisionEntity::Spawn( void )
 	s_PortalSimulatorCollisionEntities[entindex()] = true;
 	VPhysicsSetObject( NULL );
 	AddFlag( FL_WORLDBRUSH );
-	AddEFlags( EF_NODRAW | EF_NOINTERP | EF_NOSHADOW | EF_NORECEIVESHADOW );
+	AddEffects( EF_NODRAW | EF_NOSHADOW | EF_NORECEIVESHADOW );
+	IncrementInterpolationFrame();
 }
 
 void CPSCollisionEntity::Activate( void )

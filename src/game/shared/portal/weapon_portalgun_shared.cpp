@@ -1,4 +1,4 @@
-//========= Copyright © 1996-2005, Valve Corporation, All rights reserved. ============//
+//========= Copyright Valve Corporation, All rights reserved. ============//
 //
 // Purpose: 
 //
@@ -52,12 +52,7 @@ CWeaponPortalgun::CWeaponPortalgun( void )
 	m_fMinRange2	= 0.0f;
 	m_fMaxRange2	= MAX_TRACE_LENGTH;
 
-	m_EffectState	= EFFECT_NONE;
-
-#ifdef GAME_DLL
-	m_flSoonestPrimaryAttack = gpGlobals->curtime;
-#endif // GAME_DLL
-
+	m_EffectState	= (int)EFFECT_NONE;
 }
 
 void CWeaponPortalgun::Precache()
@@ -99,6 +94,16 @@ bool CWeaponPortalgun::ShouldDrawCrosshair( void )
 }
 
 //-----------------------------------------------------------------------------
+// Purpose: Override so only reload one shell at a time
+// Input  :
+// Output :
+//-----------------------------------------------------------------------------
+bool CWeaponPortalgun::Reload( void )
+{
+	return true;
+}
+
+//-----------------------------------------------------------------------------
 // Purpose: Play finish reload anim and fill clip
 // Input  :
 // Output :
@@ -131,9 +136,6 @@ void CWeaponPortalgun::DryFire( void )
 	WeaponSound(EMPTY);
 	SendWeaponAnim( ACT_VM_DRYFIRE );
 	
-#ifdef GAME_DLL
-	m_flSoonestPrimaryAttack = gpGlobals->curtime + PORTALGUN_FASTEST_DRY_REFIRE_TIME;
-#endif
 	m_flNextPrimaryAttack = gpGlobals->curtime + SequenceDuration();
 }
 
@@ -216,7 +218,6 @@ void CWeaponPortalgun::PrimaryAttack( void )
 	}
 
 #ifndef CLIENT_DLL
-	m_flSoonestPrimaryAttack = gpGlobals->curtime + PORTALGUN_FASTEST_REFIRE_TIME;
 	inputdata_t inputdata;
 	inputdata.pActivator = this;
 	inputdata.pCaller = this;
@@ -297,8 +298,6 @@ void CWeaponPortalgun::ItemHolsterFrame( void )
 	if ( GetOwner()->GetActiveWeapon() == this )
 		return;
 
-#ifndef HL1_CLIENT_DLL
-#ifndef HL1_DLL
 	// If it's been longer than three seconds, reload
 	if ( ( gpGlobals->curtime - m_flHolsterTime ) > sk_auto_reload_time.GetFloat() )
 	{
@@ -312,13 +311,11 @@ void CWeaponPortalgun::ItemHolsterFrame( void )
 			return;
 
 		// Just load the clip with no animations
-		int ammoFill = min( (GetMaxClip1() - m_iClip1), GetOwner()->GetAmmoCount( GetPrimaryAmmoType() ) );
+		int ammoFill = MIN( (GetMaxClip1() - m_iClip1), GetOwner()->GetAmmoCount( GetPrimaryAmmoType() ) );
 		
 		GetOwner()->RemoveAmmo( ammoFill, GetPrimaryAmmoType() );
 		m_iClip1 += ammoFill;
 	}
-#endif
-#endif
 }
 
 //-----------------------------------------------------------------------------
