@@ -12,8 +12,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\public\vgui_controls\AnalogBar.h">
       <Filter>Public Header Files</Filter>
     </ClInclude>
@@ -530,9 +528,6 @@
       <Filter>VPC Scripts</Filter>
     </None>
     <None Include="..\..\vpc_scripts\protobuf_builder.vpc">
-      <Filter>VPC Scripts</Filter>
-    </None>
-    <None Include="..\..\vpc_scripts\pysource_base.vpc">
       <Filter>VPC Scripts</Filter>
     </None>
     <None Include="..\..\vpc_scripts\source_base.vpc">

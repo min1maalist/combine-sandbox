@@ -29,17 +29,6 @@
 #include "tier1/utlsymbol.h"
 #include "vgui_controls/BuildGroup.h"
 
-
-// =======================================
-// PySource Additions
-// =======================================
-#ifdef ENABLE_PYTHON
-#include "vgui_boost_python.h"
-#endif // ENABLE_PYTHON
-// =======================================
-// END PySource Additions
-// =======================================
-
 // undefine windows function macros that overlap 
 #ifdef PostMessage
 #undef PostMessage
@@ -50,16 +39,6 @@
 #endif
 
 class CUtlBuffer;
-
-// =======================================
-// PySource Additions
-// =======================================
-#ifdef ENABLE_PYTHON
-class BufferCallPaintTraverse;
-#endif // ENABLE_PYTHON
-// =======================================
-// END PySource Additions
-// =======================================
 
 namespace vgui
 {
@@ -967,25 +946,6 @@ private:
 
 	// obselete, remove soon
 	void OnOldMessage(KeyValues *params, VPANEL ifromPanel);
-
-// =======================================
-// PySource Additions
-// =======================================
-#ifdef ENABLE_PYTHON
-	friend class BufferCallPaintTraverse;
-
-public:
-	virtual void PyDestroyPanel();
-
-	virtual PyObject *GetPySelf() const { return NULL; }
-
-protected:
-	bool m_bPyDeleted;
-
-#endif // ENABLE_PYTHON
-// =======================================
-// END PySource Additions
-// =======================================
 };
 
 inline void Panel::DisableMouseInputForThisPanel( bool bDisable )

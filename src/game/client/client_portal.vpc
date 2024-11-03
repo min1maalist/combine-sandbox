@@ -18,7 +18,7 @@ $Configuration
 	}
 }
 
-$Project "Client (Portal)"
+$Project "Client (Combine Sandbox)"
 {
 	$Folder	"Source Files"
 	{
@@ -109,6 +109,11 @@ $Project "Client (Portal)"
 			$File	"hl2\shieldproxy.cpp"
 			$File	"$SRCDIR\game\shared\hl2\survival_gamerules.cpp"
 			$File	"hl2\vgui_rootpanel_hl2.cpp"
+		}
+
+		$Folder "Combine Shitbox"
+		{
+			$File	"$SRCDIR\game\shared\csbox\weapon_physgun.cpp"
 		}
 
 		$Folder	"Portal"

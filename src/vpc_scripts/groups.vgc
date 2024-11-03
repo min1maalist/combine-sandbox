@@ -16,7 +16,6 @@ $Group "gamedlls"
 
 $Group "game"
 {
-	"boost_python"
 	"client"
 	"mathlib"
 	"raytrace"

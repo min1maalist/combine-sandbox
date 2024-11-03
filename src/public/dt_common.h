@@ -18,7 +18,7 @@
 #include "tier1/strtools.h"
 #include <stddef.h>
 
-#if defined(LINUX) && !defined(PYPP_GENERATION)
+#ifdef LINUX
 #undef offsetof
 #define offsetof(s,m)	(size_t)&(((s *)0)->m)
 #endif

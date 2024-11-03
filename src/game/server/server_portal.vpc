@@ -18,7 +18,7 @@ $Configuration
 	}
 }
 
-$Project "Server (Portal)"
+$Project "Server (Combine Sandbox)"
 {
 	$Folder	"Source Files"
 	{
@@ -269,6 +269,11 @@ $Project "Server (Portal)"
 				$File	"episodic\weapon_hopwire.cpp"
 			}
 
+		}
+
+		$Folder "Combine Shitbox"
+		{
+			$File	"$SRCDIR\game\shared\csbox\weapon_physgun.cpp"
 		}
 
 		$Folder	"Portal"

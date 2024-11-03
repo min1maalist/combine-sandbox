@@ -1,0 +1,15 @@
+[vpc crc file version 2]
+b9c20ec3 C:\Users\hp\Downloads\tf2c-src (01-17-24)\tf2c-src\src\devtools\bin\vpc.exe
+_Nc_VS2013/vpcgame:tf2classic_
+1ffb2c64 vscript.vpc
+4832e67a ..\vpc_scripts\source_dll_base.vpc
+d752cf80 ..\vpc_scripts\platform_dirs.vpc
+b6e97414 ..\vpc_scripts\source_base.vpc
+3c0dec70 ..\vpc_scripts\source_dll_win32_base.vpc
+486b766d ..\vpc_scripts\version.vpc
+846102f0 ..\vpc_scripts\loadaddress.vpc
+1037d184 ..\vpc_scripts\source_dll_win32_debug.vpc
+6166de99 ..\vpc_scripts\source_dll_win32_release.vpc
+87bb2a52 ..\vpc_scripts\source_win32_base.vpc
+346bda4a ..\vpc_scripts\source_video_base.vpc
+30bf2216 ..\vpc_scripts\definitions\win32_2010.def
