@@ -6,9 +6,9 @@
 #endif
 
 #ifdef CLIENT_DLL
-	#include "..\game\client\hl2mp\c_hl2mp_player.h"
+	#include "c_hl2mp_player.h"
 #else
-	#include "..\game\server\hl2mp\hl2mp_player.h"
+	#include "hl2mp_player.h"
 #endif
 
 #include "weapon_hl2mpbase.h"

@@ -62,10 +62,15 @@
 	}
     "12"
 	{
-		"label" "VR Test"
-		"command" "engine vr_activate"
-		"OnlyWhenVREnabled" "1"
+		"label" "Sinleplayer"
+		"command" "engine exec singleplayer"
 		"notmulti" "1"
+	}
+	"13"
+	{
+		"label" "TOOLGUN (requires console to be opened)"
+		"command" "engine exec toolgun"
+		"OnlyInGame" "1"
 	}
 
 }
