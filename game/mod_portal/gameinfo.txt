@@ -2,7 +2,7 @@
 {
 	game		"Combine Sandbox"
 	title 		"Combine Sandbox"
-	type		"both"
+	type		multiplayer_only
 	nodifficulty	1
 	hasportals	1
 	

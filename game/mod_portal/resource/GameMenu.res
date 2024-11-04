@@ -62,8 +62,9 @@
 	}
     "12"
 	{
-		"label" "HTMLView"
-		"command" "engine ToggleHTMLView"
+		"label" "VR Test"
+		"command" "engine vr_activate"
+		"OnlyWhenVREnabled" "1"
 		"notmulti" "1"
 	}
 

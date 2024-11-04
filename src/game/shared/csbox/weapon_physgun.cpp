@@ -1,8 +1,8 @@
-﻿//========= Copyright � 1996-2005, Valve Corporation, All rights reserved. ============//
+﻿//========= Copyright � 2009-20xx, Combine Sandbox, All rights reserved. ============//
 //
 // Purpose: 
 //
-// $NoKeywords: $
+// Physics Manipulation Gun!!!!!11!
 //=============================================================================//
 
 #include "cbase.h"
