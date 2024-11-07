@@ -1,7 +1,7 @@
 "GameInfo"
 {
-	game		"Combine Sandbox"
-	title 		"Combine Sandbox"
+	game		"Combine Sandbox 1.0"
+	title 		"Combine Sandbox 1.0" // The 1.0 version is released!
 	type		multiplayer_only
 	nodifficulty	1
 	hasportals	1
