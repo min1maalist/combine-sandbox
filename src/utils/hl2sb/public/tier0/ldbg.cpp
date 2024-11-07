@@ -17,13 +17,13 @@
 
 static int luasrc_SpewActivate( lua_State *L )
 {
-  SpewActivate( luaL_checkstring( L, 1 ), luaL_checkint( L, 2 ) );
+  //SpewActivate( luaL_checkstring( L, 1 ), luaL_checkint( L, 2 ) );
   return 0;
 }
 
 static int luasrc_IsSpewActive( lua_State *L )
 {
-  lua_pushboolean( L, IsSpewActive( luaL_checkstring( L, 1 ), luaL_checkint( L, 2 ) ) );
+  //lua_pushboolean( L, IsSpewActive( luaL_checkstring( L, 1 ), luaL_checkint( L, 2 ) ) );
   return 1;
 }
 
@@ -35,7 +35,7 @@ static int luasrc_Msg( lua_State *L )
 
 static int luasrc_DMsg( lua_State *L )
 {
-  DMsg( luaL_checkstring( L, 1 ), luaL_checkint( L, 2 ), luaL_checkstring( L, 3 ) );
+  //DMsg( luaL_checkstring( L, 1 ), luaL_checkint( L, 2 ), luaL_checkstring( L, 3 ) );
   return 0;
 }
 
@@ -47,7 +47,7 @@ static int luasrc_Warning( lua_State *L )
 
 static int luasrc_DWarning( lua_State *L )
 {
-  DWarning( luaL_checkstring( L, 1 ), luaL_checkint( L, 2 ), luaL_checkstring( L, 3 ) );
+  //DWarning( luaL_checkstring( L, 1 ), luaL_checkint( L, 2 ), luaL_checkstring( L, 3 ) );
   return 0;
 }
 
@@ -59,7 +59,7 @@ static int luasrc_Log( lua_State *L )
 
 static int luasrc_DLog( lua_State *L )
 {
-  DLog( luaL_checkstring( L, 1 ), luaL_checkint( L, 2 ), luaL_checkstring( L, 3 ) );
+  //DLog( luaL_checkstring( L, 1 ), luaL_checkint( L, 2 ), luaL_checkstring( L, 3 ) );
   return 0;
 }
 
@@ -89,7 +89,7 @@ static int luasrc_DevLog( lua_State *L )
 
 static int luasrc_ConColorMsg( lua_State *L )
 {
-  ConColorMsg( *( Color * )luaL_checkcolor( L, 1 ), luaL_checkstring( L, 2 ) );
+  //ConColorMsg( *( Color * )luaL_checkcolor( L, 1 ), luaL_checkstring( L, 2 ) );
   return 0;
 }
 
@@ -113,7 +113,7 @@ static int luasrc_ConLog( lua_State *L )
 
 static int luasrc_ConDColorMsg( lua_State *L )
 {
-  ConDColorMsg( *( Color * )luaL_checkcolor( L, 1 ), luaL_checkstring( L, 2 ) );
+  //ConDColorMsg( *( Color * )luaL_checkcolor( L, 1 ), luaL_checkstring( L, 2 ) );
   return 0;
 }
 
@@ -137,19 +137,19 @@ static int luasrc_ConDLog( lua_State *L )
 
 static int luasrc_NetMsg( lua_State *L )
 {
-  NetMsg( luaL_checkint( L, 1 ), luaL_checkstring( L, 2 ) );
+  //NetMsg( luaL_checkint( L, 1 ), luaL_checkstring( L, 2 ) );
   return 0;
 }
 
 static int luasrc_NetWarning( lua_State *L )
 {
-  NetWarning( luaL_checkint( L, 1 ), luaL_checkstring( L, 2 ) );
+  //NetWarning( luaL_checkint( L, 1 ), luaL_checkstring( L, 2 ) );
   return 0;
 }
 
 static int luasrc_NetLog( lua_State *L )
 {
-  NetLog( luaL_checkint( L, 1 ), luaL_checkstring( L, 2 ) );
+  //NetLog( luaL_checkint( L, 1 ), luaL_checkstring( L, 2 ) );
   return 0;
 }
 
@@ -181,7 +181,7 @@ static const luaL_Reg dbg_funcs[] = {
 
 int luaopen_dbg( lua_State *L )
 {
-  luaL_register( L, "_G", dbg_funcs );
+  //luaL_register( L, "_G", dbg_funcs );
   lua_pop( L, 1 );
   return 1;
 }

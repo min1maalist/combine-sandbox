@@ -25,7 +25,7 @@
 LUA_API lua_CBaseEntity *lua_toentity( lua_State *L, int idx )
 {
   if ( !lua_isuserdata( L, idx ) )
-    luaL_typerror( L, idx, "CBaseEntity" );
+    //luaL_typerror( L, idx, "CBaseEntity" );
   if ( lua_getmetatable( L, idx ) )
   {
     lua_pushstring( L, "__type" );
@@ -33,7 +33,7 @@ LUA_API lua_CBaseEntity *lua_toentity( lua_State *L, int idx )
     if ( !lua_isstring( L, -1 ) )
       lua_pop( L, 2 );
     else if ( Q_strcmp( luaL_checkstring( L, -1 ), "entity" ) != 0 )
-      luaL_typerror( L, idx, "CBaseEntity" );
+      //luaL_typerror( L, idx, "CBaseEntity" );
   }
   lua_CBaseEntity **ppEntity = ( lua_CBaseEntity ** )lua_touserdata( L, idx );
   return *ppEntity;
@@ -60,7 +60,7 @@ LUALIB_API lua_CBaseEntity *luaL_checkentity( lua_State *L, int narg )
 {
   lua_CBaseEntity *d = lua_toentity( L, narg );
   if ( d == NULL ) /* avoid extra test when d is not 0 */
-    luaL_typerror( L, narg, "CBaseEntity" );
+    //luaL_typerror( L, narg, "CBaseEntity" );
   return d;
 }
 
@@ -72,7 +72,7 @@ LUALIB_API lua_CBaseEntity *luaL_optentity( lua_State *L, int narg,
 
 static int luasrc_CBaseEntity_GetClassname( lua_State *L )
 {
-  lua_pushstring( L, CBaseEntity_GetClassname( luaL_checkentity( L, 1 ) ) );
+  //lua_pushstring( L, CBaseEntity_GetClassname( luaL_checkentity( L, 1 ) ) );
   return 1;
 }
 
@@ -84,7 +84,7 @@ static int luasrc_CBaseEntity_IsAlive( lua_State *L )
 
 static int luasrc_CBaseEntity_PrecacheModel( lua_State *L )
 {
-  lua_pushinteger( L, CBaseEntity_PrecacheModel( luaL_checkstring( L, 1 ) ) );
+  //lua_pushinteger( L, CBaseEntity_PrecacheModel( luaL_checkstring( L, 1 ) ) );
   return 1;
 }
 
@@ -102,7 +102,7 @@ static int luasrc_CBaseEntity_SetModel( lua_State *L )
 
 static int luasrc_CBaseEntity___tostring( lua_State *L )
 {
-  lua_pushfstring( L, "CBaseEntity: %s", CBaseEntity_GetClassname( luaL_checkentity( L, 1 ) ) );
+  //lua_pushfstring( L, "CBaseEntity: %s", CBaseEntity_GetClassname( luaL_checkentity( L, 1 ) ) );
   return 1;
 }
 
@@ -138,12 +138,12 @@ static const luaL_Reg CBaseEntity_funcs[] = {
 int luaopen_CBaseEntity( lua_State *L )
 {
   luaL_newmetatable( L, "CBaseEntity" );
-  luaL_register( L, NULL, CBaseEntitymeta );
+  //luaL_register( L, NULL, CBaseEntitymeta );
   lua_pushvalue( L, -1 );           /* push metatable */
   lua_setfield( L, -2, "__index" ); /* metatable.__index = metatable */
   lua_pushstring( L, "entity" );
   lua_setfield( L, -2, "__type" ); /* metatable.__type = "entity" */
-  luaL_register( L, "_G", CBaseEntity_funcs );
+  //luaL_register( L, "_G", CBaseEntity_funcs );
   lua_pop( L, 2 );
   return 1;
 }

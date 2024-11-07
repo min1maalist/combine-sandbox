@@ -48,7 +48,7 @@ LUALIB_API lua_CBasePlayer *luaL_checkplayer( lua_State *L, int narg )
 {
   lua_CBasePlayer *d = lua_toplayer( L, narg );
   if ( d == NULL ) /* avoid extra test when d is not 0 */
-    luaL_typerror( L, narg, "CBasePlayer" );
+    //luaL_typerror( L, narg, "CBasePlayer" );
   return d;
 }
 
@@ -67,7 +67,7 @@ static int luasrc_CBasePlayer_GetUserID( lua_State *L )
 
 static int luasrc_CBasePlayer_GiveNamedItem( lua_State *L )
 {
-  lua_pushentity( L, CBasePlayer_GiveNamedItem( luaL_checkplayer( L, 1 ), luaL_checkstring( L, 2 ), luaL_optint( L, 3, 0 ) ) );
+  //lua_pushentity( L, CBasePlayer_GiveNamedItem( luaL_checkplayer( L, 1 ), luaL_checkstring( L, 2 ), luaL_optint( L, 3, 0 ) ) );
   return 1;
 }
 
@@ -105,7 +105,7 @@ static const luaL_Reg CBasePlayermeta[] = {
 int luaopen_CBasePlayer( lua_State *L )
 {
   luaL_newmetatable( L, "CBasePlayer" );
-  luaL_register( L, NULL, CBasePlayermeta );
+  //luaL_register( L, NULL, CBasePlayermeta );
   lua_pushstring( L, "entity" );
   lua_setfield( L, -2, "__type" ); /* metatable.__type = "entity" */
   lua_pop( L, 1 );

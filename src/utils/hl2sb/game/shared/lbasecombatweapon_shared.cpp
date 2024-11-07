@@ -8,6 +8,7 @@
 
 #include "../../luamanager.h"
 #include "lbasecombatweapon_shared.h"
+#include "lua.hpp"
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -43,7 +44,7 @@ LUALIB_API lua_CBaseCombatWeapon *luaL_checkweapon( lua_State *L, int narg )
 {
   lua_CBaseCombatWeapon *d = lua_toweapon( L, narg );
   if ( d == NULL ) /* avoid extra test when d is not 0 */
-    luaL_typerror( L, narg, "CBaseCombatWeapon" );
+    //luaL_typerror( L, narg, "CBaseCombatWeapon" );
   return d;
 }
 
@@ -78,7 +79,7 @@ static const luaL_Reg CBaseCombatWeaponmeta[] = {
 int luaopen_CBaseCombatWeapon( lua_State *L )
 {
   luaL_newmetatable( L, "CBaseCombatWeapon" );
-  luaL_register( L, NULL, CBaseCombatWeaponmeta );
+  //luaL_register( L, NULL, CBaseCombatWeaponmeta );
   lua_pushstring( L, "entity" );
   lua_setfield( L, -2, "__type" ); /* metatable.__type = "entity" */
   lua_pop( L, 1 );

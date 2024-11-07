@@ -69,7 +69,7 @@ LUALIB_API lua_ConCommand *luaL_checkconcommand( lua_State *L, int narg )
 {
   lua_ConCommand *d = lua_toconcommand( L, narg );
   if ( d == NULL ) /* avoid extra test when d is not 0 */
-    luaL_typerror( L, narg, "ConCommand" );
+    //luaL_typerror( L, narg, "ConCommand" );
   return d;
 }
 
@@ -77,7 +77,7 @@ LUALIB_API lua_ConVar *luaL_checkconvar( lua_State *L, int narg )
 {
   lua_ConVar *d = lua_toconvar( L, narg );
   if ( d == NULL ) /* avoid extra test when d is not 0 */
-    luaL_typerror( L, narg, "ConVar" );
+    //luaL_typerror( L, narg, "ConVar" );
   return d;
 }
 
@@ -177,11 +177,11 @@ static int luasrc_ConCommand( lua_State *L )
     return 1;
   }
 
-  ConCommand *pConCommand = new ConCommand( strdup( pName ), CC_ConCommand, strdup( luaL_optstring( L, 2, 0 ) ), luaL_optint( L, 3, 0 ), NULL );
+  //ConCommand *pConCommand = new ConCommand( strdup( pName ), CC_ConCommand, strdup( luaL_optstring( L, 2, 0 ) ), luaL_optint( L, 3, 0 ), NULL );
 
-  lookup = m_ConCommandDatabase.Insert( pName, pConCommand );
-  Assert( lookup != m_ConCommandDatabase.InvalidIndex() );
-  lua_pushconcommand( L, pConCommand );
+  //lookup = m_ConCommandDatabase.Insert( pName, pConCommand );
+  //Assert( lookup != m_ConCommandDatabase.InvalidIndex() );
+  //lua_pushconcommand( L, pConCommand );
   return 1;
 }
 
@@ -207,12 +207,12 @@ static const luaL_Reg ConCommand_funcs[] = {
 int luaopen_ConCommand( lua_State *L )
 {
   luaL_newmetatable( L, "ConCommand" );
-  luaL_register( L, NULL, ConCommandmeta );
+  //luaL_register( L, NULL, ConCommandmeta );
   lua_pushvalue( L, -1 );           /* push metatable */
   lua_setfield( L, -2, "__index" ); /* metatable.__index = metatable */
   lua_pushstring( L, "concommand" );
   lua_setfield( L, -2, "__type" ); /* metatable.__type = "concommand" */
-  luaL_register( L, "_G", ConCommand_funcs );
+  //luaL_register( L, "_G", ConCommand_funcs );
   lua_pop( L, 2 );
   return 1;
 }
@@ -358,11 +358,11 @@ static int luasrc_ConVar( lua_State *L )
     return 1;
   }
 
-  ConVar *pConVar = new ConVar( strdup( pName ), luaL_checkstring( L, 2 ), luaL_optint( L, 3, 0 ), strdup( luaL_optstring( L, 4, 0 ) ), luaL_optboolean( L, 5, 0 ), luaL_optnumber( L, 6, 0.0 ), luaL_optboolean( L, 7, 0 ), luaL_optnumber( L, 8, 0 ) );
+  //ConVar *pConVar = new ConVar( strdup( pName ), luaL_checkstring( L, 2 ), luaL_optint( L, 3, 0 ), strdup( luaL_optstring( L, 4, 0 ) ), luaL_optboolean( L, 5, 0 ), luaL_optnumber( L, 6, 0.0 ), luaL_optboolean( L, 7, 0 ), luaL_optnumber( L, 8, 0 ) );
 
-  lookup = m_ConVarDatabase.Insert( pName, pConVar );
-  Assert( lookup != m_ConVarDatabase.InvalidIndex() );
-  lua_pushconvar( L, pConVar );
+  //lookup = m_ConVarDatabase.Insert( pName, pConVar );
+  //Assert( lookup != m_ConVarDatabase.InvalidIndex() );
+  //lua_pushconvar( L, pConVar );
   return 1;
 }
 
@@ -388,12 +388,12 @@ static const luaL_Reg ConVar_funcs[] = {
 int luaopen_ConVar( lua_State *L )
 {
   luaL_newmetatable( L, "ConVar" );
-  luaL_register( L, NULL, ConVarmeta );
+  //luaL_register( L, NULL, ConVarmeta );
   lua_pushvalue( L, -1 );           /* push metatable */
   lua_setfield( L, -2, "__index" ); /* metatable.__index = metatable */
   lua_pushstring( L, "convar" );
   lua_setfield( L, -2, "__type" ); /* metatable.__type = "convar" */
-  luaL_register( L, "_G", ConVar_funcs );
+  //luaL_register( L, "_G", ConVar_funcs );
   lua_pop( L, 2 );
   return 1;
 }
