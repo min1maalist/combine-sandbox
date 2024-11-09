@@ -3016,6 +3016,9 @@
     <ClCompile Include="WorldDimsProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\game\shared\csbox\csbox_cmds.cpp">
+      <Filter>Source Files\Combine Shitbox</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\game\shared\csbox\weapon_physgun.cpp">
       <Filter>Source Files\Combine Shitbox</Filter>
     </ClCompile>
@@ -3597,9 +3600,6 @@
     </ClCompile>
     <ClCompile Include="toolframework_client.cpp">
       <Filter>Tool Framework</Filter>
-    </ClCompile>
-    <ClCompile Include="..\shared\csbox\csbox_cmds.cpp">
-      <Filter>Source Files\Combine Shitbox</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

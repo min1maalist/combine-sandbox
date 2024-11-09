@@ -114,6 +114,7 @@ $Project "Client (Combine Sandbox)"
 		$Folder "Combine Shitbox"
 		{
 			$File	"$SRCDIR\game\shared\csbox\weapon_physgun.cpp"
+			$File 	"$SRCDIR\game\shared\csbox\csbox_cmds.cpp"
 		}
 
 		$Folder	"Portal"
