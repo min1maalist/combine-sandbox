@@ -5,7 +5,8 @@
 	type		multiplayer_only
 	nodifficulty	1
 	hasportals	1
-	
+	gamelogo 1
+
 	portalcontent 1
 
 	FileSystem
