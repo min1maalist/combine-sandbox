@@ -558,8 +558,6 @@ void DrawAllDebugOverlays( void )
 	DrawMessageEntities();
 }
 
-#include "content_mounter.h"
-
 CServerGameDLL g_ServerGameDLL;
 // INTERFACEVERSION_SERVERGAMEDLL_VERSION_8 is compatible with the latest since we're only adding things to the end, so expose that as well.
 //EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CServerGameDLL, IServerGameDLL008, INTERFACEVERSION_SERVERGAMEDLL_VERSION_8, g_ServerGameDLL );
@@ -584,7 +582,7 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 	s_SteamAPIContext.Init();
 	s_SteamGameServerAPIContext.Init();
 #endif
- 
+
 	// init each (seperated for ease of debugging)
 	if ( (engine = (IVEngineServer*)appSystemFactory(INTERFACEVERSION_VENGINESERVER, NULL)) == NULL )
 		return false;
@@ -684,8 +682,6 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 	g_pGameSaveRestoreBlockSet->AddBlockHandler( GetCommentarySaveRestoreBlockHandler() );
 	g_pGameSaveRestoreBlockSet->AddBlockHandler( GetEventQueueSaveRestoreBlockHandler() );
 	g_pGameSaveRestoreBlockSet->AddBlockHandler( GetAchievementSaveRestoreBlockHandler() );
-
-	MountExtraContent();
 
 	// The string system must init first + shutdown last
 	IGameSystem::Add( GameStringSystem() );

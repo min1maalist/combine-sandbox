@@ -1,0 +1,6 @@
+Credits
+Neofetch was inspired by ItzVladiks Neofetch implementation: https://www.youtube.com/watch?v=n0SynWuB7Zs
+
+Fixes for AI was based on this Repo: https://github.com/lunar0724/source-sdk-2013-multiplayer-fixes/
+
+Spawn Menu by hds6

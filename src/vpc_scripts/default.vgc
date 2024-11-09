@@ -19,7 +19,7 @@ $Games
 	"HL2"
 	"HL2MP"
 	"LOSTCOAST"
-	"PORTAL"
+	"CSBOX"
 }
 
 // Makes the VPC scripts work in the SDK's context
