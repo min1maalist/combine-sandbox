@@ -3598,6 +3598,9 @@
     <ClCompile Include="toolframework_client.cpp">
       <Filter>Tool Framework</Filter>
     </ClCompile>
+    <ClCompile Include="..\shared\csbox\csbox_cmds.cpp">
+      <Filter>Source Files\Combine Shitbox</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
