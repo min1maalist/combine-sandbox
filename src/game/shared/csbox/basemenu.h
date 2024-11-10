@@ -1,4 +1,8 @@
-
+// Copyright 2009-20xx Combine Sandbox, All Rights Reserved
+//
+// Purpose:
+//
+//=========================================================
 #ifndef BASEMENU_H
 #define BASEMENU_H
 #ifdef _WIN32
