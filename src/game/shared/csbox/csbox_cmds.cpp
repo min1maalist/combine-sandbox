@@ -39,7 +39,7 @@ const tchar* GetPlatformName()
 #elif PLATFORM_HAIKU
     return "Haiku";
 #else
-    return "Unknown Platform"
+    return "Unknown Platform (what the fuck are you running this on)"
 #endif
 }
 
@@ -50,7 +50,7 @@ const tchar* GetGame()
 #elif defined(PORTAL_CLIENT_DLL)
     return "Combine Sandbox";
 #elif defined(HL1_CLIENT_DLL)
-    return "Combine Sandbox";
+    return "Combine Sandbox (HL1)";
 #elif defined(HL2MP)
     return "Combine Sandbox";
 #elif defined(CSBOX)
@@ -85,7 +85,7 @@ void csboxfetch(void)
     Warning("                        .*@@@@*.\n");
     Warning("                        -@@@@@-.\n");
     Warning("                      .%@@+.\n");
-    Msg("Engine: Source Engine\n");
+    Msg("Engine Version: Source 2013\n");
     Msg("Platform: %s\n", GetPlatformName());
     Msg("Arch: %s\n", GetProcessorArchName());
     Msg("Game: %s\n", GetGame());
