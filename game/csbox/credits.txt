@@ -4,3 +4,7 @@ Neofetch was inspired by ItzVladiks Neofetch implementation: https://www.youtube
 Fixes for AI was based on this Repo: https://github.com/lunar0724/source-sdk-2013-multiplayer-fixes/
 
 Spawn Menu by hds6
+
+Iconium21 for the background
+
+YourLocalMoon or the HTML Main Menu

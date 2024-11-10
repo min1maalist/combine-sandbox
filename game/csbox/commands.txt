@@ -1,0 +1,6 @@
+neofetch - Display's system information
+mp3 - MP3 Player
+friendlyfire - Enables Friendly Fire
+toolgun - Toolgun for Console (broken for now so run "exec toolgun")
+singleplayer - Play Combine Sandbox in Singleplayer
+shitify - Destroy's the graphics

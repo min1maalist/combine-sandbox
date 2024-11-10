@@ -115,6 +115,12 @@ $Project "Client (Combine Sandbox)"
 		{
 			$File	"$SRCDIR\game\shared\csbox\weapon_physgun.cpp"
 			$File 	"$SRCDIR\game\shared\csbox\csbox_cmds.cpp"
+			$Folder "VGUI"
+			{
+				$File	"$SRCDIR\game\shared\csbox\basemenu.cpp"
+				$File	"$SRCDIR\game\shared\csbox\basemenu.h"
+			}
+			
 		}
 
 		$Folder	"Portal"

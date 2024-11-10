@@ -28,6 +28,9 @@
     <Filter Include="Source Files\Combine Shitbox">
       <UniqueIdentifier>{C50F1E67-A363-2A6C-AC03-1C4AEC1D86D4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Combine Shitbox\VGUI">
+      <UniqueIdentifier>{4C53700F-1BFE-4A5F-9DA8-0B7065C84C8D}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Source Files\game_controls">
       <UniqueIdentifier>{1E7DB91A-DC0A-B17F-617D-4C4FB3FA7A3E}</UniqueIdentifier>
     </Filter>
@@ -1832,6 +1835,9 @@
     <ClInclude Include="viewpostprocess.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\game\shared\csbox\basemenu.h">
+      <Filter>Source Files\Combine Shitbox\VGUI</Filter>
+    </ClInclude>
     <ClInclude Include="game_controls\basemodel_panel.h">
       <Filter>Source Files\game_controls</Filter>
     </ClInclude>
@@ -3021,6 +3027,9 @@
     </ClCompile>
     <ClCompile Include="..\..\game\shared\csbox\weapon_physgun.cpp">
       <Filter>Source Files\Combine Shitbox</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\csbox\basemenu.cpp">
+      <Filter>Source Files\Combine Shitbox\VGUI</Filter>
     </ClCompile>
     <ClCompile Include="game_controls\basemodel_panel.cpp">
       <Filter>Source Files\game_controls</Filter>

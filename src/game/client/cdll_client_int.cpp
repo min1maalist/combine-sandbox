@@ -172,8 +172,8 @@ extern vgui::IInputInternal *g_InputInternal;
 #include "sixense/in_sixense.h"
 #endif
 
-#ifdef WITH_LUA
-#include "baseluahandle.h"
+#ifdef CSBOX
+#include "..\shared\csbox\basemenu.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -223,6 +223,10 @@ IReplaySystem *g_pReplay = NULL;
 #endif
 
 IHaptics *haptics = NULL;// NVNT haptics system interface singleton
+
+#ifdef CSBOX
+RootPanel* IBaseMenu;
+#endif
 
 //=============================================================================
 // HPE_BEGIN
@@ -880,6 +884,18 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	ConnectTier1Libraries( &appSystemFactory, 1 );
 	ConnectTier2Libraries( &appSystemFactory, 1 );
 	ConnectTier3Libraries( &appSystemFactory, 1 );
+
+#ifdef CSBOX
+	if (CommandLine()->FindParm("-gameui") == 0)
+	{
+		if (!IBaseMenu)
+		{
+			OverrideUI->Create(NULL);
+			IBaseMenu = OverrideUI->GetMenuBase();
+			OverrideRootUI();
+		}
+	}
+#endif
 
 #ifndef NO_STEAM
 	ClientSteamContext().Activate();
@@ -1655,6 +1671,12 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 //-----------------------------------------------------------------------------
 void CHLClient::LevelInitPostEntity( )
 {
+#ifdef CSBOX
+	IBaseMenu->m_pHTMLPanel->RunJavascript("togglevisible(true);");
+	IBaseMenu->m_pHTMLPanel->RequestFocus();
+#endif
+
+
 	IGameSystem::LevelInitPostEntityAllSystems();
 	C_PhysPropClientside::RecreateAll();
 	internalCenterPrint->Clear();
@@ -1704,6 +1726,11 @@ void CHLClient::LevelShutdown( void )
 	// Remove temporary entities before removing entities from the client entity list so that the te_* may
 	// clean up before hand.
 	tempents->LevelShutdown();
+
+#ifdef CSBOX
+	IBaseMenu->m_pHTMLPanel->RunJavascript("togglevisible(false);");
+	IBaseMenu->m_pHTMLPanel->RequestFocus();
+#endif
 
 	// Now release/delete the entities
 	cl_entitylist->Release();
