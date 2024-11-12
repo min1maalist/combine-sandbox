@@ -275,7 +275,6 @@ $Project "Server (Combine Sandbox)"
 		{
 			$File	"$SRCDIR\game\shared\csbox\weapon_physgun.cpp"
 		}
-
 		$Folder	"Portal"
 		{
 			$File	"$SRCDIR\game\shared\portal\achievements_portal.cpp"

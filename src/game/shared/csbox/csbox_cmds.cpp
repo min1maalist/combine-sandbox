@@ -39,7 +39,7 @@ const tchar* GetPlatformName()
 #elif PLATFORM_HAIKU
     return "Haiku";
 #else
-    return "Unknown Platform (what the fuck are you running this on)"
+    return "Unknown Platform (what the fuck are you running this on?)"
 #endif
 }
 
@@ -50,20 +50,20 @@ const tchar* GetGame()
 #elif defined(PORTAL_CLIENT_DLL)
     return "Combine Sandbox";
 #elif defined(HL1_CLIENT_DLL)
-    return "Combine Sandbox (HL1)";
+    return "Combine Sandbox (HL1_Base)";
 #elif defined(HL2MP)
-    return "Combine Sandbox";
+    return "Combine Sandbox (HL2DM_Base)";
 #elif defined(CSBOX)
     return "Combine Sandbox";
 #else
-    return "Unknown Version";
+    return "Unknown Version (what the fuck?)";
 #endif
 }
 
 void csboxfetch(void)
 {
 
-    
+
     Warning(" .-*#%@@@@@@@@@@@@@@@@@@@@@@@@@@@@%+.\n");
     Warning(".=%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*.\n");
     Warning(" @@@@@@@#+:   ..-*@@@@@@@@@@@@@@@@@@@@@@@@*\n");
@@ -85,7 +85,7 @@ void csboxfetch(void)
     Warning("                        .*@@@@*.\n");
     Warning("                        -@@@@@-.\n");
     Warning("                      .%@@+.\n");
-    Msg("Engine Version: Source 2013\n");
+    Msg("Engine Version: Source 2013 (Zenith)\n");
     Msg("Platform: %s\n", GetPlatformName());
     Msg("Arch: %s\n", GetProcessorArchName());
     Msg("Game: %s\n", GetGame());
@@ -106,6 +106,8 @@ CON_COMMAND(singleplayer, "Play Combine Sandbox in Singleplayer") {
     engine->ClientCmd("maxplayers 1");
     engine->ClientCmd("sv_lan 1");
     engine->ClientCmd("sv_cheats 1");
+    engine->ClientCmd("impulse 101");
+    engine->ClientCmd("give weapon_physgun");
     engine->ClientCmd("map dm_lockdown");
 }
 
@@ -113,3 +115,9 @@ CON_COMMAND(shitify, "Destroy's the graphics") {
     engine->ClientCmd("sv_cheats 1; mat_dxlevel 60; cl_ragdoll_collide 0; mat_picmip 4; r_WaterDrawReflection 0; r_WaterDrawRefraction 0; mat_wateroverlaysize 8; r_lod 5; mat_fullbright 1; mat_diffuse 5; mat_bumpmap 0; r_shadows 0; mat_forceaniso 0; mat_forcehardwaresync 0; mat_reducefillrate 0; mat_mipmaptextures 0; mat_filtertextures 0; mat_bloom 0; mat_envmapsize 32; mat_envmapgasize 8; mat_antialiasing 0; cl_phys_props_enable 0; mat_filterlightmaps 0; mat_showlowresimage 1");
     engine->ClientCmd("echo 'Shitified your graphics'");
 }
+
+CON_COMMAND(spawnmenu, "Spawn Menu") {
+    engine->ClientCmd("debugsystemui"); // TODO: Replace the HDS6 Spawn Menu with the AMod Spawn Menu to piss moon
+}
+
+// Spawn Menu?

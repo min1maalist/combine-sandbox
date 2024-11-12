@@ -1,4 +1,4 @@
-Commands:
+[Commands]
 
 neofetch - Display's system information
 mp3 - MP3 Player
@@ -7,7 +7,7 @@ toolgun - Toolgun for Console (broken for now so run "exec toolgun")
 singleplayer - Play Combine Sandbox in Singleplayer
 shitify - Destroy's the graphics
 
-Credits:
+[Credits]
 Neofetch was inspired by ItzVladiks Neofetch implementation: https://www.youtube.com/watch?v=n0SynWuB7Zs
 
 Fixes for AI was based on this Repo: https://github.com/lunar0724/source-sdk-2013-multiplayer-fixes/
@@ -16,9 +16,16 @@ Spawn Menu by hds6
 
 Iconium21 for the background
 
-YourLocalMoon for the HTML Main Menu
+Thomas Matthews for the HTML Main Menu
 
-Changelog:
+[CHANGELOG]
 added PickupObject
-added new commands
 changed playermodel from chell to Gordon
+Added neofetch
+Upgraded the toolgun
+Friendly Fire implemented and enabled by Default
+fixed AI
+Spawn Menu
+Restored the MP3 Player
+Updated Physgun
+

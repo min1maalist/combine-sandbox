@@ -106,7 +106,7 @@ void RootPanel::ApplySchemeSettings(IScheme* pScheme)
 
 	const char* gameDir = engine->GetGameDirectory();
 	char filePath[256];
-	sprintf(filePath, "%s/html/menu.html", gameDir);
+	sprintf(filePath, "%s/resource/csbox/menu.html", gameDir);
 
 	m_pHTMLPanel->SetBounds(0, 0, wide, tall);
 	m_pHTMLPanel->OpenURL(filePath, nullptr, true);

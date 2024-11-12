@@ -120,7 +120,6 @@ $Project "Client (Combine Sandbox)"
 				$File	"$SRCDIR\game\shared\csbox\basemenu.cpp"
 				$File	"$SRCDIR\game\shared\csbox\basemenu.h"
 			}
-			
 		}
 
 		$Folder	"Portal"

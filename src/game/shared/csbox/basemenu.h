@@ -30,7 +30,6 @@ public:
 
 	IGameUI* GetGameUI();
 
-	// elements
 	vgui::HTML* m_pHTMLPanel;
 
 protected:
