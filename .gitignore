@@ -55,3 +55,6 @@ config.cfg
 
 # shader files
 *.tmp
+
+# Combine Sandbox unwanted shit
+*.bak
