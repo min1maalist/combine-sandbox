@@ -28,4 +28,5 @@ fixed AI
 Spawn Menu
 Restored the MP3 Player
 Updated Physgun
+Added Knife weapon
 

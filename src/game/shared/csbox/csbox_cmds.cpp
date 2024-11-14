@@ -117,7 +117,5 @@ CON_COMMAND(shitify, "Destroy's the graphics") {
 }
 
 CON_COMMAND(spawnmenu, "Spawn Menu") {
-    engine->ClientCmd("debugsystemui"); // TODO: Replace the HDS6 Spawn Menu with the AMod Spawn Menu to piss moon
+    engine->ClientCmd("debugsystemui");
 }
-
-// Spawn Menu?
