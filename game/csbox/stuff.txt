@@ -16,7 +16,7 @@ Spawn Menu by hds6
 
 Iconium21 for the background
 
-Thomas Matthews for the HTML Main Menu
+Thomas & YourLocalMoon for the HTML Main Menu
 
 [CHANGELOG]
 added PickupObject
