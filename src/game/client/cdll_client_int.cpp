@@ -5,7 +5,6 @@
 // $NoKeywords: $
 //===========================================================================//
 #include "cbase.h"
-#include "imgui/imgui_system.h"
 #include <crtmemdebug.h>
 #include "vgui_int.h"
 #include "clientmode.h"
@@ -1182,7 +1181,7 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 		Discord_UpdatePresence(&discordPresence);
 	}
 
-	g_pImguiSystem->Init();
+	//g_pImguiSystem->Init();
 	return true;
 }
 
@@ -1308,7 +1307,7 @@ void CHLClient::Shutdown( void )
 	ShutdownFbx();
 #endif
 
-g_pImguiSystem->Shutdown();
+//g_pImguiSystem->Shutdown();
 Discord_Shutdown();
 	
 	// This call disconnects the VGui libraries which we rely on later in the shutdown path, so don't do it
