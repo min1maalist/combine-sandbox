@@ -155,3 +155,13 @@ $Project "vvis_launcher"
 {
 	"utils\vvis_launcher\vvis_launcher.vpc" [$WIN32]
 }
+
+$Project "vscript"
+{
+	"vscript\vscript.vpc"
+}
+
+$Project "angelscript"
+{
+	"thirdparty\angelscript_2.32.0\sdk\angelscript.vpc"
+}

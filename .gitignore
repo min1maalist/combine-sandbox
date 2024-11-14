@@ -58,3 +58,11 @@ config.cfg
 
 # Combine Sandbox unwanted shit
 *.bak
+game/csbox/GameState.txt
+game/csbox/cfg/server_blacklist.txt
+game/csbox/modelsounds.cache
+game/csbox/sound/sound.cache
+game/csbox/stats.txt
+game/csbox/voice_ban.dt
+*.cache
+game/csbox/cfg/server_blacklist.txt
