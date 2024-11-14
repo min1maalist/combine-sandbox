@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 
 $macro SRCDIR		".."
-$Macro OUTBINDIR	"$SRCDIR\..\game\tf2vintage\bin"
+$Macro OUTBINDIR	"$SRCDIR\..\game\csbox\bin"
 
 $include "$SRCDIR\vpc_scripts\source_dll_base.vpc"
 
@@ -44,11 +44,6 @@ $Project "VScript"
 		$File   "vscript.cpp"
 		$File   "vscript_math.cpp"
 		$File   "vscript_misc.cpp"
-		$File   "languages/squirrel/vsquirrel.cpp"
-		$File   "languages/squirrel/vsquirrel_math.cpp"
-		$File   "languages/squirrel/sq_vmstate.cpp"
-		$File	"languages/lua/lua_vm.cpp"
-		$File	"languages/lua/lua_vector.cpp"
 		$File	"languages/angelscript/vangelscript.cpp"
 		$File	"languages/angelscript/as_vector.cpp"
 	}
@@ -70,93 +65,6 @@ $Project "VScript"
 		$File	"languages/lua/lua_vector.h"
 		$File	"languages/angelscript/vangelscript.h"
 		$File	"languages/angelscript/as_vector.h"
-	}
-
-	$Folder "Squirrel Lang"
-	{
-		$Folder "Source Files"
-		{
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqapi.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqbaselib.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqclass.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqcompiler.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\sqdbg\sqdbgserver.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqdebug.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqfuncstate.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqlexer.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqmem.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqobject.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\sqdbg\sqrdbg.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqstate.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqtable.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqvm.cpp"
-		}
-
-		$Folder "Header Files"
-		{
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqarray.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqclass.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqclosure.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqcompiler.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqfuncproto.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqfuncstate.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqlexer.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqobject.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqopcodes.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqpcheader.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqstate.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqstring.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqtable.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\squserdata.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\squtils.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\squirrel\sqvm.h"
-		}
-
-		$Folder "SQSTDLib"
-		{
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\sqstdlib\sqstdblob.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\sqstdlib\sqstdmath.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\sqstdlib\sqstdrex.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\sqstdlib\sqstdstring.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\sqstdlib\sqstdstream.cpp"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\sqstdlib\sqstdaux.cpp"
-		}
-
-		$Folder "Public Header Files"
-		{
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\include\sqconfig.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\include\sqstdaux.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\include\sqstdio.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\include\sqstdmath.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\include\sqstdstring.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\include\sqstdsystem.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\include\squirrel.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\include\sqrdbg.h"
-			$File   "$SRCDIR\thirdparty\SQUIRREL3\include\sqdbgserver.h"
-		}
-	}
-
-	$Folder "LuaJIT"
-	{
-		$Folder "Source Files"
-		{
-			$File   "$SRCDIR\thirdparty\luajit\src\luajit.c"
-			{
-				$Configuration
-				{
-					$ExcludedFromBuild	"Yes"
-				}
-			}
-		}
-
-		$Folder "Header Files"
-		{
-			$File   "$SRCDIR\thirdparty\luajit\src\lauxlib.h"
-			$File   "$SRCDIR\thirdparty\luajit\src\lualib.h"
-			$File   "$SRCDIR\thirdparty\luajit\src\lua.h"
-			$File   "$SRCDIR\thirdparty\luajit\src\luaconf.h"
-			$File   "$SRCDIR\thirdparty\luajit\src\luajit.h"
-		}
 	}
 
 	$Folder "AngelScript"
@@ -243,7 +151,6 @@ $Project "VScript"
 	{
 		$Lib 	mathlib
 		$Lib 	tier1
-		$Lib	"$LIBCOMMON\lua51"			[$WINDOWS]
 		$Lib	"$LIBCOMMON\libluajit"		[$POSIX]
 		$Lib	"$LIBCOMMON\angelscript"
 	}

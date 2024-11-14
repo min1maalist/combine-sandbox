@@ -2,8 +2,7 @@
 //
 // Purpose:
 //
-// Provide a Virtual Scripting/Embedded Scripting Language
-// to the Half-Life 2 Mod "Combine Sandbox"
+// $NoKeywords
 //=============================================================================//
 #include "tier1.h"
 #include "ivscript.h"
@@ -33,10 +32,10 @@ IScriptVM *CScriptManager::CreateVM( ScriptLanguage_t language )
 	IScriptVM *pVM = NULL;
 	switch ( language )
 	{
-		case SL_SQUIRREL:
+		/*case SL_SQUIRREL:
 			pVM = CreateSquirrelVM();
 			break;
-		/*case SL_LUA:
+		case SL_LUA:
 			pVM = CreateLuaVM();
 			break;*/
 		case SL_ANGELSCRIPT:
@@ -70,10 +69,10 @@ void CScriptManager::DestroyVM( IScriptVM *pVM )
 
 		switch ( pVM->GetLanguage() )
 		{
-			case SL_SQUIRREL:
+			/*case SL_SQUIRREL:
 				DestroySquirrelVM( pVM );
 				break;
-			/*case SL_LUA:
+			case SL_LUA:
 				DestroyLuaVM( pVM );
 				break;*/
 			case SL_ANGELSCRIPT:

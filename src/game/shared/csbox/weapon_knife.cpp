@@ -26,7 +26,7 @@ ConVar    sk_plr_dmg_knife		( "sk_plr_dmg_knife","0");
 ConVar    sk_npc_dmg_knife		( "sk_npc_dmg_knife","0");
 
 //-----------------------------------------------------------------------------
-// CWeaponCrowbar
+// CWeaponKnife
 //-----------------------------------------------------------------------------
 
 IMPLEMENT_SERVERCLASS_ST(CWeaponKnife, DT_WeaponKnife)
@@ -86,14 +86,10 @@ void CWeaponKnife::AddViewKick( void )
 }
 
 
-//-----------------------------------------------------------------------------
-// Attempt to lead the target (needed because citizens can't hit manhacks with the crowbar!)
-//-----------------------------------------------------------------------------
-ConVar sk_crowbar_lead_time( "sk_crowbar_lead_time", "0.9" );
+ConVar sk_knife_lead_time( "sk_knife_lead_time", "0.9" );
 
 int CWeaponKnife::WeaponMeleeAttack1Condition( float flDot, float flDist )
 {
-	// Attempt to lead the target (needed because citizens can't hit manhacks with the crowbar!)
 	CAI_BaseNPC *pNPC	= GetOwner()->MyNPCPointer();
 	CBaseEntity *pEnemy = pNPC->GetEnemy();
 	if (!pEnemy)
@@ -103,7 +99,7 @@ int CWeaponKnife::WeaponMeleeAttack1Condition( float flDot, float flDist )
 	vecVelocity = pEnemy->GetSmoothedVelocity( );
 
 	// Project where the enemy will be in a little while
-	float dt = sk_crowbar_lead_time.GetFloat();
+	float dt = sk_knife_lead_time.GetFloat();
 	dt += random->RandomFloat( -0.3f, 0.2f );
 	if ( dt < 0.0f )
 		dt = 0.0f;
@@ -173,7 +169,6 @@ void CWeaponKnife::HandleAnimEventMeleeHit( animevent_t *pEvent, CBaseCombatChar
 		// play sound
 		WeaponSound( MELEE_HIT );
 
-		// Fake a trace impact, so the effects work out like a player's crowbaw
 		trace_t traceHit;
 		UTIL_TraceLine( pOperator->Weapon_ShootPosition(), pHurt->GetAbsOrigin(), MASK_SHOT_HULL, pOperator, COLLISION_GROUP_NONE, &traceHit );
 		ImpactEffect( traceHit );

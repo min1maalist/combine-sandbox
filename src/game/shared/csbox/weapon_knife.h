@@ -4,8 +4,8 @@
 //
 //=============================================================================//
 
-#ifndef WEAPON_CROWBAR_H
-#define WEAPON_CROWBAR_H
+#ifndef WEAPON_KNIFE_H
+#define WEAPON_KNIFE_H
 
 #include "basebludgeonweapon.h"
 
@@ -17,8 +17,8 @@
 #error weapon_knife.h must not be included in hl2mp. The windows compiler will use the wrong class elsewhere if it is.
 #endif
 
-#define	CROWBAR_RANGE	75.0f
-#define	CROWBAR_REFIRE	0.4f
+#define	KNIFE_RANGE	75.0f
+#define	KNIFE_REFIRE	0.4f
 
 //-----------------------------------------------------------------------------
 // CWeaponCrowbar
@@ -34,8 +34,8 @@ public:
 
 	CWeaponKnife();
 
-	float		GetRange( void )		{	return	CROWBAR_RANGE;	}
-	float		GetFireRate( void )		{	return	CROWBAR_REFIRE;	}
+	float		GetRange( void )		{	return	KNIFE_RANGE;	}
+	float		GetFireRate( void )		{	return	KNIFE_REFIRE;	}
 
 	void		AddViewKick( void );
 	float		GetDamageForActivity( Activity hitActivity );

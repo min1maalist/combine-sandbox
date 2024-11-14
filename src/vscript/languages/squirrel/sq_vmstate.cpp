@@ -1295,7 +1295,7 @@ void IterateObject( CSQStateIterator *pIterator, SQUnsignedInteger type, SQObjec
 void IterateObject(CSQStateIterator* pIterator, SQObjectPtr& value, char const* pszName = NULL);
 {
 	//if ( sq_isnull( value ) )
-		return;
+		return 0;
 #ifndef NO_GARBAGE_COLLECTOR
 
 	auto IsContainer = [ ] ( SQObjectPtr const &value ) {

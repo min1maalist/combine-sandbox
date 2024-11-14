@@ -1,3 +1,10 @@
+//========= Copyright Combine Sandbox, All rights reserved. ============//
+//
+// Purpose:
+//
+// $NoKeywords: $
+//=============================================================================//
+
 #include "tier0/platform.h"
 
 #include "angelscript.h"

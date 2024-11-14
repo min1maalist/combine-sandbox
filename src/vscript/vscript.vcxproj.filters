@@ -48,9 +48,6 @@
     <Library Include="..\lib\public\discord-rpc.lib">
       <Filter>Link Libraries</Filter>
     </Library>
-    <Library Include="..\lib\common\lua51.lib">
-      <Filter>Link Libraries</Filter>
-    </Library>
     <Library Include="..\lib\public\mathlib.lib">
       <Filter>Link Libraries</Filter>
     </Library>
