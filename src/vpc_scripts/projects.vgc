@@ -165,3 +165,8 @@ $Project "angelscript"
 {
 	"thirdparty\angelscript_2.32.0\sdk\angelscript.vpc"
 }
+
+$Project "Lua"
+{
+	"utils\luaplugin\luaplugin.vpc"
+}
