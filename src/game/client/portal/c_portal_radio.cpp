@@ -4,7 +4,7 @@
 //=====================================================================================//
 #include "cbase.h"
 #include "c_physicsprop.h"
-#include "portal_gamerules.h"
+#include "hl2mp_gamerules.h"
 #include "igameevents.h"
 #include "soundenvelope.h"
 #include "beamdraw.h"

@@ -18,7 +18,11 @@
 #include "hl2_player.h"
 #include "iservervehicle.h"
 #include "items.h"
+#ifndef OMOD
 #include "hl2_gamerules.h"
+#else
+#include "hl2mp_gamerules.h"
+#endif
 
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
@@ -497,7 +501,7 @@ void CNPC_MetroPolice::PrescheduleThink( void )
 	m_bPlayerIsNear = false;
 	if ( PlayerIsCriminal() == false )
 	{
-		CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin()); 
+		CBasePlayer *pPlayer = UTIL_PlayerByIndex( 1 );
 		
 		if ( pPlayer && ( pPlayer->WorldSpaceCenter() - WorldSpaceCenter() ).LengthSqr() < (128*128) )
 		{
@@ -2883,8 +2887,7 @@ void CNPC_MetroPolice::OnAnimEventShove( void )
 //-----------------------------------------------------------------------------
 void CNPC_MetroPolice::OnAnimEventBatonOn( void )
 {
-#ifndef HL2MP
-
+#if !defined( HL2MP ) || defined( OMOD )
 	CWeaponStunStick *pStick = dynamic_cast<CWeaponStunStick *>(GetActiveWeapon());
 
 	if ( pStick )
@@ -2892,7 +2895,6 @@ void CNPC_MetroPolice::OnAnimEventBatonOn( void )
 		pStick->SetStunState( true );
 	}
 #endif
-
 }
 
 //-----------------------------------------------------------------------------
@@ -2900,8 +2902,7 @@ void CNPC_MetroPolice::OnAnimEventBatonOn( void )
 //-----------------------------------------------------------------------------
 void CNPC_MetroPolice::OnAnimEventBatonOff( void )
 {
-#ifndef HL2MP
-
+#if !defined( HL2MP ) || defined( OMOD )
 	CWeaponStunStick *pStick = dynamic_cast<CWeaponStunStick *>(GetActiveWeapon());
 	
 	if ( pStick )
@@ -3101,13 +3102,25 @@ void CNPC_MetroPolice::Event_Killed( const CTakeDamageInfo &info )
 
 	if ( pPlayer != NULL )
 	{
+#ifndef OMOD
 		CHalfLife2 *pHL2GameRules = static_cast<CHalfLife2 *>(g_pGameRules);
+#else
+		CHL2MPRules *pHL2MPRules = static_cast<CHL2MPRules *>(g_pGameRules);
+#endif
 
 		// Attempt to drop health
+#ifndef OMOD
 		if ( pHL2GameRules->NPC_ShouldDropHealth( pPlayer ) )
+#else
+		if ( pHL2MPRules->NPC_ShouldDropHealth( pPlayer ) )
+#endif
 		{
 			DropItem( "item_healthvial", WorldSpaceCenter()+RandomVector(-4,4), RandomAngle(0,360) );
+#ifndef OMOD
 			pHL2GameRules->NPC_DroppedHealth();
+#else
+			pHL2MPRules->NPC_DroppedHealth();
+#endif
 		}
 	}
 
@@ -3899,7 +3912,7 @@ void CNPC_MetroPolice::AnnounceHarrassment( void )
 //-----------------------------------------------------------------------------
 void CNPC_MetroPolice::IncrementPlayerCriminalStatus( void )
 {
-	CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin()); 
+	CBasePlayer *pPlayer = UTIL_PlayerByIndex( 1 );
 
 	if ( pPlayer )
 	{
@@ -3951,6 +3964,9 @@ float CNPC_MetroPolice::GetIdealAccel( void ) const
 //-----------------------------------------------------------------------------
 void CNPC_MetroPolice::AdministerJustice( void )
 {
+	if ( !AI_IsSinglePlayer() )
+		return;
+
 	// If we're allowed to chase the player, do so. Otherwise, just threaten.
 	if ( !IsInAScript() && (m_NPCState != NPC_STATE_SCRIPT) && HasSpawnFlags( SF_METROPOLICE_ALLOWED_TO_RESPOND ) )
 	{
@@ -3962,9 +3978,7 @@ void CNPC_MetroPolice::AdministerJustice( void )
 		m_flChasePlayerTime = gpGlobals->curtime + RandomFloat( 3, 7 );
 
 		// Attack the target
-		CBasePlayer *pPlayer = UTIL_GetNearestVisiblePlayer(this);
-		if (!pPlayer)
-			pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
+		CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
 		SetEnemy( pPlayer );
 		SetState( NPC_STATE_COMBAT );
 		UpdateEnemyMemory( pPlayer, pPlayer->GetAbsOrigin() );
@@ -3988,8 +4002,7 @@ void CNPC_MetroPolice::AdministerJustice( void )
 				if ( pNPC->HasSpawnFlags( SF_METROPOLICE_ALLOWED_TO_RESPOND ) )
 				{
 					// Is he within site & range?
-					CBasePlayer *pPlayer = UTIL_GetNearestVisiblePlayer(this); 
-					if (pPlayer && FVisible(pNPC) && pNPC->FVisible(pPlayer) && 
+					if ( FVisible(pNPC) && pNPC->FVisible( UTIL_PlayerByIndex(1) ) && 
 						UTIL_DistApprox( WorldSpaceCenter(), pNPC->WorldSpaceCenter() ) < 512 )
 					{
 						pNPC->AdministerJustice();
@@ -4006,8 +4019,11 @@ void CNPC_MetroPolice::AdministerJustice( void )
 //-----------------------------------------------------------------------------
 int CNPC_MetroPolice::SelectSchedule( void )
 {
-	CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
-	if (!GetEnemy() && HasCondition(COND_IN_PVS) && pPlayer && !pPlayer->IsAlive()) 
+#ifdef OMOD
+	if ( !GetEnemy() && HasCondition( COND_IN_PVS ) && AI_GetNearestPlayer( GetAbsOrigin() ) && !AI_GetNearestPlayer( GetAbsOrigin() )->IsAlive() )
+#else
+	if ( !GetEnemy() && HasCondition( COND_IN_PVS ) && AI_GetSinglePlayer() && !AI_GetSinglePlayer()->IsAlive() )
+#endif
 	{
 		return SCHED_PATROL_WALK;
 	}
@@ -4979,7 +4995,7 @@ void CNPC_MetroPolice::GatherConditions( void )
 		ClearCondition( COND_METROPOLICE_PLAYER_TOO_CLOSE );
 	}
 
-	CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin()); 
+	CBasePlayer *pPlayer = UTIL_PlayerByIndex( 1 );
 	
 	// FIXME: Player can be NULL here during level transitions.
 	if ( !pPlayer )
@@ -5052,8 +5068,7 @@ bool CNPC_MetroPolice::HasBaton( void )
 //-----------------------------------------------------------------------------
 bool CNPC_MetroPolice::BatonActive( void )
 {
-#ifndef HL2MP
-
+#if !defined( HL2MP ) || defined( OMOD )
 	CWeaponStunStick *pStick = dynamic_cast<CWeaponStunStick *>(GetActiveWeapon());
 
 	if ( pStick )
@@ -5112,7 +5127,11 @@ void CNPC_MetroPolice::VPhysicsCollision( int index, gamevcollisionevent_t *pEve
 
 	if ( pEvent->pObjects[otherIndex]->GetGameFlags() & FVPHYSICS_PLAYER_HELD )
 	{
-		CHL2_Player *pPlayer = dynamic_cast<CHL2_Player *>(UTIL_GetNearestPlayer(pHitEntity->GetAbsOrigin())); 
+#ifdef OMOD
+		CHL2MP_Player *pPlayer = dynamic_cast<CHL2MP_Player *>(AI_GetNearestPlayer( GetAbsOrigin() ));
+#else
+		CHL2_Player *pPlayer = dynamic_cast<CHL2_Player *>(UTIL_PlayerByIndex( 1 ));
+#endif
 
 		// See if it's being held by the player
 		if ( pPlayer != NULL && pPlayer->IsHoldingEntity( pHitEntity ) )

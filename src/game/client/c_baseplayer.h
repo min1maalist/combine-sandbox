@@ -436,13 +436,14 @@ public:
 
 	CUserCmd		*m_pCurrentCommand;
 
-#ifdef CSBOX
+#ifdef OMOD
 	// adnan
 	// store the use angles
 	// set when the player presses use
 	QAngle		m_vecUseAngles;
 	// end adnan
 #endif
+
 	// Movement constraints
 	EHANDLE			m_hConstraintEntity;
 	Vector			m_vecConstraintCenter;

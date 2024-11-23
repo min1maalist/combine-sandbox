@@ -1420,6 +1420,11 @@ void CSceneEntity::DispatchEndInterrupt( CChoreoScene *scene, CChoreoEvent *even
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartExpression( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->AddSceneEvent( scene, event );
 }
 
@@ -1430,6 +1435,11 @@ void CSceneEntity::DispatchStartExpression( CChoreoScene *scene, CBaseFlex *acto
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchEndExpression( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->RemoveSceneEvent( scene, event, false );
 }
 
@@ -1440,6 +1450,11 @@ void CSceneEntity::DispatchEndExpression( CChoreoScene *scene, CBaseFlex *actor,
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartFlexAnimation( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->AddSceneEvent( scene, event );
 }
 
@@ -1450,6 +1465,11 @@ void CSceneEntity::DispatchStartFlexAnimation( CChoreoScene *scene, CBaseFlex *a
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchEndFlexAnimation( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->RemoveSceneEvent( scene, event, false );
 }
 
@@ -1460,6 +1480,11 @@ void CSceneEntity::DispatchEndFlexAnimation( CChoreoScene *scene, CBaseFlex *act
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartGesture( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	// Ingore null gestures
 	if ( !Q_stricmp( event->GetName(), "NULL" ) )
 		return;
@@ -1475,6 +1500,11 @@ void CSceneEntity::DispatchStartGesture( CChoreoScene *scene, CBaseFlex *actor, 
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchEndGesture( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	// Ingore null gestures
 	if ( !Q_stricmp( event->GetName(), "NULL" ) )
 		return;
@@ -1489,6 +1519,11 @@ void CSceneEntity::DispatchEndGesture( CChoreoScene *scene, CBaseFlex *actor, CC
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartGeneric( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	CBaseEntity *pTarget = FindNamedEntity( event->GetParameters2( ) );
 	actor->AddSceneEvent( scene, event, pTarget );
 }
@@ -1501,6 +1536,11 @@ void CSceneEntity::DispatchStartGeneric( CChoreoScene *scene, CBaseFlex *actor, 
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchEndGeneric( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->RemoveSceneEvent( scene, event, m_bRestoring );
 }
 
@@ -1511,12 +1551,22 @@ void CSceneEntity::DispatchEndGeneric( CChoreoScene *scene, CBaseFlex *actor, CC
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartLookAt( CChoreoScene *scene, CBaseFlex *actor, CBaseEntity *actor2, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->AddSceneEvent( scene, event, actor2 );
 }
 
 
 void CSceneEntity::DispatchEndLookAt( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->RemoveSceneEvent( scene, event, m_bRestoring );
 }
 
@@ -1530,12 +1580,22 @@ void CSceneEntity::DispatchEndLookAt( CChoreoScene *scene, CBaseFlex *actor, CCh
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartMoveTo( CChoreoScene *scene, CBaseFlex *actor, CBaseEntity *actor2, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->AddSceneEvent( scene, event, actor2 );
 }
 
 
 void CSceneEntity::DispatchEndMoveTo( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->RemoveSceneEvent( scene, event, m_bRestoring );
 }
 
@@ -1665,6 +1725,9 @@ void CSceneEntity::DispatchStartSpeak( CChoreoScene *scene, CBaseFlex *actor, CC
 	if ( actor )
 	{
 		CPASAttenuationFilter filter( actor );
+#ifdef OMOD
+		filter.AddAllPlayers();
+#endif
 
 		if ( m_pRecipientFilter )
 		{
@@ -1865,6 +1928,11 @@ void CSceneEntity::DispatchStartSpeak( CChoreoScene *scene, CBaseFlex *actor, CC
 
 void CSceneEntity::DispatchEndSpeak( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->RemoveSceneEvent( scene, event, m_bRestoring );
 }
 
@@ -1876,6 +1944,11 @@ void CSceneEntity::DispatchEndSpeak( CChoreoScene *scene, CBaseFlex *actor, CCho
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartFace( CChoreoScene *scene, CBaseFlex *actor, CBaseEntity *actor2, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->AddSceneEvent( scene, event, actor2 );
 }
 
@@ -1888,6 +1961,11 @@ void CSceneEntity::DispatchStartFace( CChoreoScene *scene, CBaseFlex *actor, CBa
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchEndFace( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->RemoveSceneEvent( scene, event, m_bRestoring );
 }
 
@@ -1899,6 +1977,11 @@ void CSceneEntity::DispatchEndFace( CChoreoScene *scene, CBaseFlex *actor, CChor
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartSequence( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->AddSceneEvent( scene, event );
 }
 
@@ -1910,6 +1993,11 @@ void CSceneEntity::DispatchStartSequence( CChoreoScene *scene, CBaseFlex *actor,
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchEndSequence( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->RemoveSceneEvent( scene, event, m_bRestoring );
 }
 
@@ -1921,6 +2009,11 @@ void CSceneEntity::DispatchEndSequence( CChoreoScene *scene, CBaseFlex *actor, C
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchStartPermitResponses( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->SetPermitResponse( gpGlobals->curtime + event->GetDuration() );
 }
 
@@ -1932,6 +2025,11 @@ void CSceneEntity::DispatchStartPermitResponses( CChoreoScene *scene, CBaseFlex 
 //-----------------------------------------------------------------------------
 void CSceneEntity::DispatchEndPermitResponses( CChoreoScene *scene, CBaseFlex *actor, CChoreoEvent *event )
 {
+#ifdef OMOD
+	if ( !actor )
+		return;
+#endif
+
 	actor->SetPermitResponse( 0 );
 }
 
@@ -2464,10 +2562,16 @@ void CSceneEntity::StartPlayback( void )
 		m_pScene = LoadScene( STRING( m_iszSceneFile ), this );
 		if ( !m_pScene )
 		{
+#ifndef OMOD // this takes half of my screen :rage:
 			DevMsg( "%s missing from scenes.image\n", STRING( m_iszSceneFile ) );
+#endif
 			m_bSceneMissing = true;
 			return;
 		}
+
+#ifdef OMOD
+		PrecacheScene( m_pScene );
+#endif
 
 		OnLoaded();
 
@@ -2588,7 +2692,7 @@ void CSceneEntity::BuildSortedSpeakEventSoundsPrefetchList(
 				// In single player, try to use the combined or regular .wav files as needed
 				if ( gpGlobals->maxClients == 1 )
 				{
-					CBasePlayer *player = UTIL_GetLocalPlayer();
+					CBasePlayer *player = UTIL_GetNearestPlayer( GetAbsOrigin() );
 					if ( player && !GetSoundNameForPlayer( event, player, soundname, sizeof( soundname ), player ) )
 					{
 						// Skip to next event
@@ -2912,7 +3016,11 @@ void CSceneEntity::StartEvent( float currenttime, CChoreoScene *scene, CChoreoEv
 				event->SetEndTime( event->GetStartTime() + 1.0 );
 			}
 
+#ifdef OMOD
+			if ( pActor )
+#else
 			if ( pActor && !IsMultiplayer() )
+#endif
 			{
 				CBaseEntity *pActor2 = NULL;
 				if ( event->GetParameters3( ) && strlen( event->GetParameters3( ) ) > 0 )
@@ -2937,7 +3045,11 @@ void CSceneEntity::StartEvent( float currenttime, CChoreoScene *scene, CChoreoEv
 		break;
 	case CChoreoEvent::FACE:
 		{
+#ifdef OMOD
+			if ( pActor )
+#else
 			if ( pActor && !IsMultiplayer() )
+#endif
 			{
 				CBaseEntity *pActor2 = FindNamedEntity( event->GetParameters( ), pActor );
 				if ( pActor2 )
@@ -3307,33 +3419,42 @@ bool CSceneEntity::ShouldNetwork() const
 	return false;
 }
 
+// see: https://developer.valvesoftware.com/wiki/Scenes.image
 CChoreoScene *CSceneEntity::LoadScene( const char *filename, IChoreoEventCallback *pCallback )
 {
-	DevMsg( 2, "Blocking load of scene from '%s'\n", filename );
-
 	char loadfile[MAX_PATH];
 	Q_strncpy( loadfile, filename, sizeof( loadfile ) );
 	Q_SetExtension( loadfile, ".vcd", sizeof( loadfile ) );
 	Q_FixSlashes( loadfile );
+	
+	void *pBuffer = 0;
+	CChoreoScene *pScene;
 
-	// binary compiled vcd
-	void *pBuffer;
-	int fileSize;
-	if ( !CopySceneFileIntoMemory( loadfile, &pBuffer, &fileSize ) )
+	int fileSize = filesystem->ReadFileEx( loadfile, "GAME", &pBuffer, true );
+	if (fileSize)
 	{
-		MissingSceneWarning( loadfile );
-		return NULL;
-	}
-
-	CChoreoScene *pScene = new CChoreoScene( NULL );
-	CUtlBuffer buf( pBuffer, fileSize, CUtlBuffer::READ_ONLY );
-	if ( !pScene->RestoreFromBinaryBuffer( buf, loadfile, &g_ChoreoStringPool ) )
-	{
-		Warning( "CSceneEntity::LoadScene: Unable to load binary scene '%s'\n", loadfile );
-		delete pScene;
-		pScene = NULL;
+		g_TokenProcessor.SetBuffer((char*)pBuffer);
+		pScene = ChoreoLoadScene( loadfile, NULL, &g_TokenProcessor, LocalScene_Printf );
 	}
 	else
+	{
+		// binary compiled vcd
+		pScene = new CChoreoScene( NULL );
+		if ( !CopySceneFileIntoMemory( loadfile, &pBuffer, &fileSize ) )
+		{
+			MissingSceneWarning( loadfile );
+			return NULL;
+		}
+		CUtlBuffer buf( pBuffer, fileSize, CUtlBuffer::READ_ONLY );
+		if ( !pScene->RestoreFromBinaryBuffer( buf, loadfile, &g_ChoreoStringPool ) )
+		{
+			Warning( "CSceneEntity::LoadScene: Unable to load scene '%s'\n", loadfile );
+			delete pScene;
+			pScene = NULL;
+		}
+	}
+	
+	if(pScene)
 	{
 		pScene->SetPrintFunc( LocalScene_Printf );
 		pScene->SetEventCallbackInterface( pCallback );
@@ -3712,7 +3833,7 @@ CBaseEntity *CSceneEntity::FindNamedEntity( const char *name, CBaseEntity *pActo
 
 	if ( !stricmp( name, "Player" ) || !stricmp( name, "!player" ))
 	{
-		entity = UTIL_GetNearestPlayer(GetAbsOrigin());
+		entity = ( CBaseEntity * )UTIL_GetNearestPlayer( pActor->GetAbsOrigin() );
 	}
 	else if ( !stricmp( name, "!target1" ) )
 	{
@@ -3839,7 +3960,7 @@ CBaseEntity *CSceneEntity::FindNamedEntityClosest( const char *name, CBaseEntity
 	} 
 	else if ( !stricmp( name, "Player" ) || !stricmp( name, "!player" ))
 	{
-		entity = UTIL_GetNearestPlayer(GetAbsOrigin()); 
+		entity = ( CBaseEntity * )UTIL_GetNearestPlayer( pActor->GetAbsOrigin() );
 		return entity;
 	}
 	else if ( !stricmp( name, "!target1" ) )
@@ -4590,6 +4711,8 @@ int GetSceneSpeechCount( char const *pszScene )
 // Purpose: Used for precaching instanced scenes
 // Input  : *pszScene - 
 //-----------------------------------------------------------------------------
+
+// see: https://developer.valvesoftware.com/wiki/Scenes.image
 void PrecacheInstancedScene( char const *pszScene )
 {
 	static int nMakingReslists = -1;
@@ -4605,16 +4728,51 @@ void PrecacheInstancedScene( char const *pszScene )
 		g_pFullFileSystem->Size( pszScene );
 	}
 
-	// verify existence, cache is pre-populated, should be there
 	SceneCachedData_t sceneData;
-	if ( !scenefilecache->GetSceneCachedData( pszScene, &sceneData ) )
+
+	char loadfile[MAX_PATH];
+	Q_strncpy( loadfile, pszScene, sizeof( loadfile ) );
+	Q_SetExtension( loadfile, ".vcd", sizeof( loadfile ) );
+	Q_FixSlashes( loadfile );
+
+	// Attempt to precache manually
+	void *pBuffer = NULL;
+	if (filesystem->ReadFileEx( loadfile, "GAME", &pBuffer, false, true ))
 	{
-		// Scenes are sloppy and don't always exist.
-		// A scene that is not in the pre-built cache image, but on disk, is a true error.
-		if ( developer.GetInt() && ( IsX360() && ( g_pFullFileSystem->GetDVDMode() != DVDMODE_STRICT ) && g_pFullFileSystem->FileExists( pszScene, "GAME" ) ) )
+		g_TokenProcessor.SetBuffer((char*)pBuffer);
+		CChoreoScene *pScene = ChoreoLoadScene( loadfile, NULL, &g_TokenProcessor, LocalScene_Printf );
+		if (pScene)
 		{
-			Warning( "PrecacheInstancedScene: Missing scene '%s' from scene image cache.\nRebuild scene image cache!\n", pszScene );
+			for ( int i = 0; i < pScene->GetNumEvents(); i++ )
+			{
+				CChoreoEvent *pEvent = pScene->GetEvent(i);
+				if (pEvent && pEvent->GetType() == CChoreoEvent::SPEAK)
+				{
+					CBaseEntity::PrecacheScriptSound( pEvent->GetParameters() );
+
+					// Precache CC token
+					if ( pEvent->GetCloseCaptionType() == CChoreoEvent::CC_MASTER && 
+						 pEvent->GetNumSlaves() > 0 )
+					{
+						char tok[ CChoreoEvent::MAX_CCTOKEN_STRING ];
+						if ( pEvent->GetPlaybackCloseCaptionToken( tok, sizeof( tok ) ) )
+						{
+							CBaseEntity::PrecacheScriptSound( tok );
+						}
+					}
+				}
+			}
 		}
+	}
+	else if ( !scenefilecache->GetSceneCachedData( pszScene, &sceneData ) )
+	{
+		// This warning was meant for when scenes.image was supposed to be the sole method of loading scenes.
+		// It's been deactivated as part of the raw file support, as even if this was somehow on the Xbox 360,
+		// it would never trip anyway because if the file existed, it would've been read earlier.
+		//if ( developer.GetInt() && ( IsX360() && ( g_pFullFileSystem->GetDVDMode() != DVDMODE_STRICT ) && g_pFullFileSystem->FileExists( pszScene, "GAME" ) ) )
+		//{
+		//	Warning( "PrecacheInstancedScene: Missing scene '%s' from scene image cache.\nRebuild scene image cache!\n", pszScene );
+		//}
 	}
 	else
 	{

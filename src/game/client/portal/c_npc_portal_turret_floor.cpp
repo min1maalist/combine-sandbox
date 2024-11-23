@@ -8,15 +8,13 @@
 #include "cbase.h"
 #include "c_ai_basenpc.h"
 #include "beam_shared.h"
-#include "prop_portal_shared.h"
-
+#include "util_shared.h"
 
 #define FLOOR_TURRET_PORTAL_EYE_ATTACHMENT 1
 #define FLOOR_TURRET_PORTAL_LASER_ATTACHMENT 2
 #define FLOOR_TURRET_PORTAL_LASER_RANGE 8192
 
 #define FLOOR_TURRET_PORTAL_END_POINT_PULSE_SCALE 4.0f
-
 
 class C_NPC_Portal_FloorTurret : public C_AI_BaseNPC
 {
@@ -144,17 +142,18 @@ void C_NPC_Portal_FloorTurret::LaserOn( void )
 
 	// Trace to find an endpoint
 	Vector vEndPoint;
-	float fEndFraction;
+	trace_t tr;
 	Ray_t rayPath;
 	rayPath.Init( vecMuzzle, vecMuzzle + vecMuzzleDir * FLOOR_TURRET_PORTAL_LASER_RANGE );
 
-	CTraceFilterSkipClassname traceFilter( this, "prop_energy_ball", COLLISION_GROUP_NONE );
+	CTraceFilterSkipClassname traceFilter(this, "prop_energy_ball", COLLISION_GROUP_NONE);
+	UTIL_TraceLine(vecMuzzle, vecMuzzle + vecMuzzleDir * FLOOR_TURRET_PORTAL_LASER_RANGE, MASK_SHOT, &traceFilter, &tr);
 
-	if ( UTIL_Portal_TraceRay_Beam( rayPath, MASK_SHOT, &traceFilter, &fEndFraction ) )
-		vEndPoint = vecMuzzle + vecMuzzleDir * FLOOR_TURRET_PORTAL_LASER_RANGE;	// Trace went through portal and endpoint is unknown
+	if (tr.DidHit())
+		vEndPoint = tr.endpos;
 	else
-		vEndPoint = vecMuzzle + vecMuzzleDir * FLOOR_TURRET_PORTAL_LASER_RANGE * fEndFraction;	// Trace hit a wall
-
+		vEndPoint = vecMuzzle + vecMuzzleDir * FLOOR_TURRET_PORTAL_LASER_RANGE;
+	
 	// The beam is backwards, sort of. The endpoint is the sniper. This is
 	// so that the beam can be tapered to very thin where it emits from the turret.
 	m_pBeam->PointsInit( vEndPoint, vecMuzzle );

@@ -105,7 +105,7 @@ void CMessage::InputShowMessage( inputdata_t &inputdata )
 		}
 		else
 		{
-			pPlayer = UTIL_GetLocalPlayer(); // just show it to the host, if there is one 
+			pPlayer = UTIL_GetNearestPlayer( GetAbsOrigin() );
 		}
 
 		if ( pPlayer && pPlayer->IsPlayer() )
@@ -219,10 +219,12 @@ void CCredits::RollOutroCredits()
 {
 	sv_unlockedchapters.SetValue( "15" );
 	
-	CRecipientFilter filter;
-	filter.AddAllPlayers();
-	filter.MakeReliable();
-	UserMessageBegin(filter, "CreditsMsg");
+	CBasePlayer *pPlayer = UTIL_GetNearestPlayer( GetAbsOrigin() );
+
+	CSingleUserRecipientFilter user( pPlayer );
+	user.MakeReliable();
+
+	UserMessageBegin( user, "CreditsMsg" );
 		WRITE_BYTE( 3 );
 	MessageEnd();
 }
@@ -239,7 +241,7 @@ void CCredits::InputRollOutroCredits( inputdata_t &inputdata )
 
 void CCredits::InputShowLogo( inputdata_t &inputdata )
 {
-	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+	CBasePlayer *pPlayer = UTIL_GetNearestPlayer( GetAbsOrigin() );
 
 	CSingleUserRecipientFilter user( pPlayer );
 	user.MakeReliable();
@@ -265,7 +267,7 @@ void CCredits::InputSetLogoLength( inputdata_t &inputdata )
 
 void CCredits::InputRollCredits( inputdata_t &inputdata )
 {
-	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+	CBasePlayer *pPlayer = UTIL_GetNearestPlayer( GetAbsOrigin() );
 
 	CSingleUserRecipientFilter user( pPlayer );
 	user.MakeReliable();

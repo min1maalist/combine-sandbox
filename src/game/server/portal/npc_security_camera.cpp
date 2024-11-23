@@ -23,9 +23,8 @@
 #include "basehlcombatweapon_shared.h"
 #include "iservervehicle.h"
 #include "physics_prop_ragdoll.h"
-#include "portal_util_shared.h"
-#include "prop_portal.h"
-#include "portal_player.h"
+#include "util_shared.h"
+#include "hl2mp_player.h"
 #include "world.h"
 #include "ai_baseactor.h"		// for Glados ent playing VCDs
 #include "sceneentity.h"		// precacheing vcds
@@ -663,38 +662,21 @@ void CNPC_SecurityCamera::ActiveThink( void )
 	Vector	vecDirToEnemy = vecMidEnemy - vecMid;	
 	float	flDistToEnemy = VectorNormalize( vecDirToEnemy );
 
-	CProp_Portal *pPortal = NULL;
-
-	if ( pEnemy->IsAlive() )
+	if (pEnemy->IsAlive())
 	{
-		pPortal = FInViewConeThroughPortal( pEnemy );
+		Vector vecDirToEnemy = vecMidEnemy - vecMid;
 
-		if ( pPortal && FVisibleThroughPortal( pPortal, pEnemy ) )
+		trace_t tr;
+		CTraceFilterSimple filter(this, COLLISION_GROUP_NONE);
+		UTIL_TraceLine(vecMid, vecMidEnemy, MASK_VISIBLE_AND_NPCS, &filter, &tr);
+
+		if (tr.m_pEnt == pEnemy || tr.fraction == 1.0f)
 		{
-			// Translate our target across the portal
-			Vector vecMidEnemyTransformed;
-			UTIL_Portal_PointTransform( pPortal->m_hLinkedPortal->MatrixThisToLinked(), vecMidEnemy, vecMidEnemyTransformed );
-
-			//Calculate dir and dist to enemy
-			Vector	vecDirToEnemyTransformed = vecMidEnemyTransformed - vecMid;	
-			float	flDistToEnemyTransformed = VectorNormalize( vecDirToEnemyTransformed );
-
-			// If it's not visible through normal means or the enemy is closer through the portal, use the translated info
-			if ( !bEnemyVisible || flDistToEnemyTransformed < flDistToEnemy )
-			{
-				bEnemyVisible = true;
-				vecMidEnemy = vecMidEnemyTransformed;
-				vecDirToEnemy = vecDirToEnemyTransformed;
-				flDistToEnemy = flDistToEnemyTransformed;
-			}
-			else
-			{
-				pPortal = NULL;
-			}
+			bEnemyVisible = true;
 		}
 		else
 		{
-			pPortal = NULL;
+			bEnemyVisible = false;
 		}
 	}
 
@@ -712,11 +694,6 @@ void CNPC_SecurityCamera::ActiveThink( void )
 
 	//We want to look at the enemy's eyes so we don't jitter
 	Vector vEnemyEyes = pEnemy->EyePosition();
-
-	if ( pPortal )
-	{
-		UTIL_Portal_PointTransform( pPortal->m_hLinkedPortal->MatrixThisToLinked(), vEnemyEyes, vEnemyEyes );
-	}
 
 	Vector	vecDirToEnemyEyes = ( vEnemyEyes + m_vNoisePos ) - vecMid;
 	VectorNormalize( vecDirToEnemyEyes );
@@ -819,11 +796,25 @@ void CNPC_SecurityCamera::SearchThink( void )
 				}
 				else
 				{
-					CProp_Portal *pPortal = FInViewConeThroughPortal( pPlayer );
-					if ( pPortal && FVisibleThroughPortal( pPortal, pPlayer ) )
+					if (pPlayer->IsAlive())
 					{
-						pEnemy = pPlayer;
-						break;
+						Vector vecToPlayer = pPlayer->WorldSpaceCenter() - WorldSpaceCenter();
+						VectorNormalize(vecToPlayer);
+
+						float flDot = DotProduct(vecToPlayer, EyeDirection3D());
+
+						if (flDot > 0.707f)
+						{
+							trace_t tr;
+							CTraceFilterSimple filter(this, COLLISION_GROUP_NONE);
+							UTIL_TraceLine(WorldSpaceCenter(), pPlayer->WorldSpaceCenter(), MASK_VISIBLE_AND_NPCS, &filter, &tr);
+
+							if (tr.m_pEnt == pPlayer)
+							{
+								pEnemy = pPlayer;
+								break;
+							}
+						}
 					}
 				}
 			}
@@ -1112,7 +1103,7 @@ bool CNPC_SecurityCamera::CanBeAnEnemyOf( CBaseEntity *pEnemy )
 void PlayDismountSounds()
 {
 	// Play GLaDOS's audio reaction
-	CPortal_Player* pPlayer = ToPortalPlayer( UTIL_PlayerByIndex( 1 ) );
+	CHL2MP_Player* pPlayer = ToHL2MPPlayer( UTIL_PlayerByIndex( 1 ) );
 	CAI_BaseActor* pGlaDOS  = (CAI_BaseActor*)gEntList.FindEntityByName( NULL, "Aperture_AI" );
 	
 	if ( !pPlayer || !pGlaDOS )
@@ -1126,7 +1117,7 @@ void PlayDismountSounds()
 	{
 		gameeventmanager->FireEvent( event );
 	}
-	
+
 	// If glados is currently talking, don't let her talk over herself or interrupt a potentially important speech.
 	// Should we play the dismount sound after she's done? or is that too disjointed from the camera dismounting act to make sense...
 	if ( IsRunningScriptedScene( pGlaDOS, false ) )
@@ -1134,8 +1125,7 @@ void PlayDismountSounds()
 		return;
 	}
 
-	pPlayer->IncNumCamerasDetatched();
-	int iNumCamerasDetatched = pPlayer->GetNumCamerasDetatched();
+	int iNumCamerasDetatched = 6;
 
 	// If they've knocked down every one possible, play special '1' sound.
 	if ( iNumCamerasDetatched == SECURITY_CAMERA_TOTAL_TO_KNOCK_DOWN )

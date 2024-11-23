@@ -1,9 +1,0 @@
-// envmaptint_fix
-"LightmappedGeneric"
-{
-	"$basetexture" "Metal/metalfloor_bts_001a"
-	"%keywords" "portal"
-	//"$bumpmap" "Metal/metalfloor_bts_001a_normal"
-	"$surfaceprop" "metal"
-	"%noportal" 1
-}

@@ -10,18 +10,16 @@
 #include "ammodef.h"
 #include "hl2_shareddefs.h"
 
-#ifdef CLIENT_DLL
-
-#else
-	#include "player.h"
-	#include "game.h"
-	#include "gamerules.h"
-	#include "teamplay_gamerules.h"
-	#include "hl2_player.h"
-	#include "voice_gamemgr.h"
-	#include "globalstate.h"
-	#include "ai_basenpc.h"
-	#include "weapon_physcannon.h"
+#ifndef CLIENT_DLL
+#include "player.h"
+#include "game.h"
+#include "gamerules.h"
+#include "teamplay_gamerules.h"
+#include "hl2_player.h"
+#include "voice_gamemgr.h"
+#include "globalstate.h"
+#include "ai_basenpc.h"
+#include "weapon_physcannon.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -1398,12 +1396,10 @@ ConVar  alyx_darkness_force( "alyx_darkness_force", "0", FCVAR_CHEAT | FCVAR_REP
 		{
 			// A physics object has struck a player ally. Don't allow damage if it
 			// came from the player's physcannon. 
-			for (int i = 1; i <= gpGlobals->maxClients; i++)
-			{
-				CBasePlayer *pPlayer = UTIL_PlayerByIndex(i);
-				if (!pPlayer)
-					continue;
+			CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
 
+			if( pPlayer )
+			{
 				CBaseEntity *pWeapon = pPlayer->HasNamedPlayerItem("weapon_physcannon");
 
 				if( pWeapon )

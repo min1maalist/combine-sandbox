@@ -1,6 +1,6 @@
 //========= Copyright Valve Corporation, All rights reserved. ============//
 //
-// Purpose:
+// Purpose: 
 //
 // $NoKeywords: $
 //===========================================================================//
@@ -64,7 +64,7 @@
 #include "vgui_controls/AnimationController.h"
 #include "bitmap/tgawriter.h"
 #include "c_world.h"
-#include "perfvisualbenchmark.h"
+#include "perfvisualbenchmark.h"	
 #include "SoundEmitterSystem/isoundemittersystembase.h"
 #include "hud_closecaption.h"
 #include "colorcorrectionmgr.h"
@@ -87,7 +87,7 @@
 #include "ihudlcd.h"
 #include "toolframework_client.h"
 #include "hltvcamera.h"
-#if defined(REPLAY_ENABLED)
+#if defined( REPLAY_ENABLED )
 #include "replay/replaycamera.h"
 #include "replay/replay_ragdoll.h"
 #include "qlimits.h"
@@ -112,7 +112,7 @@
 #include "matsys_controls/matsyscontrols.h"
 #include "gamestats.h"
 #include "particle_parse.h"
-#if defined(TF_CLIENT_DLL)
+#if defined( TF_CLIENT_DLL )
 #include "rtime.h"
 #include "tf_hud_disconnect_prompt.h"
 #include "../engine/audio/public/sound.h"
@@ -131,17 +131,16 @@
 #include "haptics/haptic_utils.h"
 #include "haptics/haptic_msgs.h"
 
-#if defined(TF_CLIENT_DLL)
+#if defined( TF_CLIENT_DLL )
 #include "abuse_report.h"
 #endif
 
 #ifdef USES_ECON_ITEMS
 #include "econ_item_system.h"
-#endif		// USES_ECON_ITEMS
+#endif // USES_ECON_ITEMS
 
-#if defined(TF_CLIENT_DLL)
+#if defined( TF_CLIENT_DLL )
 #include "econ/tool_items/custom_texture_cache.h"
-
 #endif
 
 #ifdef WORKSHOP_IMPORT_ENABLED
@@ -161,9 +160,6 @@ extern vgui::IInputInternal *g_InputInternal;
 // HPE_END
 //=============================================================================
 
-
-
-
 #ifdef PORTAL
 #include "PortalRender.h"
 #endif
@@ -172,10 +168,9 @@ extern vgui::IInputInternal *g_InputInternal;
 #include "sixense/in_sixense.h"
 #endif
 
-#ifdef CSBOX
-#include "..\shared\csbox\basemenu.h"
-#include "discord_rpc.h"
-#include <time.h>
+#ifdef OMOD
+#include "basemenu.h"
+#include "mountsteamcontent.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -184,7 +179,7 @@ extern vgui::IInputInternal *g_InputInternal;
 extern IClientMode *GetClientModeNormal();
 
 // IF YOU ADD AN INTERFACE, EXTERN IT IN THE HEADER FILE.
-IVEngineClient *engine = NULL;
+IVEngineClient	*engine = NULL;
 IVModelRender *modelrender = NULL;
 IVEfx *effects = NULL;
 IVRenderView *render = NULL;
@@ -194,7 +189,7 @@ IDataCache *datacache = NULL;
 IVModelInfoClient *modelinfo = NULL;
 IEngineVGui *enginevgui = NULL;
 INetworkStringTableContainer *networkstringtable = NULL;
-ISpatialPartition *partition = NULL;
+ISpatialPartition* partition = NULL;
 IFileSystem *filesystem = NULL;
 IShadowMgr *shadowmgr = NULL;
 IStaticPropMgrClient *staticpropmgr = NULL;
@@ -209,11 +204,11 @@ IGameEventManager2 *gameeventmanager = NULL;
 ISoundEmitterSystemBase *soundemitterbase = NULL;
 IInputSystem *inputsystem = NULL;
 ISceneFileCache *scenefilecache = NULL;
-IXboxSystem *xboxsystem = NULL;		// Xbox 360 only
+IXboxSystem *xboxsystem = NULL;	// Xbox 360 only
 IMatchmaking *matchmaking = NULL;
 IUploadGameStats *gamestatsuploader = NULL;
 IClientReplayContext *g_pClientReplayContext = NULL;
-#if defined(REPLAY_ENABLED)
+#if defined( REPLAY_ENABLED )
 IReplayManager *g_pReplayManager = NULL;
 IReplayMovieManager *g_pReplayMovieManager = NULL;
 IReplayScreenshotManager *g_pReplayScreenshotManager = NULL;
@@ -224,10 +219,10 @@ IEngineClientReplay *g_pEngineClientReplay = NULL;
 IReplaySystem *g_pReplay = NULL;
 #endif
 
-IHaptics *haptics = NULL;// NVNT haptics system interface singleton
+IHaptics* haptics = NULL;// NVNT haptics system interface singleton
 
-#ifdef CSBOX
-RootPanel* IBaseMenu;
+#ifdef OMOD
+RootPanel          	*IBaseMenu;
 #endif
 
 //=============================================================================
@@ -343,8 +338,6 @@ void DispatchHudText( const char *pszName );
 static ConVar s_CV_ShowParticleCounts("showparticlecounts", "0", 0, "Display number of particles drawn per frame");
 static ConVar s_cl_team("cl_team", "default", FCVAR_USERINFO|FCVAR_ARCHIVE, "Default team when joining a game");
 static ConVar s_cl_class("cl_class", "default", FCVAR_USERINFO|FCVAR_ARCHIVE, "Default class when joining a game");
-static ConVar cl_discord_appid("cl_discord_appid", "1293910247966117929", FCVAR_DEVELOPMENTONLY | FCVAR_CHEAT);
-static int64_t startTimestamp = time(0);
 
 #ifdef HL1MP_CLIENT_DLL
 static ConVar s_cl_load_hl1_content("cl_load_hl1_content", "0", FCVAR_ARCHIVE, "Mount the content from Half-Life: Source if possible");
@@ -854,42 +847,6 @@ bool IsEngineThreaded()
 // Constructor
 //-----------------------------------------------------------------------------
 
-//-----------------------------------------------------------------------------
-// Discord RPC
-//-----------------------------------------------------------------------------
-static void HandleDiscordReady(const DiscordUser* connectedUser)
-{
-	DevMsg("Discord: Connected to user %s#%s - %s\n",
-		connectedUser->username,
-		connectedUser->discriminator,
-		connectedUser->userId);
-}
-
-static void HandleDiscordDisconnected(int errcode, const char* message)
-{
-	DevMsg("Discord: Disconnected (%d: %s)\n", errcode, message);
-}
-
-static void HandleDiscordError(int errcode, const char* message)
-{
-	DevMsg("Discord: Error (%d: %s)\n", errcode, message);
-}
-
-static void HandleDiscordJoin(const char* secret)
-{
-	// Not implemented
-}
-
-static void HandleDiscordSpectate(const char* secret)
-{
-	// Not implemented
-}
-
-static void HandleDiscordJoinRequest(const DiscordUser* request)
-{
-	// Not implemented
-}
-
 CHLClient::CHLClient() 
 {
 	// Kinda bogus, but the logic in the engine is too convoluted to put it there
@@ -899,7 +856,6 @@ CHLClient::CHLClient()
 
 extern IGameSystem *ViewportClientSystem();
 
-#include "content_mounter.h"
 
 //-----------------------------------------------------------------------------
 ISourceVirtualReality *g_pSourceVR = NULL;
@@ -913,7 +869,6 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	InitCRTMemDebug();
 	MathLib_Init( 2.2f, 2.2f, 0.0f, 2.0f );
 
-
 #ifdef SIXENSE
 	g_pSixenseInput = new SixenseInput;
 #endif
@@ -925,21 +880,22 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	ConnectTier2Libraries( &appSystemFactory, 1 );
 	ConnectTier3Libraries( &appSystemFactory, 1 );
 
-#ifdef CSBOX
-	if (CommandLine()->FindParm("-gameui") == 0)
+#ifndef NO_STEAM
+	ClientSteamContext().Activate();
+#endif
+
+#ifdef OMOD
+	if ( CommandLine()->FindParm( "-gameui" ) == 0 )
 	{
-		if (!IBaseMenu)
+		if ( !IBaseMenu )
 		{
-			OverrideUI->Create(NULL);
+			OverrideUI->Create( NULL );
 			IBaseMenu = OverrideUI->GetMenuBase();
 			OverrideRootUI();
 		}
 	}
-	IBaseMenu->m_pHTMLPanel->RunJavascript("modifybg(false);");
-#endif
 
-#ifndef NO_STEAM
-	ClientSteamContext().Activate();
+	IBaseMenu->m_pHTMLPanel->RunJavascript("modifybg(false);");
 #endif
 
 	// We aren't happy unless we get all of our interfaces.
@@ -1049,8 +1005,6 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 
 	g_pcv_ThreadMode = g_pCVar->FindVar( "host_thread_mode" );
 
-	MountExtraContent();
-
 	if (!Initializer::InitializeAllObjects())
 		return false;
 
@@ -1080,10 +1034,10 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	IGameSystem::Add( PerfVisualBenchmark() );
 	IGameSystem::Add( MumbleSystem() );
 	
-	#if defined( TF_CLIENT_DLL )
+#if defined( TF_CLIENT_DLL )
 	IGameSystem::Add( CustomTextureToolCacheGameSystem() );
 	IGameSystem::Add( TFSharedContentManager() );
-	#endif
+#endif
 
 #if defined( TF_CLIENT_DLL )
 	if ( g_AbuseReportMgr != NULL )
@@ -1155,33 +1109,6 @@ int CHLClient::Init( CreateInterfaceFn appSystemFactory, CreateInterfaceFn physi
 	HookHapticMessages(); // Always hook the messages
 #endif
 
-	DiscordEventHandlers handlers;
-	memset(&handlers, 0, sizeof(handlers));
-
-	handlers.ready = HandleDiscordReady;
-	handlers.disconnected = HandleDiscordDisconnected;
-	handlers.errored = HandleDiscordError;
-	handlers.joinGame = HandleDiscordJoin;
-	handlers.spectateGame = HandleDiscordSpectate;
-	handlers.joinRequest = HandleDiscordJoinRequest;
-
-	char appid[255];
-	sprintf(appid, "%d", engine->GetAppID());
-	Discord_Initialize(cl_discord_appid.GetString(), &handlers, 1, appid);
-
-	if (!g_bTextMode)
-	{
-		DiscordRichPresence discordPresence;
-		memset(&discordPresence, 0, sizeof(discordPresence));
-
-		discordPresence.state = "In-Game";
-		discordPresence.details = "Main Menu";
-		discordPresence.startTimestamp = startTimestamp;
-		discordPresence.largeImageKey = "273_20240914113740";
-		Discord_UpdatePresence(&discordPresence);
-	}
-
-	//g_pImguiSystem->Init();
 	return true;
 }
 
@@ -1249,6 +1176,10 @@ void CHLClient::PostInit()
 		}
 	}
 #endif
+
+#ifdef OMOD
+	mountGames();
+#endif
 }
 
 //-----------------------------------------------------------------------------
@@ -1290,6 +1221,13 @@ void CHLClient::Shutdown( void )
 
 	IGameSystem::ShutdownAllSystems();
 	
+#ifdef OMOD
+	if ( IBaseMenu )
+  	{
+    	IBaseMenu->~RootPanel();
+  	}
+#endif
+
 	gHUD.Shutdown();
 	VGui_Shutdown();
 	
@@ -1306,9 +1244,6 @@ void CHLClient::Shutdown( void )
 	DisconnectDataModel();
 	ShutdownFbx();
 #endif
-
-//g_pImguiSystem->Shutdown();
-Discord_Shutdown();
 	
 	// This call disconnects the VGui libraries which we rely on later in the shutdown path, so don't do it
 //	DisconnectTier3Libraries( );
@@ -1722,19 +1657,6 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 	}
 #endif
 
-	if (!g_bTextMode)
-	{
-		DiscordRichPresence discordPresence;
-		memset(&discordPresence, 0, sizeof(discordPresence));
-
-		char buffer[256];
-		discordPresence.state = "In-Game";
-		sprintf(buffer, "Map: %s", pMapName);
-		discordPresence.details = buffer;
-		discordPresence.largeImageKey = "273_20240914113740";
-		Discord_UpdatePresence(&discordPresence);
-	}
-
 	// Check low violence settings for this map
 	g_RagdollLVManager.SetLowViolence( pMapName );
 
@@ -1755,12 +1677,11 @@ void CHLClient::LevelInitPreEntity( char const* pMapName )
 //-----------------------------------------------------------------------------
 void CHLClient::LevelInitPostEntity( )
 {
-#ifdef CSBOX
+#ifdef OMOD
 	IBaseMenu->m_pHTMLPanel->RunJavascript("togglevisible(true);");
 	IBaseMenu->m_pHTMLPanel->RunJavascript("modifybg(true);");
 	IBaseMenu->m_pHTMLPanel->RequestFocus();
 #endif
-
 
 	IGameSystem::LevelInitPostEntityAllSystems();
 	C_PhysPropClientside::RecreateAll();
@@ -1812,7 +1733,7 @@ void CHLClient::LevelShutdown( void )
 	// clean up before hand.
 	tempents->LevelShutdown();
 
-#ifdef CSBOX
+#ifdef OMOD
 	IBaseMenu->m_pHTMLPanel->RunJavascript("togglevisible(false);");
 	IBaseMenu->m_pHTMLPanel->RunJavascript("modifybg(false);");
 	IBaseMenu->m_pHTMLPanel->RequestFocus();
@@ -1838,18 +1759,6 @@ void CHLClient::LevelShutdown( void )
 	StopAllRumbleEffects();
 
 	gHUD.LevelShutdown();
-	if (!g_bTextMode)
-	{
-		DiscordRichPresence discordPresence;
-		memset(&discordPresence, 0, sizeof(discordPresence));
-
-		discordPresence.state = "In-Game";
-		discordPresence.details = "Main Menu";
-		discordPresence.startTimestamp = startTimestamp;
-		discordPresence.largeImageKey = "273_20240914113740";
-		Discord_UpdatePresence(&discordPresence);
-	}
-
 
 	internalCenterPrint->Clear();
 

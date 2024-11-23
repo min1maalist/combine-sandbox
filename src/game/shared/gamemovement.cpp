@@ -1830,7 +1830,7 @@ void CGameMovement::Accelerate( Vector& wishdir, float wishspeed, float accel )
 		return;
 
 	// See if we are changing direction a bit
-	currentspeed = sqrt(DotProduct(mv->m_vecVelocity, mv->m_vecVelocity));
+	currentspeed = mv->m_vecVelocity.Dot(wishdir);
 
 	// Reduce wishspeed by the amount of veer.
 	addspeed = wishspeed - currentspeed;
@@ -2255,6 +2255,16 @@ void CGameMovement::FullObserverMove( void )
 //-----------------------------------------------------------------------------
 void CGameMovement::FullNoClipMove( float factor, float maxacceleration )
 {
+	if ( mv->m_nButtons & IN_SPEED )
+	{
+		factor *= 2.0f;
+	}
+
+	if ( mv->m_nButtons & IN_DUCK )
+	{
+		factor /= 2.0f;
+	}
+
 	Vector wishvel;
 	Vector forward, right, up;
 	Vector wishdir;
@@ -2262,11 +2272,6 @@ void CGameMovement::FullNoClipMove( float factor, float maxacceleration )
 	float maxspeed = sv_maxspeed.GetFloat() * factor;
 
 	AngleVectors (mv->m_vecViewAngles, &forward, &right, &up);  // Determine movement angles
-
-	if ( mv->m_nButtons & IN_SPEED )
-	{
-		factor /= 2.0f;
-	}
 	
 	// Copy movement amounts
 	float fmove = mv->m_flForwardMove * factor;

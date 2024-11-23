@@ -6,7 +6,7 @@
 //=============================================================================//
 #include "cbase.h"
 #include "npc_turret_floor.h"
-#include "portal_player.h"
+#include "hl2mp_player.h"
 #include "weapon_physcannon.h"
 #include "basehlcombatweapon_shared.h"
 #include "ammodef.h"
@@ -14,7 +14,6 @@
 #include "ai_memory.h"
 #include "rope.h"
 #include "rope_shared.h"
-#include "prop_portal_shared.h"
 #include "Sprite.h"
 
 #define SF_FLOOR_TURRET_AUTOACTIVATE		0x00000020
@@ -751,42 +750,6 @@ void CNPC_Portal_FloorTurret::ActiveThink( void )
 	Vector	vecDirToEnemy = vecMidEnemy - vecMid;	
 	m_flDistToEnemy = VectorNormalize( vecDirToEnemy );
 
-	// If the enemy isn't in the normal fov, check the fov through portals
-	CProp_Portal *pPortal = NULL;
-	if ( pEnemy->IsAlive() )
-	{
-		pPortal = FInViewConeThroughPortal( pEnemy );
-
-		if ( pPortal && FVisibleThroughPortal( pPortal, pEnemy ) )
-		{
-			// Translate our target across the portal
-			Vector vecMidEnemyTransformed;
-			UTIL_Portal_PointTransform( pPortal->m_hLinkedPortal->MatrixThisToLinked(), vecMidEnemy, vecMidEnemyTransformed );
-
-			//Calculate dir and dist to enemy
-			Vector	vecDirToEnemyTransformed = vecMidEnemyTransformed - vecMid;	
-			float	flDistToEnemyTransformed = VectorNormalize( vecDirToEnemyTransformed );
-
-			// If it's not visible through normal means or the enemy is closer through the portal, use the translated info
-			if ( !bEnemyInFOV || !bEnemyVisible || flDistToEnemyTransformed < m_flDistToEnemy )
-			{
-				bEnemyInFOV = true;
-				bEnemyVisible = true;
-				vecMidEnemy = vecMidEnemyTransformed;
-				vecDirToEnemy = vecDirToEnemyTransformed;
-				m_flDistToEnemy = flDistToEnemyTransformed;
-			}
-			else
-			{
-				pPortal = NULL;
-			}
-		}
-		else
-		{
-			pPortal = NULL;
-		}
-	}
-
 	//Draw debug info
 	if ( g_debug_turret.GetBool() )
 	{
@@ -922,11 +885,6 @@ void CNPC_Portal_FloorTurret::ActiveThink( void )
 	{
 		//We want to look at the enemy's eyes so we don't jitter
 		Vector vEnemyWorldSpaceCenter = pEnemy->WorldSpaceCenter();
-		if ( pPortal && pPortal->IsActivedAndLinked() )
-		{
-			// Translate our target across the portal
-			UTIL_Portal_PointTransform( pPortal->m_hLinkedPortal->MatrixThisToLinked(), vEnemyWorldSpaceCenter, vEnemyWorldSpaceCenter );
-		}
 
 		Vector	vecDirToEnemyEyes = vEnemyWorldSpaceCenter - vecMid;
 		VectorNormalize( vecDirToEnemyEyes );
@@ -978,38 +936,9 @@ void CNPC_Portal_FloorTurret::SearchThink( void )
 		Vector vecMid = EyePosition();
 		Vector vecMidEnemy = pEnemy->BodyTarget( vecMid );
 
-		//Look for our current enemy
-		bool bEnemyInFOV = FInViewCone( pEnemy );
-		bool bEnemyVisible = FVisible( pEnemy );
-
 		//Calculate dir and dist to enemy
 		Vector	vecDirToEnemy = vecMidEnemy - vecMid;	
 		m_flDistToEnemy = VectorNormalize( vecDirToEnemy );
-
-		// If the enemy isn't in the normal fov, check the fov through portals
-		CProp_Portal *pPortal = NULL;
-		pPortal = FInViewConeThroughPortal( pEnemy );
-
-		if ( pPortal && FVisibleThroughPortal( pPortal, pEnemy ) )
-		{
-			// Translate our target across the portal
-			Vector vecMidEnemyTransformed;
-			UTIL_Portal_PointTransform( pPortal->m_hLinkedPortal->MatrixThisToLinked(), vecMidEnemy, vecMidEnemyTransformed );
-
-			//Calculate dir and dist to enemy
-			Vector	vecDirToEnemyTransformed = vecMidEnemyTransformed - vecMid;	
-			float	flDistToEnemyTransformed = VectorNormalize( vecDirToEnemyTransformed );
-
-			// If it's not visible through normal means or the enemy is closer through the portal, use the translated info
-			if ( !bEnemyInFOV || !bEnemyVisible || flDistToEnemyTransformed < m_flDistToEnemy )
-			{
-				bEnemyInFOV = true;
-				bEnemyVisible = true;
-				vecMidEnemy = vecMidEnemyTransformed;
-				vecDirToEnemy = vecDirToEnemyTransformed;
-				m_flDistToEnemy = flDistToEnemyTransformed;
-			}
-		}
 
 		// Give enemies that are farther away a longer grace period
 		float fDistanceRatio = m_flDistToEnemy / PORTAL_FLOOR_TURRET_RANGE;

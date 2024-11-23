@@ -6,9 +6,6 @@
 #include "cbase.h"					// for pch
 #include "props.h"
 #include "filters.h"
-#include "achievementmgr.h"
-
-extern CAchievementMgr g_AchievementMgrPortal;
 
 #define RADIO_MODEL_NAME "models/props/radio_reference.mdl"
 //#define RADIO_DEBUG_SERVER
@@ -153,11 +150,6 @@ void CPortal_Dinosaur::Activate( void )
 {
 	// Find the current completion status of the dinosaurs
 	uint64 fStateFlags = 0;
-	CBaseAchievement *pTransmissionRecvd = dynamic_cast<CBaseAchievement *>(g_AchievementMgrPortal.GetAchievementByName("PORTAL_TRANSMISSION_RECEIVED"));
-	if ( pTransmissionRecvd )
-	{
-		fStateFlags = pTransmissionRecvd->GetComponentBits();
-	}
 
 	if ( m_hDinosaur_Signal != NULL )
 	{
@@ -480,16 +472,6 @@ void CSpawnDinosaurHack::LevelInitPostEntity()
 	{
 #if defined ( RADIO_DEBUG_SERVER )
 		Msg( "Not spawning any Dinosaurs: Detected a map load\n" );
-#endif
-
-		return;
-	}
-
-	IAchievement *pHeartbreaker = g_AchievementMgrPortal.GetAchievementByName("PORTAL_BEAT_GAME");
-	if ( pHeartbreaker == NULL || pHeartbreaker->IsAchieved() == false )
-	{
-#if defined ( RADIO_DEBUG_SERVER )
-		Msg( "Not spawning any Dinosaurs: Player has not beat the game, or failed to get heartbreaker achievement from mgr\n" );
 #endif
 
 		return;

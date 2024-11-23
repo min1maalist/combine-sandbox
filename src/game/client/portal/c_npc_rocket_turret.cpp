@@ -8,14 +8,11 @@
 #include "cbase.h"
 #include "c_ai_basenpc.h"
 #include "beam_shared.h"
-#include "prop_portal_shared.h"
-
 
 #define ROCKET_TURRET_LASER_ATTACHMENT 2
 #define ROCKET_TURRET_LASER_RANGE 8192
 
 #define ROCKET_TURRET_END_POINT_PULSE_SCALE 5.0f
-
 
 class C_NPC_RocketTurret : public C_AI_BaseNPC
 {
@@ -157,14 +154,15 @@ void C_NPC_RocketTurret::LaserOn( void )
 
 	// Trace to find an endpoint (so the beam draws through portals)
 	Vector vEndPoint;
-	float fEndFraction;
 	Ray_t rayPath;
 	rayPath.Init( vecMuzzle, vecMuzzle + vecAimDir * ROCKET_TURRET_LASER_RANGE );
 
-	if ( UTIL_Portal_TraceRay_Beam( rayPath, MASK_SHOT, &m_filterBeams, &fEndFraction ) )
-		vEndPoint = vecMuzzle + vecAimDir * ROCKET_TURRET_LASER_RANGE;	// Trace went through portal and endpoint is unknown
+	trace_t tr;
+	UTIL_TraceLine(vecMuzzle, vecMuzzle + vecAimDir * ROCKET_TURRET_LASER_RANGE, MASK_SHOT, &m_filterBeams, &tr);
+	if (tr.DidHit())
+		vEndPoint = vecMuzzle + vecAimDir * ROCKET_TURRET_LASER_RANGE * tr.fraction;
 	else
-		vEndPoint = vecMuzzle + vecAimDir * ROCKET_TURRET_LASER_RANGE * fEndFraction;	// Trace hit a wall
+		vEndPoint = vecMuzzle + vecAimDir * ROCKET_TURRET_LASER_RANGE;
 
 	m_pBeam->PointsInit( vEndPoint, vecMuzzle );
 

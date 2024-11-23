@@ -28,7 +28,6 @@
 #include "vstdlib/IKeyValuesSystem.h"
 #include "tier1/utlsymbol.h"
 #include "vgui_controls/BuildGroup.h"
-#include "cdll_int.h"
 
 // undefine windows function macros that overlap 
 #ifdef PostMessage

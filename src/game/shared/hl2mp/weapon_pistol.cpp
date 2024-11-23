@@ -47,24 +47,20 @@ public:
 	void	PrimaryAttack( void );
 	void	AddViewKick( void );
 	void	DryFire( void );
-	void	Operator_HandleAnimEvent(animevent_t *pEvent, CBaseCombatCharacter *pOperator); 
 
 	void	UpdatePenaltyTime( void );
 
-#ifndef CLIENT_DLL
-	int		CapabilitiesGet(void) { return bits_CAP_WEAPON_RANGE_ATTACK1; }
 	Activity	GetPrimaryAttackActivity( void );
+
+#ifndef CLIENT_DLL
+	int		CapabilitiesGet( void ) { return bits_CAP_WEAPON_RANGE_ATTACK1; }
+	void	Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator ); 
 #endif
 
 	virtual bool Reload( void );
 
 	virtual const Vector& GetBulletSpread( void )
-	{	
-		// Handle NPCs first
-		static Vector npcCone = VECTOR_CONE_5DEGREES;
-		if (GetOwner() && GetOwner()->IsNPC())
-			return npcCone;
-
+	{		
 		static Vector cone;
 
 		float ramp = RemapValClamped(	m_flAccuracyPenalty, 
@@ -193,41 +189,6 @@ void CWeaponPistol::Precache( void )
 	BaseClass::Precache();
 }
 
-#ifndef CLIENT_DLL
-//-----------------------------------------------------------------------------
-// Purpose:
-// Input  :
-// Output :
-//-----------------------------------------------------------------------------
-void CWeaponPistol::Operator_HandleAnimEvent(animevent_t *pEvent, CBaseCombatCharacter *pOperator)
-{
-	switch (pEvent->event)
-	{
-	case EVENT_WEAPON_PISTOL_FIRE:
-	{
-		Vector vecShootOrigin, vecShootDir;
-		vecShootOrigin = pOperator->Weapon_ShootPosition();
-
-		CAI_BaseNPC *npc = pOperator->MyNPCPointer();
-		ASSERT(npc != NULL);
-
-		vecShootDir = npc->GetActualShootTrajectory(vecShootOrigin);
-
-		CSoundEnt::InsertSound(SOUND_COMBAT | SOUND_CONTEXT_GUNFIRE, pOperator->GetAbsOrigin(), SOUNDENT_VOLUME_PISTOL, 0.2, pOperator, SOUNDENT_CHANNEL_WEAPON, pOperator->GetEnemy());
-
-		WeaponSound(SINGLE_NPC);
-		pOperator->FireBullets(1, vecShootOrigin, vecShootDir, VECTOR_CONE_PRECALCULATED, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 2);
-		pOperator->DoMuzzleFlash();
-		m_iClip1 = m_iClip1 - 1;
-	}
-	break;
-	default:
-		BaseClass::Operator_HandleAnimEvent(pEvent, pOperator);
-		break;
-	}
-}
-
-#endif
 
 //-----------------------------------------------------------------------------
 // Purpose:
@@ -257,10 +218,6 @@ void CWeaponPistol::PrimaryAttack( void )
 
 	m_flLastAttackTime = gpGlobals->curtime;
 	m_flSoonestPrimaryAttack = gpGlobals->curtime + PISTOL_FASTEST_REFIRE_TIME;
-
-#ifndef CLIENT_DLL
-	CSoundEnt::InsertSound(SOUND_COMBAT, GetAbsOrigin(), SOUNDENT_VOLUME_PISTOL, 0.2, GetOwner());
-#endif
 
 	CBasePlayer *pOwner = ToBasePlayer( GetOwner() );
 
@@ -350,7 +307,6 @@ void CWeaponPistol::ItemPostFrame( void )
 	}
 }
 
-#ifndef CLIENT_DLL
 //-----------------------------------------------------------------------------
 // Purpose: 
 // Output : int
@@ -368,7 +324,6 @@ Activity CWeaponPistol::GetPrimaryAttackActivity( void )
 
 	return ACT_VM_RECOIL3;
 }
-#endif
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -402,3 +357,39 @@ void CWeaponPistol::AddViewKick( void )
 	//Add it to the view punch
 	pPlayer->ViewPunch( viewPunch );
 }
+
+#ifndef CLIENT_DLL
+//-----------------------------------------------------------------------------
+// Purpose:
+// Input  :
+// Output :
+//-----------------------------------------------------------------------------
+void CWeaponPistol::Operator_HandleAnimEvent(animevent_t* pEvent, CBaseCombatCharacter* pOperator)
+{
+	switch (pEvent->event)
+	{
+	case EVENT_WEAPON_PISTOL_FIRE:
+	{
+		Vector vecShootOrigin, vecShootDir;
+		vecShootOrigin = pOperator->Weapon_ShootPosition();
+
+		CAI_BaseNPC* npc = pOperator->MyNPCPointer();
+		ASSERT(npc != NULL);
+
+		vecShootDir = npc->GetActualShootTrajectory(vecShootOrigin);
+
+		CSoundEnt::InsertSound(SOUND_COMBAT | SOUND_CONTEXT_GUNFIRE, pOperator->GetAbsOrigin(), SOUNDENT_VOLUME_PISTOL, 0.2, pOperator, SOUNDENT_CHANNEL_WEAPON, pOperator->GetEnemy());
+
+		WeaponSound(SINGLE_NPC);
+		pOperator->FireBullets(1, vecShootOrigin, vecShootDir, VECTOR_CONE_PRECALCULATED, MAX_TRACE_LENGTH, m_iPrimaryAmmoType, 2);
+		pOperator->DoMuzzleFlash();
+		m_iClip1 = m_iClip1 - 1;
+	}
+	break;
+	default:
+		BaseClass::Operator_HandleAnimEvent(pEvent, pOperator);
+		break;
+	}
+}
+
+#endif

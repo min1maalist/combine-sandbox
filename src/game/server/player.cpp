@@ -194,7 +194,7 @@ ConVar  player_debug_print_damage( "player_debug_print_damage", "0", FCVAR_CHEAT
 
 void CC_GiveCurrentAmmo( void )
 {
-	CBasePlayer *pPlayer = UTIL_GetLocalPlayer(); 
+	CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
 
 	if( pPlayer )
 	{
@@ -417,6 +417,14 @@ BEGIN_DATADESC( CBasePlayer )
 	DEFINE_FIELD( m_flOldPlayerViewOffsetZ, FIELD_FLOAT ),
 	DEFINE_FIELD( m_bPlayerUnderwater, FIELD_BOOLEAN ),
 	DEFINE_FIELD( m_hViewEntity, FIELD_EHANDLE ),
+
+#ifdef OMOD
+	// adnan
+	// set the use angles
+	// set when the player presses use
+	DEFINE_FIELD( m_vecUseAngles, FIELD_VECTOR ),
+	// end adnan
+#endif
 
 	DEFINE_FIELD( m_hConstraintEntity, FIELD_EHANDLE ),
 	DEFINE_FIELD( m_vecConstraintCenter, FIELD_VECTOR ),
@@ -729,28 +737,22 @@ int CBasePlayer::ShouldTransmit( const CCheckTransmitInfo *pInfo )
 }
 
 
-bool CBasePlayer::WantsLagCompensationOnEntity(const CBaseEntity *pEntity, const CUserCmd *pCmd, const CBitVec<MAX_EDICTS> *pEntityTransmitBits) const 
+bool CBasePlayer::WantsLagCompensationOnEntity( const CBasePlayer *pPlayer, const CUserCmd *pCmd, const CBitVec<MAX_EDICTS> *pEntityTransmitBits ) const
 {
 	// Team members shouldn't be adjusted unless friendly fire is on.
-	if (!friendlyfire.GetInt() && pEntity->GetTeamNumber() == GetTeamNumber()) 
+	if ( !friendlyfire.GetInt() && pPlayer->GetTeamNumber() == GetTeamNumber() )
 		return false;
 
 	// If this entity hasn't been transmitted to us and acked, then don't bother lag compensating it.
-	if (pEntityTransmitBits && !pEntityTransmitBits->Get(pEntity->entindex())) 
+	if ( pEntityTransmitBits && !pEntityTransmitBits->Get( pPlayer->entindex() ) )
 		return false;
 
 	const Vector &vMyOrigin = GetAbsOrigin();
-	const Vector &vHisOrigin = pEntity->GetAbsOrigin(); 
+	const Vector &vHisOrigin = pPlayer->GetAbsOrigin();
 
 	// get max distance player could have moved within max lag compensation time, 
 	// multiply by 1.5 to to avoid "dead zones"  (sqrt(2) would be the exact value)
-	float maxspeed;
-	CBasePlayer *pPlayer = ToBasePlayer((CBaseEntity*)pEntity);
-	if (pPlayer)
-		maxspeed = pPlayer->MaxSpeed();
-	else
-		maxspeed = 600;
-	float maxDistance = 1.5 * maxspeed * sv_maxunlag.GetFloat();
+	float maxDistance = 1.5 * pPlayer->MaxSpeed() * sv_maxunlag.GetFloat();
 
 	// If the player is within this distance, lag compensate them in case they're running past us.
 	if ( vHisOrigin.DistTo( vMyOrigin ) < maxDistance )
@@ -915,9 +917,11 @@ void CBasePlayer::TraceAttack( const CTakeDamageInfo &inputInfo, const Vector &v
 			// --------------------------------------------------
 			//  If an NPC check if friendly fire is disallowed
 			// --------------------------------------------------
+#ifndef OMOD
 			CAI_BaseNPC *pNPC = info.GetAttacker()->MyNPCPointer();
 			if ( pNPC && (pNPC->CapabilitiesGet() & bits_CAP_NO_HIT_PLAYER) && pNPC->IRelationType( this ) != D_HT )
 				return;
+#endif
 
 			// Prevent team damage here so blood doesn't appear
 			if ( info.GetAttacker()->IsPlayer() )
@@ -7623,7 +7627,7 @@ void CStripWeapons::StripWeapons(inputdata_t &data, bool stripSuit)
 	}
 	else if ( !g_pGameRules->IsDeathmatch() )
 	{
-		pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin()); 
+		pPlayer = UTIL_GetNearestPlayer( GetAbsOrigin() );
 	}
 
 	if ( pPlayer )
@@ -7719,12 +7723,10 @@ void CRevertSaved::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 	SetNextThink( gpGlobals->curtime + LoadTime() );
 	SetThink( &CRevertSaved::LoadThink );
 
-	for (int i = 1; i <= gpGlobals->maxClients; i++) 
-	{
-		CBasePlayer *pPlayer = UTIL_PlayerByIndex(i);
-		if (!pPlayer)
-			continue;
+	CBasePlayer *pPlayer = UTIL_GetNearestPlayer( GetAbsOrigin() );
 
+	if ( pPlayer )
+	{
 		//Adrian: Setting this flag so we can't move or save a game.
 		pPlayer->pl.deadflag = true;
 		pPlayer->AddFlag( (FL_NOTARGET|FL_FROZEN) );
@@ -7747,12 +7749,10 @@ void CRevertSaved::InputReload( inputdata_t &inputdata )
 	SetThink( &CRevertSaved::LoadThink );
 #endif
 
-	for (int i = 1; i <= gpGlobals->maxClients; i++) 
-	{
-		CBasePlayer *pPlayer = UTIL_PlayerByIndex(i); 
-		if (!pPlayer)
-			continue;
+	CBasePlayer *pPlayer = UTIL_GetNearestPlayer( GetAbsOrigin() );
 
+	if ( pPlayer )
+	{
 		//Adrian: Setting this flag so we can't move or save a game.
 		pPlayer->pl.deadflag = true;
 		pPlayer->AddFlag( (FL_NOTARGET|FL_FROZEN) );
@@ -7859,9 +7859,9 @@ void CMovementSpeedMod::InputSpeedMod(inputdata_t &data)
 	{
 		pPlayer = (CBasePlayer *)data.pActivator;
 	}
-	else
+	else if ( !g_pGameRules->IsDeathmatch() )
 	{
-		pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin());
+		pPlayer = UTIL_GetNearestPlayer( GetAbsOrigin() );
 	}
 
 	if ( pPlayer )
@@ -7975,6 +7975,14 @@ void SendProxy_CropFlagsToPlayerFlagBitsLength( const SendProp *pProp, const voi
 		SendPropVector		( SENDINFO( m_vecBaseVelocity ), -1, SPROP_COORD ),
 #else
 		SendPropVector		( SENDINFO( m_vecBaseVelocity ), 20, 0, -1000, 1000 ),
+#endif
+
+#ifdef OMOD
+		// adnan
+		// send the use angles
+		// set when the player presses use
+		SendPropVector		( SENDINFO( m_vecUseAngles), 0, SPROP_NOSCALE ),
+		// end adnan
 #endif
 
 		SendPropEHandle		( SENDINFO( m_hConstraintEntity)),

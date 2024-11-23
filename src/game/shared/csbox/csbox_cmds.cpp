@@ -79,7 +79,7 @@ void csboxfetch(void)
 	ConColorMsg( orange, "                      @@@@@@           \n" );
 	ConColorMsg( orange, "                     @@@@@@            \n" );
 	ConColorMsg( orange, "                       @@@             \n\n" );
-    Msg("Engine: Source (Zenith)\n");
+    Msg("Engine: Source (2013)\n");
     Msg("Platform: %s\n", GetPlatformName());
     Msg("Architecture: %s\n", GetProcessorArchName());
     Msg("Game: Combine Sandbox\n");

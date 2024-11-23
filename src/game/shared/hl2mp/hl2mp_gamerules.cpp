@@ -10,33 +10,31 @@
 #include "gameeventdefs.h"
 #include <KeyValues.h>
 #include "ammodef.h"
-#include "hl2_gamerules.h"
+
+#include "hl2_shareddefs.h"
+#include "takedamageinfo.h"
 
 #ifdef CLIENT_DLL
-	#include "c_hl2mp_player.h"
+#include "c_hl2mp_player.h"
 #else
-
-	#include "eventqueue.h"
-	#include "player.h"
-	#include "gamerules.h"
-	#include "game.h"
-	#include "items.h"
-	#include "entitylist.h"
-	#include "mapentities.h"
-	#include "in_buttons.h"
-	#include <ctype.h>
-	#include "voice_gamemgr.h"
-	#include "iscorer.h"
-	#include "hl2mp_player.h"
-	#include "weapon_hl2mpbasehlmpcombatweapon.h"
-	#include "team.h"
-	#include "voice_gamemgr.h"
-	#include "hl2mp_gameinterface.h"
-	#include "hl2mp_cvars.h"
-
-#ifdef DEBUG	
-	#include "hl2mp_bot_temp.h"
-#endif
+#include "eventqueue.h"
+#include "player.h"
+#include "gamerules.h"
+#include "game.h"
+#include "items.h"
+#include "entitylist.h"
+#include "mapentities.h"
+#include "in_buttons.h"
+#include <ctype.h>
+#include "voice_gamemgr.h"
+#include "iscorer.h"
+#include "hl2mp_player.h"
+#include "weapon_hl2mpbasehlmpcombatweapon.h"
+#include "team.h"
+#include "voice_gamemgr.h"
+#include "hl2mp_gameinterface.h"
+#include "hl2mp_cvars.h"
+#include "hl2mp_bot_temp.h"
 
 extern void respawn(CBaseEntity *pEdict, bool fCopyCorpse);
 
@@ -160,6 +158,11 @@ static const char *s_PreserveEnts[] =
 	END_SEND_TABLE()
 #endif
 
+#ifdef OMOD
+extern ConVar	sk_plr_health_drop_time;
+extern ConVar	sk_plr_grenade_drop_time;
+#endif
+
 #ifndef CLIENT_DLL
 
 	class CVoiceGameMgrHelper : public IVoiceGameMgrHelper
@@ -195,8 +198,6 @@ CHL2MPRules::CHL2MPRules()
 
 		g_Teams.AddToTail( pTeam );
 	}
-
-	InitDefaultAIRelationships();
 
 	m_bTeamPlayEnabled = teamplay.GetBool();
 	m_flIntermissionEndTime = 0.0f;
@@ -292,6 +293,64 @@ void CHL2MPRules::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &inf
 #endif
 }
 
+#ifndef CLIENT_DLL
+#ifdef OMOD
+//-----------------------------------------------------------------------------
+// Purpose: Whether or not the NPC should drop a health vial
+// Output : Returns true on success, false on failure.
+//-----------------------------------------------------------------------------
+bool CHL2MPRules::NPC_ShouldDropHealth(CBasePlayer* pRecipient)
+{
+	// Can only do this every so often
+	if (m_flLastHealthDropTime > gpGlobals->curtime)
+		return false;
+
+	//Try to throw dynamic health
+	float healthPerc = ((float)pRecipient->m_iHealth / (float)pRecipient->m_iMaxHealth);
+
+	if (random->RandomFloat(0.0f, 1.0f) > healthPerc * 1.5f)
+		return true;
+
+	return false;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Whether or not the NPC should drop a health vial
+// Output : Returns true on success, false on failure.
+//-----------------------------------------------------------------------------
+bool CHL2MPRules::NPC_ShouldDropGrenade(CBasePlayer* pRecipient)
+{
+	// Can only do this every so often
+	if (m_flLastGrenadeDropTime > gpGlobals->curtime)
+		return false;
+
+	int grenadeIndex = GetAmmoDef()->Index("grenade");
+	int numGrenades = pRecipient->GetAmmoCount(grenadeIndex);
+
+	// If we're not maxed out on grenades and we've randomly okay'd it
+	if ((numGrenades < GetAmmoDef()->MaxCarry(grenadeIndex)) && (random->RandomInt(0, 2) == 0))
+		return true;
+
+	return false;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Update the drop counter for health
+//-----------------------------------------------------------------------------
+void CHL2MPRules::NPC_DroppedHealth(void)
+{
+	m_flLastHealthDropTime = gpGlobals->curtime + sk_plr_health_drop_time.GetFloat();
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: Update the drop counter for grenades
+//-----------------------------------------------------------------------------
+void CHL2MPRules::NPC_DroppedGrenade(void)
+{
+	m_flLastGrenadeDropTime = gpGlobals->curtime + sk_plr_grenade_drop_time.GetFloat();
+}
+#endif
+#endif
 
 void CHL2MPRules::Think( void )
 {
@@ -663,40 +722,65 @@ void CHL2MPRules::ClientDisconnected( edict_t *pClient )
 //=========================================================
 // Deathnotice. 
 //=========================================================
-void CHL2MPRules::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info )
+void CHL2MPRules::DeathNotice(CBasePlayer* pVictim, const CTakeDamageInfo& info)
 {
 #ifndef CLIENT_DLL
 	// Work out what killed the player, and send a message to all clients about it
-	const char *killer_weapon_name = "world";		// by default, the player is killed by the world
+	const char* killer_weapon_name = "world";		// by default, the player is killed by the world
 	int killer_ID = 0;
+#ifdef OMOD
+	const char* killer_class_name = "class C_World";		// by default, the player is killed by the world
+	const char* weapon_class_name = NULL;
+#endif
 
 	// Find the killer & the scorer
-	CBaseEntity *pInflictor = info.GetInflictor();
-	CBaseEntity *pKiller = info.GetAttacker();
-	CBasePlayer *pScorer = GetDeathScorer( pKiller, pInflictor );
+	CBaseEntity* pInflictor = info.GetInflictor();
+	CBaseEntity* pKiller = info.GetAttacker();
+	CBasePlayer* pScorer = GetDeathScorer(pKiller, pInflictor);
 
 	// Custom kill type?
-	if ( info.GetDamageCustom() )
+#ifdef OMOD
+	if (info.GetDamageCustom())
 	{
-		killer_weapon_name = GetDamageCustomString( info );
-		if ( pScorer )
+		killer_weapon_name = GetDamageCustomString(info);
+		killer_class_name = pKiller->GetClassname();
+		weapon_class_name = pInflictor->GetClassname();
+#else
+	if (info.GetDamageCustom())
+	{
+		killer_weapon_name = GetDamageCustomString(info);
+#endif
+		if (pScorer)
 		{
 			killer_ID = pScorer->GetUserID();
 		}
+
+#ifdef OMOD
+		if (!Q_strcmp(killer_class_name, weapon_class_name))
+		{
+			// If the inflictor is the killer,  then it must be their current weapon doing the damage
+			CAI_BaseNPC* pNPC = pKiller->MyNPCPointer();
+			if (pNPC && pNPC->GetActiveWeapon())
+			{
+				killer_weapon_name = pNPC->GetActiveWeapon()->GetClassname();
+				weapon_class_name = pNPC->GetActiveWeapon()->GetClassname();
+			}
+		}
+#endif
 	}
 	else
 	{
 		// Is the killer a client?
-		if ( pScorer )
+		if (pScorer)
 		{
 			killer_ID = pScorer->GetUserID();
-			
-			if ( pInflictor )
+
+			if (pInflictor)
 			{
-				if ( pInflictor == pScorer )
+				if (pInflictor == pScorer)
 				{
 					// If the inflictor is the killer,  then it must be their current weapon doing the damage
-					if ( pScorer->GetActiveWeapon() )
+					if (pScorer->GetActiveWeapon())
 					{
 						killer_weapon_name = pScorer->GetActiveWeapon()->GetClassname();
 					}
@@ -710,53 +794,71 @@ void CHL2MPRules::DeathNotice( CBasePlayer *pVictim, const CTakeDamageInfo &info
 		else
 		{
 			killer_weapon_name = pInflictor->GetClassname();
+#ifdef OMOD
+			killer_class_name = pKiller->GetClassname();
+			weapon_class_name = pInflictor->GetClassname();
+
+			if (!Q_strcmp(killer_class_name, weapon_class_name))
+			{
+				// If the inflictor is the killer,  then it must be their current weapon doing the damage
+				CAI_BaseNPC* pNPC = pKiller->MyNPCPointer();
+				if (pNPC && pNPC->GetActiveWeapon())
+				{
+					killer_weapon_name = pNPC->GetActiveWeapon()->GetClassname();
+					weapon_class_name = pNPC->GetActiveWeapon()->GetClassname();
+				}
+			}
+#endif
 		}
 
 		// strip the NPC_* or weapon_* from the inflictor's classname
-		if ( strncmp( killer_weapon_name, "weapon_", 7 ) == 0 )
+		if (strncmp(killer_weapon_name, "weapon_", 7) == 0)
 		{
 			killer_weapon_name += 7;
 		}
-		else if ( strncmp( killer_weapon_name, "npc_", 4 ) == 0 )
+		else if (strncmp(killer_weapon_name, "npc_", 4) == 0)
 		{
 			killer_weapon_name += 4;
 		}
-		else if ( strncmp( killer_weapon_name, "func_", 5 ) == 0 )
+		else if (strncmp(killer_weapon_name, "func_", 5) == 0)
 		{
 			killer_weapon_name += 5;
 		}
-		else if ( strstr( killer_weapon_name, "physics" ) )
+		else if (strstr(killer_weapon_name, "physics"))
 		{
 			killer_weapon_name = "physics";
 		}
 
-		if ( strcmp( killer_weapon_name, "prop_combine_ball" ) == 0 )
+		if (strcmp(killer_weapon_name, "prop_combine_ball") == 0)
 		{
 			killer_weapon_name = "combine_ball";
 		}
-		else if ( strcmp( killer_weapon_name, "grenade_ar2" ) == 0 )
+		else if (strcmp(killer_weapon_name, "grenade_ar2") == 0)
 		{
 			killer_weapon_name = "smg1_grenade";
 		}
-		else if ( strcmp( killer_weapon_name, "satchel" ) == 0 || strcmp( killer_weapon_name, "tripmine" ) == 0)
+		else if (strcmp(killer_weapon_name, "satchel") == 0 || strcmp(killer_weapon_name, "tripmine") == 0)
 		{
 			killer_weapon_name = "slam";
 		}
-
-
 	}
 
-	IGameEvent *event = gameeventmanager->CreateEvent( "player_death" );
-	if( event )
+	IGameEvent* event = gameeventmanager->CreateEvent("player_death");
+	if (event)
 	{
-		event->SetInt("userid", pVictim->GetUserID() );
-		event->SetInt("attacker", killer_ID );
-		event->SetString("weapon", killer_weapon_name );
-		event->SetInt( "priority", 7 );
-		gameeventmanager->FireEvent( event );
+		event->SetInt("userid", pVictim->GetUserID());
+		event->SetInt("attacker", killer_ID);
+#ifdef OMOD
+		event->SetString("attackername", killer_class_name);
+#endif
+		event->SetString("weapon", killer_weapon_name);
+#ifdef OMOD
+		event->SetString("weaponname", weapon_class_name);
+#endif
+		event->SetInt("priority", 7);
+		gameeventmanager->FireEvent(event);
 	}
 #endif
-
 }
 
 void CHL2MPRules::ClientSettingsChanged( CBasePlayer *pPlayer )
@@ -891,6 +993,23 @@ bool CHL2MPRules::ShouldCollide( int collisionGroup0, int collisionGroup1 )
 
 }
 
+#if !defined( CLIENT_DLL ) && defined( OMOD )
+//-----------------------------------------------------------------------------
+// Returns whether or not Alyx cares about light levels in order to see.
+//-----------------------------------------------------------------------------
+bool CHL2MPRules::IsAlyxInDarknessMode()
+{
+#ifdef HL2_EPISODIC
+	if ( alyx_darkness_force.GetBool() )
+		return true;
+
+	return ( GlobalEntity_GetState( "ep_alyx_darknessmode" ) == GLOBAL_ON );
+#else
+	return false;
+#endif // HL2_EPISODIC
+}
+#endif
+
 bool CHL2MPRules::ClientCommand( CBaseEntity *pEdict, const CCommand &args )
 {
 #ifndef CLIENT_DLL
@@ -922,101 +1041,133 @@ CAmmoDef *GetAmmoDef()
 {
 	static CAmmoDef def;
 	static bool bInitted = false;
-
-	if (!bInitted)
+	
+	if ( !bInitted )
 	{
 		bInitted = true;
-		//																								plr dmg		npc dmg	max carry	impulse
-		def.AddAmmoType("AR2", DMG_BULLET, TRACER_LINE_AND_WHIZ, 0, 35, 60, BULLET_IMPULSE(200, 1225), 0);
-		def.AddAmmoType("AR2AltFire", DMG_DISSOLVE, TRACER_NONE, 0, 0, 3, 0, 0);
-		def.AddAmmoType("Pistol", DMG_BULLET, TRACER_LINE_AND_WHIZ, 0, 18, 150, BULLET_IMPULSE(200, 1225), 0);
-		def.AddAmmoType("SMG1", DMG_BULLET, TRACER_LINE_AND_WHIZ, 0, 10, 225, BULLET_IMPULSE(200, 1225), 0);
-		def.AddAmmoType("357", DMG_BULLET, TRACER_LINE_AND_WHIZ, 0, 0, 12, BULLET_IMPULSE(800, 5000), 0);
-		def.AddAmmoType("XBowBolt", DMG_BULLET, TRACER_LINE, 0, 140, 10, BULLET_IMPULSE(800, 8000), 0);
-		def.AddAmmoType("Buckshot", DMG_BULLET | DMG_BUCKSHOT, TRACER_LINE, 0, 8, 30, BULLET_IMPULSE(400, 1200), 0);
-		def.AddAmmoType("RPG_Round", DMG_BURN, TRACER_NONE, 0, 180, 3, 0, 0);
-		def.AddAmmoType("SMG1_Grenade", DMG_BURN, TRACER_NONE, 0, 115, 3, 0, 0);
-		def.AddAmmoType("Grenade", DMG_BURN, TRACER_NONE, 0, 135, 5, 0, 0);
-		def.AddAmmoType("slam", DMG_BURN, TRACER_NONE, 0, 0, 5, 0, 0);
 
+		def.AddAmmoType("AR2",				DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_ar2",			"sk_npc_dmg_ar2",			"sk_max_ar2",			BULLET_IMPULSE(200, 1225), 0 );
+		def.AddAmmoType("AlyxGun",			DMG_BULLET,					TRACER_LINE,			"sk_plr_dmg_alyxgun",		"sk_npc_dmg_alyxgun",		"sk_max_alyxgun",		BULLET_IMPULSE(200, 1225), 0 );
+		def.AddAmmoType("Pistol",			DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_pistol",		"sk_npc_dmg_pistol",		"sk_max_pistol",		BULLET_IMPULSE(200, 1225), 0 );
+		def.AddAmmoType("SMG1",				DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_smg1",			"sk_npc_dmg_smg1",			"sk_max_smg1",			BULLET_IMPULSE(200, 1225), 0 );
+		def.AddAmmoType("357",				DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_plr_dmg_357",			"sk_npc_dmg_357",			"sk_max_357",			BULLET_IMPULSE(800, 5000), 0 );
+		def.AddAmmoType("XBowBolt",			DMG_BULLET,					TRACER_LINE,			"sk_plr_dmg_crossbow",		"sk_npc_dmg_crossbow",		"sk_max_crossbow",		BULLET_IMPULSE(800, 8000), 0 );
 
-		def.AddAmmoType("AlyxGun", DMG_BULLET, TRACER_LINE, "sk_plr_dmg_alyxgun", "sk_npc_dmg_alyxgun", "sk_max_alyxgun", BULLET_IMPULSE(200, 1225), 0);
+		def.AddAmmoType("Buckshot",			DMG_BULLET | DMG_BUCKSHOT,	TRACER_LINE,			"sk_plr_dmg_buckshot",		"sk_npc_dmg_buckshot",		"sk_max_buckshot",		BULLET_IMPULSE(400, 1200), 0 );
+		def.AddAmmoType("RPG_Round",		DMG_BURN,					TRACER_NONE,			"sk_plr_dmg_rpg_round",		"sk_npc_dmg_rpg_round",		"sk_max_rpg_round",		0, 0 );
+		def.AddAmmoType("SMG1_Grenade",		DMG_BURN,					TRACER_NONE,			"sk_plr_dmg_smg1_grenade",	"sk_npc_dmg_smg1_grenade",	"sk_max_smg1_grenade",	0, 0 );
 		def.AddAmmoType("SniperRound",		DMG_BULLET | DMG_SNIPER,	TRACER_NONE,			"sk_plr_dmg_sniper_round",	"sk_npc_dmg_sniper_round",	"sk_max_sniper_round",	BULLET_IMPULSE(650, 6000), 0 );
 		def.AddAmmoType("SniperPenetratedRound", DMG_BULLET | DMG_SNIPER, TRACER_NONE,			"sk_dmg_sniper_penetrate_plr", "sk_dmg_sniper_penetrate_npc", "sk_max_sniper_round", BULLET_IMPULSE(150, 6000), 0 );
 		def.AddAmmoType("Grenade",			DMG_BURN,					TRACER_NONE,			"sk_plr_dmg_grenade",		"sk_npc_dmg_grenade",		"sk_max_grenade",		0, 0);
 		def.AddAmmoType("Thumper",			DMG_SONIC,					TRACER_NONE,			10, 10, 2, 0, 0 );
 		def.AddAmmoType("Gravity",			DMG_CLUB,					TRACER_NONE,			0,	0, 8, 0, 0 );
+//		def.AddAmmoType("Extinguisher",		DMG_BURN,					TRACER_NONE,			0,	0, 100, 0, 0 );
 		def.AddAmmoType("Battery",			DMG_CLUB,					TRACER_NONE,			NULL, NULL, NULL, 0, 0 );
 		def.AddAmmoType("GaussEnergy",		DMG_SHOCK,					TRACER_NONE,			"sk_jeep_gauss_damage",		"sk_jeep_gauss_damage", "sk_max_gauss_round", BULLET_IMPULSE(650, 8000), 0 ); // hit like a 10kg weight at 400 in/s
 		def.AddAmmoType("CombineCannon",	DMG_BULLET,					TRACER_LINE,			"sk_npc_dmg_gunship_to_plr", "sk_npc_dmg_gunship", NULL, 1.5 * 750 * 12, 0 ); // hit like a 1.5kg weight at 750 ft/s
-		def.AddAmmoType("AirboatGun", DMG_AIRBOAT, TRACER_LINE, "sk_plr_dmg_airboat", "sk_npc_dmg_airboat", NULL, BULLET_IMPULSE(10, 600), 0);
-		def.AddAmmoType("StriderMinigun", DMG_BULLET, TRACER_LINE, 5, 15, 15, 1.0 * 750 * 12, AMMO_FORCE_DROP_IF_CARRIED); // hit like a 1.0kg weight at 750 ft/s
-		def.AddAmmoType("StriderMinigunDirect", DMG_BULLET, TRACER_LINE, 2, 2, 15, 1.0 * 750 * 12, AMMO_FORCE_DROP_IF_CARRIED); // hit like a 1.0kg weight at 750 ft/s
-		def.AddAmmoType("HelicopterGun", DMG_BULLET, TRACER_LINE_AND_WHIZ, "sk_npc_dmg_helicopter_to_plr", "sk_npc_dmg_helicopter", "sk_max_smg1", BULLET_IMPULSE(400, 1225), AMMO_FORCE_DROP_IF_CARRIED | AMMO_INTERPRET_PLRDAMAGE_AS_DAMAGE_TO_PLAYER);
+		def.AddAmmoType("AirboatGun",		DMG_AIRBOAT,				TRACER_LINE,			"sk_plr_dmg_airboat",		"sk_npc_dmg_airboat",		NULL,					BULLET_IMPULSE(10, 600), 0 );
+
+		//=====================================================================
+		// STRIDER MINIGUN DAMAGE - Pull up a chair and I'll tell you a tale.
+		//
+		// When we shipped Half-Life 2 in 2004, we were unaware of a bug in
+		// CAmmoDef::NPCDamage() which was returning the MaxCarry field of
+		// an ammotype as the amount of damage that should be done to a NPC
+		// by that type of ammo. Thankfully, the bug only affected Ammo Types 
+		// that DO NOT use ConVars to specify their parameters. As you can see,
+		// all of the important ammotypes use ConVars, so the effect of the bug
+		// was limited. The Strider Minigun was affected, though.
+		//
+		// According to my perforce Archeology, we intended to ship the Strider
+		// Minigun ammo type to do 15 points of damage per shot, and we did. 
+		// To achieve this we, unaware of the bug, set the Strider Minigun ammo 
+		// type to have a maxcarry of 15, since our observation was that the 
+		// number that was there before (8) was indeed the amount of damage being
+		// done to NPC's at the time. So we changed the field that was incorrectly
+		// being used as the NPC Damage field.
+		//
+		// The bug was fixed during Episode 1's development. The result of the 
+		// bug fix was that the Strider was reduced to doing 5 points of damage
+		// to NPC's, since 5 is the value that was being assigned as NPC damage
+		// even though the code was returning 15 up to that point.
+		//
+		// Now as we go to ship Orange Box, we discover that the Striders in 
+		// Half-Life 2 are hugely ineffective against citizens, causing big
+		// problems in maps 12 and 13. 
+		//
+		// In order to restore balance to HL2 without upsetting the delicate 
+		// balance of ep2_outland_12, I have chosen to build Episodic binaries
+		// with 5 as the Strider->NPC damage, since that's the value that has
+		// been in place for all of Episode 2's development. Half-Life 2 will
+		// build with 15 as the Strider->NPC damage, which is how HL2 shipped
+		// originally, only this time the 15 is located in the correct field
+		// now that the AmmoDef code is behaving correctly.
+		//
+		//=====================================================================
 #ifdef HL2_EPISODIC
-		def.AddAmmoType("Hopwire", DMG_BLAST, TRACER_NONE, "sk_plr_dmg_grenade", "sk_npc_dmg_grenade", "sk_max_hopwire", 0, 0);
-		def.AddAmmoType("CombineHeavyCannon", DMG_BULLET, TRACER_LINE, 40, 40, NULL, 10 * 750 * 12, AMMO_FORCE_DROP_IF_CARRIED); // hit like a 10 kg weight at 750 ft/s
-		def.AddAmmoType("ammo_proto1", DMG_BULLET, TRACER_LINE, 0, 0, 10, 0, 0);
+		def.AddAmmoType("StriderMinigun",	DMG_BULLET,					TRACER_LINE,			5, 5, 15, 1.0 * 750 * 12, AMMO_FORCE_DROP_IF_CARRIED ); // hit like a 1.0kg weight at 750 ft/s
+#else
+		def.AddAmmoType("StriderMinigun",	DMG_BULLET,					TRACER_LINE,			5, 15,15, 1.0 * 750 * 12, AMMO_FORCE_DROP_IF_CARRIED ); // hit like a 1.0kg weight at 750 ft/s
+#endif//HL2_EPISODIC
+
+		def.AddAmmoType("StriderMinigunDirect",	DMG_BULLET,				TRACER_LINE,			2, 2, 15, 1.0 * 750 * 12, AMMO_FORCE_DROP_IF_CARRIED ); // hit like a 1.0kg weight at 750 ft/s
+		def.AddAmmoType("HelicopterGun",	DMG_BULLET,					TRACER_LINE_AND_WHIZ,	"sk_npc_dmg_helicopter_to_plr", "sk_npc_dmg_helicopter",	"sk_max_smg1",	BULLET_IMPULSE(400, 1225), AMMO_FORCE_DROP_IF_CARRIED | AMMO_INTERPRET_PLRDAMAGE_AS_DAMAGE_TO_PLAYER );
+		def.AddAmmoType("AR2AltFire",		DMG_DISSOLVE,				TRACER_NONE,			0, 0, "sk_max_ar2_altfire", 0, 0 );
+		def.AddAmmoType("Grenade",			DMG_BURN,					TRACER_NONE,			"sk_plr_dmg_grenade",		"sk_npc_dmg_grenade",		"sk_max_grenade",		0, 0);
+#ifdef HL2_EPISODIC
+		def.AddAmmoType("Hopwire",			DMG_BLAST,					TRACER_NONE,			"sk_plr_dmg_grenade",		"sk_npc_dmg_grenade",		"sk_max_hopwire",		0, 0);
+		def.AddAmmoType("CombineHeavyCannon",	DMG_BULLET,				TRACER_LINE,			40,	40, NULL, 10 * 750 * 12, AMMO_FORCE_DROP_IF_CARRIED ); // hit like a 10 kg weight at 750 ft/s
+		def.AddAmmoType("ammo_proto1",			DMG_BULLET,				TRACER_LINE,			0, 0, 10, 0, 0 );
 #endif // HL2_EPISODIC
+		def.AddAmmoType("slam", DMG_BURN, TRACER_NONE, 0, 0, 5, 0, 0);
 	}
 
 	return &def;
 }
 
 #ifdef CLIENT_DLL
-
-	ConVar cl_autowepswitch(
-		"cl_autowepswitch",
-		"1",
-		FCVAR_ARCHIVE | FCVAR_USERINFO,
-		"Automatically switch to picked up weapons (if more powerful)" );
-
+ConVar cl_autowepswitch(
+	"cl_autowepswitch",
+	"1",
+	FCVAR_ARCHIVE | FCVAR_USERINFO,
+	"Automatically switch to picked up weapons (if more powerful)" );
 #else
+// Handler for the "bot" command.
+void Bot_f()
+{		
+	// Look at -count.
+	int count = 1;
+	count = clamp( count, 1, 16 );
 
-#ifdef DEBUG
-
-	// Handler for the "bot" command.
-	void Bot_f()
-	{		
-		// Look at -count.
-		int count = 1;
-		count = clamp( count, 1, 16 );
-
-		int iTeam = TEAM_COMBINE;
-				
-		// Look at -frozen.
-		bool bFrozen = false;
+	int iTeam = TEAM_COMBINE;
 			
-		// Ok, spawn all the bots.
-		while ( --count >= 0 )
+	// Look at -frozen.
+	bool bFrozen = false;
+		
+	// Ok, spawn all the bots.
+	while ( --count >= 0 )
+	{
+		BotPutInServer( bFrozen, iTeam );
+	}
+}
+
+
+ConCommand cc_Bot( "bot", Bot_f, "Add a bot.", FCVAR_CHEAT );
+
+bool CHL2MPRules::FShouldSwitchWeapon( CBasePlayer *pPlayer, CBaseCombatWeapon *pWeapon )
+{		
+	if ( pPlayer->GetActiveWeapon() && pPlayer->IsNetClient() )
+	{
+		// Player has an active item, so let's check cl_autowepswitch.
+		const char *cl_autowepswitch = engine->GetClientConVarValue( engine->IndexOfEdict( pPlayer->edict() ),"cl_autowepswitch" );
+		if ( cl_autowepswitch && atoi( cl_autowepswitch ) <= 0 )
 		{
-			BotPutInServer( bFrozen, iTeam );
+			return false;
 		}
 	}
 
-
-	ConCommand cc_Bot( "bot", Bot_f, "Add a bot.", FCVAR_CHEAT );
-
-#endif
-
-	bool CHL2MPRules::FShouldSwitchWeapon( CBasePlayer *pPlayer, CBaseCombatWeapon *pWeapon )
-	{		
-		if ( pPlayer->GetActiveWeapon() && pPlayer->IsNetClient() )
-		{
-			// Player has an active item, so let's check cl_autowepswitch.
-			const char *cl_autowepswitch = engine->GetClientConVarValue( engine->IndexOfEdict( pPlayer->edict() ), "cl_autowepswitch" );
-			if ( cl_autowepswitch && atoi( cl_autowepswitch ) <= 0 )
-			{
-				return false;
-			}
-		}
-
-		return BaseClass::FShouldSwitchWeapon( pPlayer, pWeapon );
-	}
-
-#endif
-
-#ifndef CLIENT_DLL
+	return BaseClass::FShouldSwitchWeapon( pPlayer, pWeapon );
+}
 
 void CHL2MPRules::RestartGame()
 {
@@ -1300,6 +1451,11 @@ const char *CHL2MPRules::GetChatFormat( bool bTeamOnly, CBasePlayer *pPlayer )
 	return pszFormat;
 }
 
+//------------------------------------------------------------------------------
+// Purpose : Initialize all default class relationships
+// Input   :
+// Output  :
+//------------------------------------------------------------------------------
 void CHL2MPRules::InitDefaultAIRelationships(void)
 {
 	int i, j;
@@ -1310,9 +1466,9 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	// --------------------------------------------------------------
 	// First initialize table so we can report missing relationships
 	// --------------------------------------------------------------
-	for (i = 0; i<NUM_AI_CLASSES; i++)
+	for (i = 0; i < NUM_AI_CLASSES; i++)
 	{
-		for (j = 0; j<NUM_AI_CLASSES; j++)
+		for (j = 0; j < NUM_AI_CLASSES; j++)
 		{
 			// By default all relationships are neutral of priority zero
 			CBaseCombatCharacter::SetDefaultRelationship((Class_T)i, (Class_T)j, D_NU, 0);
@@ -1326,7 +1482,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION, CLASS_PLAYER, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION, CLASS_BARNACLE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION, CLASS_BULLSEYE, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,		CLASS_BULLSQUID,		D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_BULLSQUID,		D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION, CLASS_CITIZEN_PASSIVE, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION, CLASS_CITIZEN_REBEL, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION, CLASS_COMBINE, D_HT, 0);
@@ -1335,7 +1491,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION, CLASS_CONSCRIPT, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION, CLASS_FLARE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION, CLASS_HEADCRAB, D_HT, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,		CLASS_HOUNDEYE,			D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION,			CLASS_HOUNDEYE,			D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION, CLASS_MANHACK, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION, CLASS_METROPOLICE, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ANTLION, CLASS_MILITARY, D_HT, 0);
@@ -1523,7 +1679,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE, CLASS_ANTLION, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE, CLASS_BARNACLE, D_FR, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE, CLASS_BULLSEYE, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,		CLASS_BULLSQUID,		D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_BULLSQUID,		D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE, CLASS_CITIZEN_PASSIVE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE, CLASS_CITIZEN_REBEL, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE, CLASS_COMBINE, D_LI, 0);
@@ -1532,7 +1688,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE, CLASS_CONSCRIPT, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE, CLASS_FLARE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE, CLASS_HEADCRAB, D_HT, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,		CLASS_HOUNDEYE,			D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE,			CLASS_HOUNDEYE,			D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE, CLASS_MANHACK, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE, CLASS_METROPOLICE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE, CLASS_MILITARY, D_NU, 0);
@@ -1555,7 +1711,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP, CLASS_ANTLION, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP, CLASS_BARNACLE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP, CLASS_BULLSEYE, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,	CLASS_BULLSQUID,		D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_BULLSQUID,		D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP, CLASS_CITIZEN_PASSIVE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP, CLASS_CITIZEN_REBEL, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP, CLASS_COMBINE, D_LI, 0);
@@ -1564,7 +1720,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP, CLASS_CONSCRIPT, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP, CLASS_FLARE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP, CLASS_HEADCRAB, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,	CLASS_HOUNDEYE,			D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP,		CLASS_HOUNDEYE,			D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP, CLASS_MANHACK, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP, CLASS_METROPOLICE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_COMBINE_GUNSHIP, CLASS_MILITARY, D_NU, 0);
@@ -1750,7 +1906,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK, CLASS_ANTLION, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK, CLASS_BARNACLE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK, CLASS_BULLSEYE, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,		CLASS_BULLSQUID,		D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_BULLSQUID,		D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK, CLASS_CITIZEN_PASSIVE, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK, CLASS_CITIZEN_REBEL, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK, CLASS_COMBINE, D_NU, 0);
@@ -1759,7 +1915,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK, CLASS_CONSCRIPT, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK, CLASS_FLARE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK, CLASS_HEADCRAB, D_HT, -1);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,		CLASS_HOUNDEYE,			D_HT,-1);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK,			CLASS_HOUNDEYE,			D_HT,-1);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK, CLASS_MANHACK, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK, CLASS_METROPOLICE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MANHACK, CLASS_MILITARY, D_NU, 0);
@@ -1782,7 +1938,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE, CLASS_ANTLION, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE, CLASS_BARNACLE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE, CLASS_BULLSEYE, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,	CLASS_BULLSQUID,		D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_BULLSQUID,		D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE, CLASS_CITIZEN_PASSIVE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE, CLASS_CITIZEN_REBEL, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE, CLASS_COMBINE, D_NU, 0);
@@ -1791,7 +1947,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE, CLASS_CONSCRIPT, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE, CLASS_FLARE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE, CLASS_HEADCRAB, D_HT, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,	CLASS_HOUNDEYE,			D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE,		CLASS_HOUNDEYE,			D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE, CLASS_MANHACK, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE, CLASS_METROPOLICE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_METROPOLICE, CLASS_MILITARY, D_NU, 0);
@@ -1846,7 +2002,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE, CLASS_ANTLION, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE, CLASS_BARNACLE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE, CLASS_BULLSEYE, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,		CLASS_BULLSQUID,		D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_BULLSQUID,		D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE, CLASS_CITIZEN_PASSIVE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE, CLASS_CITIZEN_REBEL, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE, CLASS_COMBINE, D_NU, 0);
@@ -1855,7 +2011,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE, CLASS_CONSCRIPT, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE, CLASS_FLARE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE, CLASS_HEADCRAB, D_HT, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,		CLASS_HOUNDEYE,			D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE,			CLASS_HOUNDEYE,			D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE, CLASS_MANHACK, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE, CLASS_METROPOLICE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_MISSILE, CLASS_MILITARY, D_NU, 0);
@@ -1909,7 +2065,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER, CLASS_ANTLION, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER, CLASS_BARNACLE, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER, CLASS_BULLSEYE, D_HT, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,		CLASS_BULLSQUID,		D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_BULLSQUID,		D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER, CLASS_CITIZEN_PASSIVE, D_LI, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER, CLASS_CITIZEN_REBEL, D_LI, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER, CLASS_COMBINE, D_HT, 0);
@@ -1918,7 +2074,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER, CLASS_CONSCRIPT, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER, CLASS_FLARE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER, CLASS_HEADCRAB, D_HT, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,		CLASS_HOUNDEYE,			D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER,			CLASS_HOUNDEYE,			D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER, CLASS_MANHACK, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER, CLASS_METROPOLICE, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER, CLASS_MILITARY, D_HT, 0);
@@ -1941,7 +2097,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY, CLASS_ANTLION, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY, CLASS_BARNACLE, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY, CLASS_BULLSEYE, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,		CLASS_BULLSQUID,		D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_BULLSQUID,		D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY, CLASS_CITIZEN_PASSIVE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY, CLASS_CITIZEN_REBEL, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY, CLASS_COMBINE, D_HT, 0);
@@ -1950,7 +2106,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY, CLASS_CONSCRIPT, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY, CLASS_FLARE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY, CLASS_HEADCRAB, D_FR, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,		CLASS_HOUNDEYE,			D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY,			CLASS_HOUNDEYE,			D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY, CLASS_MANHACK, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY, CLASS_METROPOLICE, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PLAYER_ALLY, CLASS_MILITARY, D_HT, 0);
@@ -2005,7 +2161,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER, CLASS_ANTLION, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER, CLASS_BARNACLE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER, CLASS_BULLSEYE, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,		CLASS_BULLSQUID,		D_NU, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_BULLSQUID,		D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER, CLASS_CITIZEN_PASSIVE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER, CLASS_CITIZEN_REBEL, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER, CLASS_COMBINE, D_LI, 0);
@@ -2014,7 +2170,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER, CLASS_CONSCRIPT, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER, CLASS_FLARE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER, CLASS_HEADCRAB, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,		CLASS_HOUNDEYE,			D_NU, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER,			CLASS_HOUNDEYE,			D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER, CLASS_MANHACK, D_LI, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER, CLASS_METROPOLICE, D_LI, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_SCANNER, CLASS_MILITARY, D_LI, 0);
@@ -2037,7 +2193,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER, CLASS_ANTLION, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER, CLASS_BARNACLE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER, CLASS_BULLSEYE, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,		CLASS_BULLSQUID,		D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_BULLSQUID,		D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER, CLASS_CITIZEN_PASSIVE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER, CLASS_CITIZEN_REBEL, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER, CLASS_COMBINE, D_NU, 0);
@@ -2046,7 +2202,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER, CLASS_CONSCRIPT, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER, CLASS_FLARE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER, CLASS_HEADCRAB, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,		CLASS_HOUNDEYE,			D_NU, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER,			CLASS_HOUNDEYE,			D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER, CLASS_MANHACK, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER, CLASS_METROPOLICE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_STALKER, CLASS_MILITARY, D_NU, 0);
@@ -2069,7 +2225,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT, CLASS_ANTLION, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT, CLASS_BARNACLE, D_FR, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT, CLASS_BULLSEYE, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,	CLASS_BULLSQUID,		D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_BULLSQUID,		D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT, CLASS_CITIZEN_PASSIVE, D_LI, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT, CLASS_CITIZEN_REBEL, D_LI, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT, CLASS_COMBINE, D_HT, 0);
@@ -2078,7 +2234,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT, CLASS_CONSCRIPT, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT, CLASS_FLARE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT, CLASS_HEADCRAB, D_HT, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,	CLASS_HOUNDEYE,			D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT,		CLASS_HOUNDEYE,			D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT, CLASS_MANHACK, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT, CLASS_METROPOLICE, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_VORTIGAUNT, CLASS_MILITARY, D_HT, 0);
@@ -2101,7 +2257,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE, CLASS_ANTLION, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE, CLASS_BARNACLE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE, CLASS_BULLSEYE, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,		CLASS_BULLSQUID,		D_NU, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_BULLSQUID,		D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE, CLASS_CITIZEN_PASSIVE, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE, CLASS_CITIZEN_REBEL, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE, CLASS_COMBINE, D_HT, 0);
@@ -2110,7 +2266,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE, CLASS_CONSCRIPT, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE, CLASS_FLARE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE, CLASS_HEADCRAB, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,		CLASS_HOUNDEYE,			D_NU, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE,			CLASS_HOUNDEYE,			D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE, CLASS_MANHACK, D_FR, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE, CLASS_METROPOLICE, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_ZOMBIE, CLASS_MILITARY, D_FR, 0);
@@ -2133,7 +2289,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER, CLASS_ANTLION, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER, CLASS_BARNACLE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER, CLASS_BULLSEYE, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,		CLASS_BULLSQUID,		D_NU, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_BULLSQUID,		D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER, CLASS_CITIZEN_PASSIVE, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER, CLASS_CITIZEN_REBEL, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER, CLASS_COMBINE, D_NU, 0);
@@ -2142,7 +2298,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER, CLASS_CONSCRIPT, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER, CLASS_FLARE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER, CLASS_HEADCRAB, D_HT, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,		CLASS_HOUNDEYE,			D_NU, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER,			CLASS_HOUNDEYE,			D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER, CLASS_MANHACK, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER, CLASS_METROPOLICE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_PROTOSNIPER, CLASS_MILITARY, D_NU, 0);
@@ -2168,7 +2324,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA, CLASS_ANTLION, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA, CLASS_BARNACLE, D_NU, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA, CLASS_BULLSEYE, D_NU, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,		CLASS_BULLSQUID,		D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_BULLSQUID,		D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA, CLASS_CITIZEN_PASSIVE, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA, CLASS_CITIZEN_REBEL, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA, CLASS_COMBINE, D_HT, 0);
@@ -2177,7 +2333,7 @@ void CHL2MPRules::InitDefaultAIRelationships(void)
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA, CLASS_CONSCRIPT, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA, CLASS_FLARE, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA, CLASS_HEADCRAB, D_HT, 0);
-	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,		CLASS_HOUNDEYE,			D_HT, 0);
+	//CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA,			CLASS_HOUNDEYE,			D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA, CLASS_MANHACK, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA, CLASS_METROPOLICE, D_HT, 0);
 	CBaseCombatCharacter::SetDefaultRelationship(CLASS_EARTH_FAUNA, CLASS_MILITARY, D_HT, 0);

@@ -41,6 +41,12 @@ LINK_ENTITY_TO_CLASS( player, CHL2MP_Player );
 
 LINK_ENTITY_TO_CLASS( info_player_combine, CPointEntity );
 LINK_ENTITY_TO_CLASS( info_player_rebel, CPointEntity );
+#ifdef OMOD
+LINK_ENTITY_TO_CLASS( info_player_counterterrorist, CPointEntity );
+LINK_ENTITY_TO_CLASS( info_player_terrorist, CPointEntity );
+LINK_ENTITY_TO_CLASS( info_player_allies, CPointEntity );
+LINK_ENTITY_TO_CLASS( info_player_axis, CPointEntity );
+#endif
 
 IMPLEMENT_SERVERCLASS_ST(CHL2MP_Player, DT_HL2MP_Player)
 	SendPropAngle( SENDINFO_VECTORELEM(m_angEyeAngles, 0), 11, SPROP_CHANGES_OFTEN ),
@@ -62,31 +68,30 @@ END_DATADESC()
 
 const char *g_ppszRandomCitizenModels[] = 
 {
-	"models/humans/group03/male_01.mdl",
-	"models/humans/group03/male_02.mdl",
-	"models/humans/group03/female_01.mdl",
-	"models/humans/group03/male_03.mdl",
-	"models/humans/group03/female_02.mdl",
-	"models/humans/group03/male_04.mdl",
-	"models/humans/group03/female_03.mdl",
-	"models/humans/group03/male_05.mdl",
-	"models/humans/group03/female_04.mdl",
-	"models/humans/group03/male_06.mdl",
-	"models/humans/group03/female_06.mdl",
-	"models/humans/group03/male_07.mdl",
-	"models/humans/group03/female_07.mdl",
-	"models/humans/group03/male_08.mdl",
-	"models/humans/group03/male_09.mdl",
+	"models/player/humans/group03/male_01.mdl",
+	"models/player/humans/group03/male_02.mdl",
+	"models/player/humans/group03/female_01.mdl",
+	"models/player/humans/group03/male_03.mdl",
+	"models/player/humans/group03/female_02.mdl",
+	"models/player/humans/group03/male_04.mdl",
+	"models/player/humans/group03/female_03.mdl",
+	"models/player/humans/group03/male_05.mdl",
+	"models/player/humans/group03/female_04.mdl",
+	"models/player/humans/group03/male_06.mdl",
+	"models/player/humans/group03/female_06.mdl",
+	"models/player/humans/group03/male_07.mdl",
+	"models/player/humans/group03/female_07.mdl",
+	"models/player/humans/group03/male_08.mdl",
+	"models/player/humans/group03/male_09.mdl",
 };
 
 const char *g_ppszRandomCombineModels[] =
 {
-	"models/combine_soldier.mdl",
-	"models/combine_soldier_prisonguard.mdl",
-	"models/combine_super_soldier.mdl",
-	"models/police.mdl",
+	"models/player/combine_soldier.mdl",
+	"models/player/combine_soldier_prisonguard.mdl",
+	"models/player/combine_super_soldier.mdl",
+	"models/player/police.mdl",
 };
-
 
 #define MAX_COMBINE_MODELS 4
 #define MODEL_CHANGE_INTERVAL 5.0f
@@ -191,11 +196,14 @@ void CHL2MP_Player::GiveAllItems( void )
 	GiveNamedItem( "weapon_slam" );
 
 	GiveNamedItem( "weapon_physcannon" );
-	
+	GiveNamedItem( "weapon_physgun" );
+
+	GiveNamedItem( "weapon_bugbait" );
 }
 
 void CHL2MP_Player::GiveDefaultItems( void )
 {
+#ifndef OMOD
 	EquipSuit();
 
 	CBasePlayer::GiveAmmo( 255,	"Pistol");
@@ -230,6 +238,9 @@ void CHL2MP_Player::GiveDefaultItems( void )
 	{
 		Weapon_Switch( Weapon_OwnsThisType( "weapon_physcannon" ) );
 	}
+#else
+	GiveAllItems();
+#endif
 }
 
 void CHL2MP_Player::PickDefaultSpawnTeam( void )
@@ -335,11 +346,14 @@ void CHL2MP_Player::Spawn(void)
 
 void CHL2MP_Player::PickupObject( CBaseEntity *pObject, bool bLimitMassAndSize )
 {
-	
+#ifdef OMOD
+	BaseClass::PickupObject( pObject, bLimitMassAndSize );
+#endif
 }
 
 bool CHL2MP_Player::ValidatePlayerModel( const char *pModel )
 {
+#ifndef OMOD
 	int iModels = ARRAYSIZE( g_ppszRandomCitizenModels );
 	int i;	
 
@@ -362,6 +376,9 @@ bool CHL2MP_Player::ValidatePlayerModel( const char *pModel )
 	}
 
 	return false;
+#else
+	return true;
+#endif
 }
 
 void CHL2MP_Player::SetPlayerTeamModel( void )
@@ -373,7 +390,7 @@ void CHL2MP_Player::SetPlayerTeamModel( void )
 
 	if ( modelIndex == -1 || ValidatePlayerModel( szModelName ) == false )
 	{
-		szModelName = "models/Combine_Soldier.mdl";
+		szModelName = "models/player/Combine_Soldier.mdl";
 		m_iModelType = TEAM_COMBINE;
 
 		char szReturnString[512];
@@ -426,7 +443,7 @@ void CHL2MP_Player::SetPlayerModel( void )
 
 		if ( ValidatePlayerModel( pszCurrentModelName ) == false )
 		{
-			pszCurrentModelName = "models/Combine_Soldier.mdl";
+			pszCurrentModelName = "models/player/Combine_Soldier.mdl";
 		}
 
 		Q_snprintf( szReturnString, sizeof (szReturnString ), "cl_playermodel %s\n", pszCurrentModelName );
@@ -474,7 +491,7 @@ void CHL2MP_Player::SetPlayerModel( void )
 
 	if ( modelIndex == -1 )
 	{
-		szModelName = "models/Combine_Soldier.mdl";
+		szModelName = "models/player/Combine_Soldier.mdl";
 		m_iModelType = TEAM_COMBINE;
 
 		char szReturnString[512];
@@ -616,7 +633,7 @@ void CHL2MP_Player::NoteWeaponFired( void )
 
 extern ConVar sv_maxunlag;
 
-bool CHL2MP_Player::WantsLagCompensationOnEntity(const CBaseEntity *pEntity, const CUserCmd *pCmd, const CBitVec<MAX_EDICTS> *pEntityTransmitBits) const
+bool CHL2MP_Player::WantsLagCompensationOnEntity( const CBasePlayer *pPlayer, const CUserCmd *pCmd, const CBitVec<MAX_EDICTS> *pEntityTransmitBits ) const
 {
 	// No need to lag compensate at all if we're not attacking in this command and
 	// we haven't attacked recently.
@@ -624,22 +641,15 @@ bool CHL2MP_Player::WantsLagCompensationOnEntity(const CBaseEntity *pEntity, con
 		return false;
 
 	// If this entity hasn't been transmitted to us and acked, then don't bother lag compensating it.
-	if (pEntityTransmitBits && !pEntityTransmitBits->Get(pEntity->entindex())) 
+	if ( pEntityTransmitBits && !pEntityTransmitBits->Get( pPlayer->entindex() ) )
 		return false;
 
 	const Vector &vMyOrigin = GetAbsOrigin();
-	const Vector &vHisOrigin = pEntity->GetAbsOrigin();
+	const Vector &vHisOrigin = pPlayer->GetAbsOrigin();
 
 	// get max distance player could have moved within max lag compensation time, 
 	// multiply by 1.5 to to avoid "dead zones"  (sqrt(2) would be the exact value)
-	float maxspeed;
-	CBasePlayer *pPlayer = ToBasePlayer((CBaseEntity*)pEntity);
-	if (pPlayer)
-		maxspeed = pPlayer->MaxSpeed();
-	else
-		maxspeed = 600;
-	float maxDistance = 1.5 * maxspeed * sv_maxunlag.GetFloat();
-
+	float maxDistance = 1.5 * pPlayer->MaxSpeed() * sv_maxunlag.GetFloat();
 
 	// If the player is within this distance, lag compensate them in case they're running past us.
 	if ( vHisOrigin.DistTo( vMyOrigin ) < maxDistance )

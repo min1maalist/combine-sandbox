@@ -400,7 +400,7 @@ bool CGib::SUB_AllowedToFade( void )
 			return false;
 	}
 
-	CBasePlayer *pPlayer = UTIL_GetNearestVisiblePlayer(this); 
+	CBasePlayer *pPlayer = UTIL_GetNearestPlayer( GetAbsOrigin() );
 
 	if ( pPlayer && pPlayer->FInViewCone( this ) && m_bForceRemove == false )
 	{

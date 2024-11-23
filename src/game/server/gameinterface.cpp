@@ -90,7 +90,6 @@
 #include "serverbenchmark_base.h"
 #include "querycache.h"
 
-
 #ifdef TF_DLL
 #include "gc_clientsystem.h"
 #include "econ_item_inventory.h"

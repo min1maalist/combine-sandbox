@@ -23,6 +23,8 @@
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
+extern ConVar npc_friendlyfire;
+
 #define EFFECT_COUNT 4
 
 extern ConVar ai_debug_avoidancebounds;
@@ -340,7 +342,7 @@ void CNPC_Dog::SetPlayerAvoidState( void )
 		physfollower_t *pBone;
 		int i;
 
-		CBasePlayer *pLocalPlayer = UTIL_GetNearestPlayer(GetAbsOrigin()); 
+		CBasePlayer *pLocalPlayer = AI_GetNearestPlayer( GetAbsOrigin() );
 
 		if ( pLocalPlayer )
 		{
@@ -472,7 +474,8 @@ void CNPC_Dog::Spawn( void )
 	m_takedamage		= DAMAGE_NO;
 	
 	CapabilitiesAdd( bits_CAP_MOVE_GROUND | bits_CAP_OPEN_DOORS | bits_CAP_TURN_HEAD | bits_CAP_ANIMATEDFACE );
-	CapabilitiesAdd( bits_CAP_FRIENDLY_DMG_IMMUNE );
+	if (!npc_friendlyfire.GetBool())
+		CapabilitiesAdd( bits_CAP_FRIENDLY_DMG_IMMUNE );
 
 	NPCInit();
 
@@ -832,7 +835,7 @@ void CNPC_Dog::ThrowObject( const char *pAttachmentName )
 			}
 				
 			if ( m_hThrowTarget == NULL )
-				m_hThrowTarget = UTIL_GetNearestVisiblePlayer(this); 
+				 m_hThrowTarget = AI_GetNearestPlayer( GetAbsOrigin() );
 
 			Vector vThrowDirection;
 
@@ -1385,7 +1388,7 @@ void CNPC_Dog::RunTask( const Task_t *pTask )
 
 				SetAim( m_hPhysicsEnt->WorldSpaceCenter() - GetAbsOrigin() );
 
-				CBasePlayer *pPlayer = UTIL_GetNearestVisiblePlayer(this); 
+				CBasePlayer *pPlayer = AI_GetNearestPlayer( GetAbsOrigin() );
 
 				float flDistanceToPlayer = flDistance;
 
@@ -1519,7 +1522,7 @@ void CNPC_Dog::SetupThrowTarget( void )
 {
 	if ( m_hThrowTarget == NULL )
 	{
-		m_hThrowTarget = UTIL_GetNearestVisiblePlayer(this); 
+		m_hThrowTarget = AI_GetNearestPlayer( GetAbsOrigin() );
 	}
 
 	SetTarget( m_hThrowTarget );
@@ -1674,7 +1677,7 @@ void CNPC_Dog::StartTask( const Task_t *pTask )
 		m_flNextSwat = gpGlobals->curtime + pTask->flTaskData;
 
 		if ( m_hThrowTarget == NULL )
-			m_hThrowTarget = UTIL_GetNearestVisiblePlayer(this); 
+			m_hThrowTarget = AI_GetNearestPlayer( GetAbsOrigin() );
 
 		TaskComplete();
 		break;

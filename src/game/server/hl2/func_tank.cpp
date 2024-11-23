@@ -1550,7 +1550,7 @@ void CFuncTank::Think( void )
 		}
 
 #ifdef FUNCTANK_AUTOUSE
-		CBasePlayer *pPlayer = UTIL_GetNearestPlayer(GetAbsOrigin()); 
+		CBasePlayer *pPlayer = UTIL_PlayerByIndex(1);
 		bool bThinkFast = false;
 
 		if( pPlayer )
@@ -2159,6 +2159,9 @@ void CFuncTank::DoMuzzleFlash( void )
 			CEffectData data;
 			data.m_nAttachmentIndex = m_nBarrelAttachment;
 			data.m_nEntIndex = pAnim->entindex();
+#ifdef OMOD
+			pAnim->GetAttachment( m_nBarrelAttachment, data.m_vOrigin );
+#endif
 			
 			// FIXME: Create a custom entry here!
 			DispatchEffect( "ChopperMuzzleFlash", data );
@@ -2170,6 +2173,9 @@ void CFuncTank::DoMuzzleFlash( void )
 			data.m_nAttachmentIndex = m_nBarrelAttachment;
 			data.m_flScale = 1.0f;
 			data.m_fFlags = MUZZLEFLASH_COMBINE;
+#ifdef OMOD
+			pAnim->GetAttachment( m_nBarrelAttachment, data.m_vOrigin );
+#endif
 
 			DispatchEffect( "MuzzleFlash", data );
 		}
@@ -2243,7 +2249,7 @@ void CFuncTank::Fire( int bulletCount, const Vector &barrelEnd, const Vector &fo
 	{
 		if ( IsX360() )
 		{
-			UTIL_GetNearestPlayer(GetAbsOrigin())->RumbleEffect(RUMBLE_AR2, 0, RUMBLE_FLAG_RESTART | RUMBLE_FLAG_RANDOM_AMPLITUDE); 
+			UTIL_PlayerByIndex(1)->RumbleEffect( RUMBLE_AR2, 0, RUMBLE_FLAG_RESTART | RUMBLE_FLAG_RANDOM_AMPLITUDE );
 		}
 		else
 		{
@@ -3482,7 +3488,7 @@ enum
 
 void UTIL_VisualizeCurve( int type, int steps, float bias )
 {
-	CBasePlayer *pPlayer = UTIL_GetLocalPlayer();
+	CBasePlayer *pPlayer = UTIL_PlayerByIndex( 1 );
 	Vector vForward, vRight, vUp;
 	
 	pPlayer->EyeVectors( &vForward, &vRight, &vUp );
@@ -4215,7 +4221,7 @@ void CFuncTankCombineCannon::FuncTankPostThink()
 			AddSpawnFlags( SF_TANK_AIM_AT_POS );
 
 			Vector vecTargetPosition = GetTargetPosition();
-			CBasePlayer *pPlayer = UTIL_GetNearestVisiblePlayer(this);
+			CBasePlayer *pPlayer = AI_GetSinglePlayer();
 			Vector vecToPlayer = pPlayer->WorldSpaceCenter() - GetAbsOrigin();
 			vecToPlayer.NormalizeInPlace();
 
@@ -4362,8 +4368,9 @@ void CFuncTankCombineCannon::Fire( int bulletCount, const Vector &barrelEnd, con
 void CFuncTankCombineCannon::MakeTracer( const Vector &vecTracerSrc, const trace_t &tr, int iTracerType )
 {
 	// If the shot passed near the player, shake the screen.
+	if( AI_IsSinglePlayer() )
 	{
-		Vector vecPlayer = UTIL_GetNearestVisiblePlayer(this)->EyePosition(); 
+		Vector vecPlayer = AI_GetSinglePlayer()->EyePosition();
 
 		Vector vecNearestPoint = PointOnLineNearestPoint( vecTracerSrc, tr.endpos, vecPlayer );
 

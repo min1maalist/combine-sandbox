@@ -637,69 +637,83 @@ CBasePlayer* UTIL_PlayerByUserId( int userID )
 }
 
 //
-// Return the local player.
-// If this is a multiplayer game, return NULL.
+// Return the listenserver-host.
+// If that's not possible, try to return literally ANY player
 // 
-CBasePlayer *UTIL_GetLocalPlayer(void)
+CBasePlayer *UTIL_GetLocalPlayer( void )
 {
-	// first try getting the host, failing that, get *ANY* player
+	//try to return the listenserver-host
 	CBasePlayer *pHost = UTIL_GetListenServerHost();
-	if (pHost)
+	if (pHost){
 		return pHost;
+	}
 
-	for (int i = 1; i <= gpGlobals->maxClients; i++)
+	//try to return literally any other client on the server
+	for (int i = 1; i < gpGlobals->maxClients; i++)
 	{
 		CBasePlayer *pPlayer = UTIL_PlayerByIndex(i);
-		if (pPlayer)
+
+		if (pPlayer){
 			return pPlayer;
+		}	
 	}
 
 	return NULL;
 }
 
-CBasePlayer *UTIL_GetNearestPlayer(const Vector &origin) 
+#ifdef OMOD
+CBasePlayer* UTIL_GetNearestPlayer(const Vector& pos)
 {
-	float distToNearest = 999999.0f;
-	CBasePlayer *pNearest = NULL;
-
-	for (int i = 1; i <= gpGlobals->maxClients; i++)
+	CBasePlayer* pPlayer = NULL;
+	float	flNearestDistSqr = FLT_MAX;
+	float	flDistSqr;
+	for (int iClient = 1; iClient <= gpGlobals->maxClients; ++iClient)
 	{
-		CBasePlayer *pPlayer = UTIL_PlayerByIndex(i);
-		if (!pPlayer)
+		CBasePlayer* pEnt = UTIL_PlayerByIndex(iClient);
+		if (!pEnt || !pEnt->IsPlayer())
 			continue;
 
-		float flDist = (pPlayer->GetAbsOrigin() - origin).LengthSqr();
-		if (flDist < distToNearest)
+		// Distance is the deciding factor
+		flDistSqr = (pos - pEnt->GetAbsOrigin()).LengthSqr();
+
+		// Closer, take it
+		if (flDistSqr < flNearestDistSqr)
 		{
-			pNearest = pPlayer;
-			distToNearest = flDist;
+			flNearestDistSqr = flDistSqr;
+			pPlayer = pEnt;
 		}
 	}
 
-	return pNearest;
+	return pPlayer;
 }
 
-CBasePlayer *UTIL_GetNearestVisiblePlayer(CBaseEntity *pLooker, int mask)
+CBasePlayer* UTIL_GetNearestVisiblePlayer(CBaseEntity* pEntity, int mask)
 {
-	float distToNearest = 999999.0f;
-	CBasePlayer *pNearest = NULL;
+	const Vector& pos = pEntity->GetAbsOrigin();
 
-	for (int i = 1; i <= gpGlobals->maxClients; i++)
+	CBasePlayer* pPlayer = NULL;
+	float	flNearestDistSqr = FLT_MAX;
+	float	flDistSqr;
+	for (int iClient = 1; iClient <= gpGlobals->maxClients; ++iClient)
 	{
-		CBasePlayer *pPlayer = UTIL_PlayerByIndex(i);
-		if (!pPlayer)
+		CBasePlayer* pEnt = UTIL_PlayerByIndex(iClient);
+		if (!pEnt || !pEnt->IsPlayer())
 			continue;
 
-		float flDist = (pPlayer->GetAbsOrigin() - pLooker->GetAbsOrigin()).LengthSqr();
-		if (flDist < distToNearest && pLooker->FVisible(pPlayer, mask))
+		// Distance is the deciding factor
+		flDistSqr = (pos - pEnt->GetAbsOrigin()).LengthSqr();
+
+		// Closer, take it
+		if (flDistSqr < flNearestDistSqr && pEntity->FVisible(pEnt, mask))
 		{
-			pNearest = pPlayer;
-			distToNearest = flDist;
+			flNearestDistSqr = flDistSqr;
+			pPlayer = pEnt;
 		}
 	}
 
-	return pNearest;
+	return pPlayer;
 }
+#endif
 
 //
 // Get the local player on a listen server - this is for multiplayer use only
@@ -707,8 +721,10 @@ CBasePlayer *UTIL_GetNearestVisiblePlayer(CBaseEntity *pLooker, int mask)
 CBasePlayer *UTIL_GetListenServerHost( void )
 {
 	// no "local player" if this is a dedicated server or a single player game
-	if (engine->IsDedicatedServer()) 
+	if (engine->IsDedicatedServer())
 	{
+		Assert( !"UTIL_GetListenServerHost" );
+		Warning( "UTIL_GetListenServerHost() called from a dedicated server or single-player game.\n" );
 		return NULL;
 	}
 

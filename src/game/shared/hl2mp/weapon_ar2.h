@@ -41,10 +41,10 @@ public:
 
 	void	AddViewKick( void );
 
-	void	FireNPCPrimaryAttack(CBaseCombatCharacter *pOperator, bool bUseWeaponAngles);
-	void	FireNPCSecondaryAttack(CBaseCombatCharacter *pOperator, bool bUseWeaponAngles);
-	void	Operator_ForceNPCFire(CBaseCombatCharacter  *pOperator, bool bSecondary);
-	void	Operator_HandleAnimEvent(animevent_t *pEvent, CBaseCombatCharacter *pOperator);
+	void	FireNPCPrimaryAttack( CBaseCombatCharacter *pOperator, bool bUseWeaponAngles );
+	void	FireNPCSecondaryAttack( CBaseCombatCharacter *pOperator, bool bUseWeaponAngles );
+	void	Operator_ForceNPCFire( CBaseCombatCharacter  *pOperator, bool bSecondary );
+	void	Operator_HandleAnimEvent( animevent_t *pEvent, CBaseCombatCharacter *pOperator );
 
 	int		GetMinBurst( void ) { return 2; }
 	int		GetMaxBurst( void ) { return 5; }
@@ -53,10 +53,13 @@ public:
 	bool	CanHolster( void );
 	bool	Reload( void );
 
+#ifdef OMOD
 #ifndef CLIENT_DLL
-	int		CapabilitiesGet(void) { return bits_CAP_WEAPON_RANGE_ATTACK1; }
+	int		CapabilitiesGet( void ) { return bits_CAP_WEAPON_RANGE_ATTACK1; }
+#endif
+#endif
+
 	Activity	GetPrimaryAttackActivity( void );
-#endif 
 	
 	void	DoImpactEffect( trace_t &tr, int nDamageType );
 	
