@@ -66,3 +66,4 @@ game/csbox/stats.txt
 game/csbox/voice_ban.dt
 *.cache
 game/csbox/cfg/server_blacklist.txt
+*.vpc_crc
