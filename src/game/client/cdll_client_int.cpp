@@ -177,7 +177,8 @@ extern vgui::IInputInternal* g_InputInternal;
 #include "discord_rpc.h"
 #include <time.h>
 #include "mountsteamcontent.h"
-#include "ge_luamanager.h"
+#include "luamanager.h"
+#include "luacachefile.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -496,6 +497,23 @@ public:
 	virtual void GetPlayerTextColor(int entindex, int color[3])
 	{
 		color[0] = color[1] = color[2] = 128;
+#if defined ( LUA_SDK )
+		BEGIN_LUA_CALL_HOOK("GetPlayerTextColor");
+		lua_pushinteger(L, entindex);
+		lua_pushinteger(L, color[0]);
+		lua_pushinteger(L, color[1]);
+		lua_pushinteger(L, color[2]);
+		END_LUA_CALL_HOOK(4, 3);
+
+		if (lua_isnumber(L, -3))
+			color[2] = (int)lua_tointeger(L, -3);
+		if (lua_isnumber(L, -2))
+			color[1] = (int)lua_tointeger(L, -2);
+		if (lua_isnumber(L, -1))
+			color[0] = (int)lua_tointeger(L, -1);
+
+		lua_pop(L, 3);
+#endif
 	}
 
 	virtual void UpdateCursorState()
@@ -504,6 +522,12 @@ public:
 
 	virtual bool			CanShowSpeakerLabels()
 	{
+#if defined ( LUA_SDK )
+		BEGIN_LUA_CALL_HOOK("CanShowSpeakerLabels");
+		END_LUA_CALL_HOOK(0, 1);
+
+		RETURN_LUA_BOOLEAN();
+#endif
 		return true;
 	}
 };
@@ -1064,6 +1088,13 @@ int CHLClient::Init(CreateInterfaceFn appSystemFactory, CreateInterfaceFn physic
 		return false;
 
 	vgui::VGui_InitMatSysInterfacesList("ClientDLL", &appSystemFactory, 1);
+#if defined ( LUA_SDK )
+	// Initialize the GameUI state
+	luasrc_init_gameui();
+
+	luasrc_dofolder(LGameUI, LUA_PATH_GAMEUI);
+#endif
+
 
 	// Add the client systems.	
 
@@ -1270,6 +1301,10 @@ void CHLClient::Shutdown(void)
 	g_pSixenseInput->Shutdown();
 	delete g_pSixenseInput;
 	g_pSixenseInput = NULL;
+#endif
+
+#ifdef LUA_SDK
+	luasrc_shutdown_gameui();
 #endif
 
 	C_BaseAnimating::ShutdownBoneSetupThreadPool();
@@ -1677,7 +1712,45 @@ void CHLClient::LevelInitPreEntity(char const* pMapName)
 		return;
 	g_bLevelInitialized = true;
 
-	Lua()->InitDll();
+#if defined ( LUA_SDK )
+	lcf_recursivedeletefile(LUA_PATH_CACHE);
+
+	// Add the Lua environment.
+	// Andrew; unarchive the Lua Cache File
+	if (gpGlobals->maxClients > 1)
+	{
+		luasrc_ExtractLcf();
+	}
+
+	luasrc_init();
+
+	if (gpGlobals->maxClients > 1)
+	{
+		luasrc_dofolder(L, LUA_PATH_CACHE LUA_PATH_EXTENSIONS);
+		luasrc_dofolder(L, LUA_PATH_CACHE LUA_PATH_MODULES);
+		luasrc_dofolder(L, LUA_PATH_CACHE LUA_PATH_GAME_SHARED);
+		luasrc_dofolder(L, LUA_PATH_CACHE LUA_PATH_GAME_CLIENT);
+	}
+
+	luasrc_dofolder(L, LUA_PATH_EXTENSIONS);
+	luasrc_dofolder(L, LUA_PATH_MODULES);
+	luasrc_dofolder(L, LUA_PATH_GAME_SHARED);
+	luasrc_dofolder(L, LUA_PATH_GAME_CLIENT);
+
+	luasrc_LoadWeapons();
+	luasrc_LoadEntities();
+	// luasrc_LoadEffects();
+
+	//Andrew; loadup base gamemode.
+	luasrc_LoadGamemode(LUA_BASE_GAMEMODE);
+
+	luasrc_LoadGamemode(gamemode.GetString());
+	luasrc_SetGamemode(gamemode.GetString());
+
+	BEGIN_LUA_CALL_HOOK("LevelInitPreEntity");
+	lua_pushstring(L, pMapName);
+	END_LUA_CALL_HOOK(1, 0);
+#endif
 
 	input->LevelInit();
 
@@ -1768,6 +1841,11 @@ void CHLClient::LevelInitPostEntity()
 	IBaseMenu->m_pHTMLPanel->RequestFocus();
 #endif
 
+#if defined ( LUA_SDK )
+	BEGIN_LUA_CALL_HOOK("LevelInitPostEntity");
+	END_LUA_CALL_HOOK(0, 0);
+#endif
+
 
 	IGameSystem::LevelInitPostEntityAllSystems();
 	C_PhysPropClientside::RecreateAll();
@@ -1803,6 +1881,14 @@ void CHLClient::LevelShutdown(void)
 		return;
 
 	g_bLevelInitialized = false;
+
+#if defined ( LUA_SDK )
+	if (g_bLuaInitialized)
+	{
+		BEGIN_LUA_CALL_HOOK("LevelShutdown");
+		END_LUA_CALL_HOOK(0, 0);
+	}
+#endif
 
 	// Disable abs recomputations when everything is shutting down
 	CBaseEntity::EnableAbsRecomputations(false);
@@ -1881,11 +1967,6 @@ void CHLClient::LevelShutdown(void)
 	CReplayRagdollRecorder::Instance().Shutdown();
 	CReplayRagdollCache::Instance().Shutdown();
 #endif
-
-#ifdef CSBOX
-	Lua()->ShutdownDll();
-#endif
-
 }
 
 

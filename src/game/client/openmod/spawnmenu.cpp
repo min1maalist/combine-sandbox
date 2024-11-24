@@ -1,4 +1,4 @@
-//========= Copyright Combine Sandbox & OpenMod, All rights reserved. ============//
+//========= Copyright OpenMod, All rights reserved. ============//
 //
 // Purpose:
 //
@@ -182,7 +182,7 @@ public:
 		int x, y;
 		surface()->GetScreenSize(x, y);
 		SetSize(x, y);
-		SetPos(0, 0);
+		SetPos(0,0);
 
 		vgui::ivgui()->AddTickSignal(GetVPanel(), 100);
 

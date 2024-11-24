@@ -14,7 +14,7 @@ $Configuration
 {
 	$Compiler
 	{
-		$AdditionalIncludeDirectories	"$BASE;$SRCDIR\game\shared\hl2,.\hl2,.\hl2mp,$SRCDIR\game\shared\hl2mp;.\openmod;$SRCDIR\game\shared\openmod;.\portal;$SRCDIR\game\shared\csbox"
+		$AdditionalIncludeDirectories	"$BASE;$SRCDIR\game\shared\hl2,.\hl2,.\hl2mp,$SRCDIR\game\shared\hl2mp;.\openmod;$SRCDIR\game\shared\openmod;.\portal"
 		$PreprocessorDefinitions		"$BASE;HL2MP;HL2_DLL;OMOD;CSBOX"
 	}
 }
@@ -84,10 +84,6 @@ $Project "Server (Combine Sandbox)"
 			$File	"$SRCDIR\game\shared\Multiplayer\multiplayer_animstate.cpp"
 			
 			$File	"$SRCDIR\game\shared\openmod\weapon_physgun.cpp"
-			$File	"$SRCDIR\game\shared\csbox\ge_luamanager.cpp"
-			$File	"$SRCDIR\game\shared\csbox\ge_luamanager.h"
-			$File	"$SRCDIR\game\shared\csbox\luahandle.cpp"
-			$File	"$SRCDIR\game\shared\csbox\luahandle.h"
 		}
 
 		$Folder	"HL2 DLL"
@@ -288,6 +284,13 @@ $Project "Server (Combine Sandbox)"
 			$File	"$SRCDIR\game\shared\hl2mp\hl2mp_weapon_parse.cpp"
 			$File	"$SRCDIR\game\shared\hl2mp\hl2mp_weapon_parse.h"
 			
+			$Folder "Lua"
+			{
+				$File	"hl2\lhl2_player.cpp"
+				$File	"$SRCDIR\game\shared\hl2mp\lhl2mp_player_shared.cpp"
+				$File	"$SRCDIR\game\shared\hl2mp\lhl2mp_player_shared.h"
+			}
+			
 			$Folder	"Weapons"
 			{
 				$File	"hl2mp\grenade_satchel.cpp"
@@ -309,6 +312,9 @@ $Project "Server (Combine Sandbox)"
 				$File	"$SRCDIR\game\shared\hl2mp\weapon_hl2mpbasebasebludgeon.cpp"
 				$File	"$SRCDIR\game\shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.cpp"
 				$File	"$SRCDIR\game\shared\hl2mp\weapon_hl2mpbasehlmpcombatweapon.h"
+				$File	"$SRCDIR\game\shared\hl2mp\weapon_hl2mpbase_scriptedweapon.cpp"
+				$File	"$SRCDIR\game\shared\hl2mp\weapon_hl2mpbase_scriptedweapon.h"
+				
 				$File	"$SRCDIR\game\shared\hl2mp\weapon_physcannon.cpp"
 				$File	"$SRCDIR\game\shared\hl2mp\weapon_physcannon.h"
 				$File	"$SRCDIR\game\shared\hl2mp\weapon_pistol.cpp"
