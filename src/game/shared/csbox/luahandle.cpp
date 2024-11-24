@@ -15,7 +15,7 @@ LuaHandle::~LuaHandle() {
 }
 
 void LuaHandle::Init() {
-    const char *luaFile = "autoexec.lua";
+    const char *luaFile = "lua.lua";
 
     // Load into buffer
     FileHandle_t f = filesystem->Open(luaFile, "rb", "MOD");

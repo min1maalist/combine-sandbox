@@ -108,7 +108,3 @@ CON_COMMAND(shitify, "Destroy's the graphics") {
     engine->ClientCmd("sv_cheats 1; mat_dxlevel 60; cl_ragdoll_collide 0; mat_picmip 4; r_WaterDrawReflection 0; r_WaterDrawRefraction 0; mat_wateroverlaysize 8; r_lod 5; mat_fullbright 1; mat_diffuse 5; mat_bumpmap 0; r_shadows 0; mat_forceaniso 0; mat_forcehardwaresync 0; mat_reducefillrate 0; mat_mipmaptextures 0; mat_filtertextures 0; mat_bloom 0; mat_envmapsize 32; mat_envmapgasize 8; mat_antialiasing 0; cl_phys_props_enable 0; mat_filterlightmaps 0; mat_showlowresimage 1");
     Msg("Shitified your graphics successfuly");
 }
-
-CON_COMMAND(spawnmenu, "Spawn Menu") {
-    engine->ClientCmd("debugsystemui");
-}
