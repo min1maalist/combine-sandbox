@@ -51,6 +51,9 @@
     <Library Include="..\..\lib\public\choreoobjects.lib">
       <Filter>Link Libraries</Filter>
     </Library>
+    <Library Include="..\..\lib\public\discord-rpc.lib">
+      <Filter>Link Libraries</Filter>
+    </Library>
     <Library Include="..\..\lib\public\dmxloader.lib">
       <Filter>Link Libraries</Filter>
     </Library>
@@ -1550,6 +1553,9 @@
     <ClInclude Include="world.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\game\shared\csbox\ge_luamanager.h">
+      <Filter>Source Files\Combine Sandbox DLL</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\game\shared\Multiplayer\multiplayer_animstate.h">
       <Filter>Source Files\Combine Sandbox DLL</Filter>
     </ClInclude>
@@ -1837,6 +1843,9 @@
     </ClInclude>
     <ClInclude Include="toolframework_server.h">
       <Filter>Tools Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\csbox\luahandle.h">
+      <Filter>Source Files\Combine Sandbox DLL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2962,6 +2971,9 @@
     <ClCompile Include="ai_eventresponse.cpp">
       <Filter>Source Files\Combine Sandbox DLL</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\game\shared\csbox\ge_luamanager.cpp">
+      <Filter>Source Files\Combine Sandbox DLL</Filter>
+    </ClCompile>
     <ClCompile Include="hl2\grenade_spit.cpp">
       <Filter>Source Files\Combine Sandbox DLL</Filter>
     </ClCompile>
@@ -3612,6 +3624,9 @@
     </ClCompile>
     <ClCompile Include="toolframework_server.cpp">
       <Filter>Tools Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\csbox\luahandle.cpp">
+      <Filter>Source Files\Combine Sandbox DLL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -69,6 +69,9 @@
     <Library Include="..\..\lib\public\choreoobjects.lib">
       <Filter>Link Libraries</Filter>
     </Library>
+    <Library Include="..\..\lib\public\discord-rpc.lib">
+      <Filter>Link Libraries</Filter>
+    </Library>
     <Library Include="..\..\lib\public\dmxloader.lib">
       <Filter>Link Libraries</Filter>
     </Library>
@@ -1844,6 +1847,9 @@
     <ClInclude Include="viewpostprocess.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\game\shared\csbox\ge_luamanager.h">
+      <Filter>Source Files\Combine Sandbox DLL</Filter>
+    </ClInclude>
     <ClInclude Include="openmod\mountsteamcontent.h">
       <Filter>Source Files\Combine Sandbox DLL</Filter>
     </ClInclude>
@@ -1954,6 +1960,9 @@
     </ClInclude>
     <ClInclude Include="toolframework_client.h">
       <Filter>Tool Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\csbox\luahandle.h">
+      <Filter>Source Files\Combine Sandbox DLL</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -3001,6 +3010,9 @@
     <ClCompile Include="..\..\game\shared\csbox\csbox_cmds.cpp">
       <Filter>Source Files\Combine Sandbox DLL</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\game\shared\csbox\ge_luamanager.cpp">
+      <Filter>Source Files\Combine Sandbox DLL</Filter>
+    </ClCompile>
     <ClCompile Include="openmod\mountsteamcontent.cpp">
       <Filter>Source Files\Combine Sandbox DLL</Filter>
     </ClCompile>
@@ -3537,6 +3549,9 @@
     </ClCompile>
     <ClCompile Include="toolframework_client.cpp">
       <Filter>Tool Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="..\shared\csbox\luahandle.cpp">
+      <Filter>Source Files\Combine Sandbox DLL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

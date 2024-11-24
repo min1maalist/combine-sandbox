@@ -1,4 +1,4 @@
-//========= Copyright OpenMod, All rights reserved. ============//
+//========= Copyright Combine Sandbox & OpenMod, All rights reserved. ============//
 //
 // Purpose:
 //
@@ -182,7 +182,7 @@ public:
 		int x, y;
 		surface()->GetScreenSize(x, y);
 		SetSize(x, y);
-		SetPos(0,0);
+		SetPos(0, 0);
 
 		vgui::ivgui()->AddTickSignal(GetVPanel(), 100);
 
@@ -258,14 +258,30 @@ public:
 		}
 	}
 
-	void OnScrollBarMoved() {
+	void OnScrollBarMoved()
+	{
 		int scrollPos = m_pScrollBar->GetValue();
 
-		for (int i = 0; i < m_Buttons.Count(); i++) {
+		for (int i = 0; i < m_Buttons.Count(); i++)
+		{
 			vgui::Panel* btn = m_Buttons[i];
 			int yOffset = btn->GetYPos() - scrollPos;
 			btn->SetPos(btn->GetXPos(), yOffset);
 		}
+	}
+
+	void OnMouseWheeled(int delta) override
+	{
+		if (!m_pScrollBar)
+			return;
+
+		int currentScroll = m_pScrollBar->GetValue();
+		int scrollIncrement = 30;
+		int newScroll = currentScroll - delta * scrollIncrement;
+
+		m_pScrollBar->SetValue(newScroll);
+
+		OnScrollBarMoved();
 	}
 
 	void Init(KeyValues* kv);

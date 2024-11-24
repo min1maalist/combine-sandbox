@@ -177,6 +177,7 @@ extern vgui::IInputInternal* g_InputInternal;
 #include "discord_rpc.h"
 #include <time.h>
 #include "mountsteamcontent.h"
+#include "ge_luamanager.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -1676,6 +1677,8 @@ void CHLClient::LevelInitPreEntity(char const* pMapName)
 		return;
 	g_bLevelInitialized = true;
 
+	Lua()->InitDll();
+
 	input->LevelInit();
 
 	vieweffects->LevelInit();
@@ -1878,6 +1881,11 @@ void CHLClient::LevelShutdown(void)
 	CReplayRagdollRecorder::Instance().Shutdown();
 	CReplayRagdollCache::Instance().Shutdown();
 #endif
+
+#ifdef CSBOX
+	Lua()->ShutdownDll();
+#endif
+
 }
 
 

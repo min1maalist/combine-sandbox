@@ -67,7 +67,7 @@ RootPanel::RootPanel(VPANEL parent) : Panel( NULL, "RootPanel" )
 		"document.body.style.msUserSelect = 'none';"
 		"document.body.style.touchAction = 'none';"
 	);
-	// oh well..
+	// oh well...
 #endif
 }
 
@@ -121,7 +121,7 @@ void RootPanel::ApplySchemeSettings(IScheme *pScheme)
 
     const char *gameDir = engine->GetGameDirectory();
     char filePath[256];
-    sprintf( filePath, "%s/html/menu.html", gameDir );
+    sprintf( filePath, "%s/html/menu.html", gameDir ); // path ig
 
     m_pHTMLPanel->SetBounds(0, 0, wide, tall);
     m_pHTMLPanel->OpenURL(filePath, nullptr, true);

@@ -1,0 +1,1 @@
+lua_run_cl print("Hello World!") -- DO NOT RUN IN SERVER PLEASE FOR THE LOVE OF FUCKING GOD
