@@ -1,0 +1,5 @@
+========================= Credits =========================
+- YourLocalMoon - HTML Shit and Lua
+- GuestSneezePlayz - Lead Dev
+- ARGG - Physics Gun
+- HL2SB - Lua
