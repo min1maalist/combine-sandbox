@@ -1,6 +1,6 @@
 "GameInfo"
 {
-	game	"Combine Sandbox"
+	game	"OpenMod"
 	title	" "
 	title2	" "
 	type multiplayer_only

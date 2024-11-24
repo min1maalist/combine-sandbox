@@ -138,8 +138,7 @@ $Project
 		$Implib	"$LIBPUBLIC\tier0"
 		$Lib	"$LIBPUBLIC\tier1"
 		$Implib	"$LIBPUBLIC\vstdlib"
-		$Implib	"$LIBPUBLIC\lua54"
-		$Lib "$LIBPUBLIC\discord-rpc"
+		$Lib	"$LIBPUBLIC\discord-rpc"
 	}
 }
 
