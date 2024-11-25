@@ -2,15 +2,15 @@
 -- Purpose: Add AK-47 to Combine Sandbox
 
 SWEP.printname				= "AK-47"
-SWEP.viewmodel				= "models/weapons/cstrike/c_rif_ak47.mdl"
+SWEP.viewmodel				= "models/weapons/v_rif_ak47.mdl"
 SWEP.playermodel			= "models/weapons/w_rif_ak47.mdl"
 SWEP.anim_prefix			= "smg2"
 SWEP.bucket					= 1
 SWEP.bucket_position		= 1
 
-SWEP.clip_size				= 45
+SWEP.clip_size				= 30
 SWEP.clip2_size				= -1
-SWEP.default_clip			= 45
+SWEP.default_clip			= 60
 SWEP.default_clip2			= -1
 SWEP.primary_ammo			= "SMG1"
 SWEP.secondary_ammo			= "None"
@@ -18,7 +18,7 @@ SWEP.secondary_ammo			= "None"
 SWEP.weight					= 7
 SWEP.item_flags				= 0
 
-SWEP.damage					= 75
+SWEP.damage					= 11 -- SWEP Based on AR2 & SMG2 LMAO - Guest
 
 SWEP.SoundData				=
 {

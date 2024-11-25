@@ -67,3 +67,8 @@ game/csbox/voice_ban.dt
 *.cache
 game/csbox/cfg/server_blacklist.txt
 *.vpc_crc
+src/lib/public/mathlib.lib
+src/lib/public/tier1.lib
+src/lib/public/vgui_controls.lib
+src/game/server/server.vcxproj.vpc_crc
+*.vpc_crc
