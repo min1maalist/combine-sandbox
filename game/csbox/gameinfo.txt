@@ -2,7 +2,7 @@
 {
 	game	"Combine Sandbox"
 	title	" "
-	title2	" "
+	//title2	" "
 	type multiplayer_only
 	nomodels 0
 	nohimodel 1

@@ -1,29 +1,29 @@
 -- SWEP By GuestSneezePlayz
--- Purpose: Add AK-47 to Combine Sandbox
-
-SWEP.printname				= "AK-47"
-SWEP.viewmodel				= "models/weapons/v_rif_ak47.mdl"
-SWEP.playermodel			= "models/weapons/w_rif_ak47.mdl"
+-- Purpose: Provide Minigun lol
+-- why: one of my friends (irl) asked
+SWEP.printname				= "MINIGUN" -- Minigun CSBOX EDITION!11!
+SWEP.viewmodel				= "models/weapons/v_minigun.mdl"
+SWEP.playermodel			= "models/weapons/w_minigun.mdl"
 SWEP.anim_prefix			= "python"
-SWEP.bucket					= 1
-SWEP.bucket_position		= 1
+SWEP.bucket					= 5
+SWEP.bucket_position		= 0
 
 SWEP.clip_size				= 999
-SWEP.clip2_size				= -1
+SWEP.clip2_size				= -0
 SWEP.default_clip			= 999
-SWEP.default_clip2			= -1
+SWEP.default_clip2			= -0
 SWEP.primary_ammo			= "SMG1"
 SWEP.secondary_ammo			= "None"
 
 SWEP.weight					= 7
 SWEP.item_flags				= 0
 
-SWEP.damage					= 11 -- SWEP Based on AR2 & SMG2 LMAO - Guest
+SWEP.damage					= 40
 
 SWEP.SoundData				=
 {
-	empty					= "Weapon_SMG1.Empty",
-	single_shot				= "Weapon_SMG1.Single"
+	empty					= "Weapon_Pistol.Empty",
+	single_shot				= "weapons/minigun/minigun_fire.wav"
 }
 
 SWEP.showusagehint			= 0
@@ -85,8 +85,8 @@ function SWEP:PrimaryAttack()
 	pPlayer:SetAnimation( 5 );
 	ToHL2MPPlayer(pPlayer):DoAnimationEvent( 0 );
 
-	self.m_flNextPrimaryAttack = gpGlobals.curtime() + 0.75;
-	self.m_flNextSecondaryAttack = gpGlobals.curtime() + 0.75;
+	self.m_flNextPrimaryAttack = gpGlobals.curtime() + 0.01;
+	self.m_flNextSecondaryAttack = gpGlobals.curtime() + 0.01;
 
 	self.m_iClip1 = self.m_iClip1 - 1;
 
@@ -110,7 +110,7 @@ if not _CLIENT then
 	pPlayer:SnapEyeAngles( angles );
 end
 
-	pPlayer:ViewPunch( QAngle( -8, random.RandomFloat( -2, 2 ), 0 ) );
+	pPlayer:ViewPunch( QAngle( -0, random.RandomFloat( -0, 0 ), 0 ) );
 
 	if ( self.m_iClip1 == 0 and pPlayer:GetAmmoCount( self.m_iPrimaryAmmoType ) <= 0 ) then
 		-- HEV suit - indicate out of ammo condition
