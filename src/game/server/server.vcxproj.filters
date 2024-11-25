@@ -1559,6 +1559,9 @@
     <ClInclude Include="world.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\game\shared\csbox\mountaddons.h">
+      <Filter>Source Files\Combine Sandbox DLL</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\game\shared\Multiplayer\multiplayer_animstate.h">
       <Filter>Source Files\Combine Sandbox DLL</Filter>
     </ClInclude>
@@ -3023,6 +3026,9 @@
       <Filter>Source Files\Combine Sandbox DLL</Filter>
     </ClCompile>
     <ClCompile Include="hl2\grenade_spit.cpp">
+      <Filter>Source Files\Combine Sandbox DLL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\csbox\mountaddons.cpp">
       <Filter>Source Files\Combine Sandbox DLL</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\Multiplayer\multiplayer_animstate.cpp">

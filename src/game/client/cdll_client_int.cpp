@@ -179,6 +179,7 @@ extern vgui::IInputInternal* g_InputInternal;
 #include "mountsteamcontent.h"
 #include "luamanager.h"
 #include "luacachefile.h"
+#include "mountaddons.h"
 #endif
 
 // memdbgon must be the last include file in a .cpp file!!!
@@ -1054,6 +1055,10 @@ int CHLClient::Init(CreateInterfaceFn appSystemFactory, CreateInterfaceFn physic
 	{
 		return false;
 	}
+
+#ifdef CSBOX
+	MountAddons(); // addons...
+#endif
 
 	if (CommandLine()->FindParm("-textmode"))
 		g_bTextMode = true;

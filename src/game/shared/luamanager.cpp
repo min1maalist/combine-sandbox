@@ -224,7 +224,7 @@ void luasrc_init (void) {
 
   luasrc_openlibs(L);
 
-  Msg( "Lua initialized (" LUA_VERSION ")\n" );
+  ConColorMsg(Color(0, 119, 255, 255), "Lua initialized (" LUA_VERSION ")\n");
 }
 
 void luasrc_shutdown (void) {

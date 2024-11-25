@@ -1856,6 +1856,9 @@
     <ClInclude Include="viewpostprocess.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\game\shared\csbox\mountaddons.h">
+      <Filter>Source Files\Combine Sandbox DLL</Filter>
+    </ClInclude>
     <ClInclude Include="openmod\mountsteamcontent.h">
       <Filter>Source Files\Combine Sandbox DLL</Filter>
     </ClInclude>
@@ -3017,6 +3020,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\csbox\csbox_cmds.cpp">
+      <Filter>Source Files\Combine Sandbox DLL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\game\shared\csbox\mountaddons.cpp">
       <Filter>Source Files\Combine Sandbox DLL</Filter>
     </ClCompile>
     <ClCompile Include="openmod\mountsteamcontent.cpp">

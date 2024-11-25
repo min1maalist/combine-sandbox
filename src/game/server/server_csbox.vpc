@@ -14,7 +14,7 @@ $Configuration
 {
 	$Compiler
 	{
-		$AdditionalIncludeDirectories	"$BASE;$SRCDIR\game\shared\hl2,.\hl2,.\hl2mp,$SRCDIR\game\shared\hl2mp;.\openmod;$SRCDIR\game\shared\openmod;.\portal"
+		$AdditionalIncludeDirectories	"$BASE;$SRCDIR\game\shared\hl2,.\hl2,.\hl2mp,$SRCDIR\game\shared\hl2mp;.\openmod;$SRCDIR\game\shared\openmod;.\portal;$SRCDIR\game\shared\csbox"
 		$PreprocessorDefinitions		"$BASE;HL2MP;HL2_DLL;OMOD;CSBOX"
 	}
 }
@@ -84,6 +84,8 @@ $Project "Server (Combine Sandbox)"
 			$File	"$SRCDIR\game\shared\Multiplayer\multiplayer_animstate.cpp"
 			
 			$File	"$SRCDIR\game\shared\openmod\weapon_physgun.cpp"
+			$File	"$SRCDIR\game\shared\csbox\mountaddons.cpp"
+			$File	"$SRCDIR\game\shared\csbox\mountaddons.h"
 		}
 
 		$Folder	"HL2 DLL"

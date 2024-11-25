@@ -1,7 +1,7 @@
 [vpc crc file version 2]
 b9c20ec3 C:\Users\hp\Documents\csbox\src\devtools\bin\vpc.exe
 _Nc_VS2013/vpcgame:valve_
-1405bedb server_csbox.vpc
+efa3f78e server_csbox.vpc
 02109ed8 ..\..\game\server\server_base.vpc
 4832e67a ..\..\vpc_scripts\source_dll_base.vpc
 d752cf80 ..\..\vpc_scripts\platform_dirs.vpc
