@@ -1,11 +1,11 @@
 ========================= Credits ========================
-Combine Sandbox uses multiple thirdparty projects for certain code and functions
+Codename: Sandbox uses multiple thirdparty projects for certain code and functions
 - GuestSneezePlayz - Lead Dev
 - YourLocalMoon - HTML Shit and Lua
 - ARGG - Physics Gun
 - HL2SB - Lua
 
-Projects that made Combine Sandbox Possible
+Projects that made Codename: Sandbox Possible
 - OpenMod
 - HL2SB
 - ARGG
