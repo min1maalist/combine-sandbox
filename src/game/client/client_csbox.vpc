@@ -43,7 +43,7 @@ $Project "Client (Combine Sandbox)"
 			$File	"portal\c_portal_radio.cpp"
 		}
 		
-		$Folder	"Combine Sandbox DLL"
+		$Folder	"Codename Sandbox DLL"
 		{
 			$Folder "VGUI"
 			{

@@ -71,7 +71,7 @@ $Project "Server (Combine Sandbox)"
 			$File	"portal\portal_radio.cpp"
 		}
 
-		$Folder	"Combine Sandbox DLL"
+		$Folder	"Codename Sandbox DLL"
 		{
 			$File	"ai_behavior_passenger.cpp"
 			$File	"ai_eventresponse.cpp"
