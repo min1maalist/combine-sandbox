@@ -135,6 +135,7 @@ extern ConVar tf_mm_servermode;
 #endif
 
 #ifdef CSBOX
+#include "csbox_sentry_manager.h"
 #include "mountaddons.h"
 #endif
 
@@ -734,6 +735,7 @@ bool CServerGameDLL::DLLInit( CreateInterfaceFn appSystemFactory,
 	}
 
 #ifdef CSBOX
+	CSBoxSentryMgr()->Init();
 	MountAddons(); // addons...
 #endif
 
@@ -815,6 +817,10 @@ void CServerGameDLL::DLLShutdown( void )
 	DisconnectTier2Libraries();
 	ConVar_Unregister();
 	DisconnectTier1Libraries();
+
+#ifdef CSBOX
+	CSBoxSentryMgr()->Shutdown();
+#endif	
 }
 
 bool CServerGameDLL::ReplayInit( CreateInterfaceFn fnReplayFactory )
