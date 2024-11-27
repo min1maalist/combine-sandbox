@@ -14,13 +14,18 @@ $Configuration
 {
 	$Compiler
 	{
-		$AdditionalIncludeDirectories	"$BASE;$SRCDIR\game\shared\hl2,.\hl2,.\hl2mp,$SRCDIR\game\shared\hl2mp;.\openmod;$SRCDIR\game\shared\openmod;.\portal;$SRCDIR\game\shared\csbox"
+		$AdditionalIncludeDirectories	"$BASE;$SRCDIR\game\shared\hl2,.\hl2,.\hl2mp,$SRCDIR\game\shared\hl2mp;.\openmod;$SRCDIR\game\shared\openmod;.\portal;$SRCDIR\game\shared\csbox;$SRCDIR\thirdparty\sentry_native\include"
 		$PreprocessorDefinitions		"$BASE;HL2MP;HL2_DLL;OMOD;CSBOX"
 	}
 }
 
 $Project "Server (Codename Sandbox)"
 {
+	$Folder "Link Libraries"
+	{
+		$Lib "$SRCDIR\thirdparty\sentry_native\lib\sentry"
+	}
+
 	$Folder	"Source Files"
 	{
 		$File	"ai_relationship.cpp"
@@ -87,6 +92,9 @@ $Project "Server (Codename Sandbox)"
 			$File	"$SRCDIR\game\shared\csbox\mountaddons.cpp"
 			$File	"$SRCDIR\game\shared\csbox\mountaddons.h"
 			$File	"$SRCDIR\game\shared\csbox\weapon_iontau.cpp"
+
+			$File	"$SRCDIR\game\shared\csbox\csbox_sentry_manager.cpp"
+			$File	"$SRCDIR\game\shared\csbox\csbox_sentry_manager.h"
 		}
 
 		$Folder	"HL2 DLL"

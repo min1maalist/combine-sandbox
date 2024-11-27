@@ -144,6 +144,10 @@
 
 #endif
 
+#ifdef CSBOX
+#include "csbox_sentry_manager.h"
+#endif	
+
 #ifdef WORKSHOP_IMPORT_ENABLED
 #include "fbxsystem/fbxsystem.h"
 #endif
@@ -1057,6 +1061,7 @@ int CHLClient::Init(CreateInterfaceFn appSystemFactory, CreateInterfaceFn physic
 	}
 
 #ifdef CSBOX
+	CSBoxSentryMgr()->Init();
 	MountAddons(); // addons...
 #endif
 
@@ -1362,6 +1367,9 @@ void CHLClient::Shutdown(void)
 	DisconnectTier1Libraries();
 
 	gameeventmanager = NULL;
+#ifdef CSBOX
+	CSBoxSentryMgr()->Shutdown();
+#endif	
 
 #if defined( WIN32 ) && !defined( _X360 )
 	// NVNT Disconnect haptics system

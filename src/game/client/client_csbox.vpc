@@ -13,13 +13,18 @@ $Configuration
 {
 	$Compiler
 	{
-		$AdditionalIncludeDirectories		"$BASE;hl2mp\ui,.\hl2mp,$SRCDIR\game\shared\hl2mp,.\hl2,.\hl2\elements,$SRCDIR\game\shared\hl2;.\openmod;$SRCDIR\game\shared\openmod;.\portal;$SRCDIR\game\shared\csbox"
+		$AdditionalIncludeDirectories		"$BASE;hl2mp\ui,.\hl2mp,$SRCDIR\game\shared\hl2mp,.\hl2,.\hl2\elements,$SRCDIR\game\shared\hl2;.\openmod;$SRCDIR\game\shared\openmod;.\portal;$SRCDIR\game\shared\csbox;$SRCDIR\thirdparty\sentry_native\include"
 		$PreprocessorDefinitions			"$BASE;HL2MP;HL2_CLIENT_DLL;OMOD;CSBOX"
 	}
 }
 
 $Project "Client (Codename Sandbox)"
 {
+	$Folder "Link Libraries"
+	{
+		$Lib "$SRCDIR\thirdparty\sentry_native\lib\sentry"
+	}
+
 	$Folder	"Source Files"
 	{
 		-$File	"$SRCDIR\game\shared\weapon_parse_default.cpp"
@@ -60,6 +65,9 @@ $Project "Client (Codename Sandbox)"
 			$File	"$SRCDIR\game\shared\csbox\csbox_cmds.cpp"
 			$File	"$SRCDIR\game\shared\csbox\mountaddons.cpp"
 			$File	"$SRCDIR\game\shared\csbox\mountaddons.h"
+			
+			$File	"$SRCDIR\game\shared\csbox\csbox_sentry_manager.cpp"
+			$File	"$SRCDIR\game\shared\csbox\csbox_sentry_manager.h"
 		}
 
 		$Folder	"HL2 DLL"
