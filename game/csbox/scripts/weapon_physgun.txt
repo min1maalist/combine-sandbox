@@ -5,7 +5,7 @@ WeaponData
 	// Weapon data is loaded by both the Game and Client DLLs.
 	"printname"			"PHYSICS MANIPULATOR"
 	"viewmodel"			"models/weapons/v_superphyscannon.mdl"
-	"playermodel"			"models/weapons/w_Physics.mdl"
+	"playermodel"			"models/weapons/w_superphyscannon.mdl"
 	"anim_prefix"			"physgun"
 	"bucket"			"0"
 	"bucket_position"		"3"
