@@ -18,7 +18,7 @@ $Configuration
 	}
 }
 
-$Project "Client (Combine Sandbox)"
+$Project "Client (Codename Sandbox)"
 {
 	$Folder	"Source Files"
 	{
@@ -51,13 +51,11 @@ $Project "Client (Combine Sandbox)"
 				$File	"openmod\basemenu.h"
 				$File	"openmod\spawnmenu.cpp"
 			}
-			
+			$File	"$SRCDIR\game\shared\csbox\c_weapon_iontau.cpp"
 			$File	"openmod\mountsteamcontent.cpp"
 			$File	"openmod\mountsteamcontent.h"
-			
 			$File	"$SRCDIR\game\shared\Multiplayer\multiplayer_animstate.h"
 			$File	"$SRCDIR\game\shared\Multiplayer\multiplayer_animstate.cpp"
-			
 			$File	"$SRCDIR\game\shared\openmod\weapon_physgun.cpp"
 			$File	"$SRCDIR\game\shared\csbox\csbox_cmds.cpp"
 			$File	"$SRCDIR\game\shared\csbox\mountaddons.cpp"
