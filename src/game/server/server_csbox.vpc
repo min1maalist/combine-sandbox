@@ -84,12 +84,9 @@ $Project "Server (Codename Sandbox)"
 			$File	"$SRCDIR\game\shared\Multiplayer\multiplayer_animstate.cpp"
 			
 			$File	"$SRCDIR\game\shared\openmod\weapon_physgun.cpp"
-<<<<<<< Updated upstream
 			$File	"$SRCDIR\game\shared\csbox\mountaddons.cpp"
 			$File	"$SRCDIR\game\shared\csbox\mountaddons.h"
-=======
 			$File	"$SRCDIR\game\shared\csbox\weapon_iontau.cpp"
->>>>>>> Stashed changes
 		}
 
 		$Folder	"HL2 DLL"

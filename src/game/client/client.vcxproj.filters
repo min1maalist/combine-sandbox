@@ -25,11 +25,11 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{BA03E055-4FA2-FCE3-8A1C-D348547D379C}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Combine Sandbox DLL">
-      <UniqueIdentifier>{9BF74C1F-B99B-B380-D498-78C0A0A3BCBD}</UniqueIdentifier>
+    <Filter Include="Source Files\Codename Sandbox DLL">
+      <UniqueIdentifier>{0A656CC5-9A11-0440-E914-1941320D3232}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Combine Sandbox DLL\VGUI">
-      <UniqueIdentifier>{2BFCBC87-23AD-8F6E-0A97-65076055BE95}</UniqueIdentifier>
+    <Filter Include="Source Files\Codename Sandbox DLL\VGUI">
+      <UniqueIdentifier>{C7EF4C67-65C6-D726-0E78-A648990B7C20}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\game_controls">
       <UniqueIdentifier>{1E7DB91A-DC0A-B17F-617D-4C4FB3FA7A3E}</UniqueIdentifier>
@@ -1857,16 +1857,16 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\game\shared\csbox\mountaddons.h">
-      <Filter>Source Files\Combine Sandbox DLL</Filter>
+      <Filter>Source Files\Codename Sandbox DLL</Filter>
     </ClInclude>
     <ClInclude Include="openmod\mountsteamcontent.h">
-      <Filter>Source Files\Combine Sandbox DLL</Filter>
+      <Filter>Source Files\Codename Sandbox DLL</Filter>
     </ClInclude>
     <ClInclude Include="..\..\game\shared\Multiplayer\multiplayer_animstate.h">
-      <Filter>Source Files\Combine Sandbox DLL</Filter>
+      <Filter>Source Files\Codename Sandbox DLL</Filter>
     </ClInclude>
     <ClInclude Include="openmod\basemenu.h">
-      <Filter>Source Files\Combine Sandbox DLL\VGUI</Filter>
+      <Filter>Source Files\Codename Sandbox DLL\VGUI</Filter>
     </ClInclude>
     <ClInclude Include="game_controls\basemodel_panel.h">
       <Filter>Source Files\game_controls</Filter>
@@ -3019,26 +3019,29 @@
     <ClCompile Include="WorldDimsProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\game\shared\csbox\c_weapon_iontau.cpp">
+      <Filter>Source Files\Codename Sandbox DLL</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\game\shared\csbox\csbox_cmds.cpp">
-      <Filter>Source Files\Combine Sandbox DLL</Filter>
+      <Filter>Source Files\Codename Sandbox DLL</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\csbox\mountaddons.cpp">
-      <Filter>Source Files\Combine Sandbox DLL</Filter>
+      <Filter>Source Files\Codename Sandbox DLL</Filter>
     </ClCompile>
     <ClCompile Include="openmod\mountsteamcontent.cpp">
-      <Filter>Source Files\Combine Sandbox DLL</Filter>
+      <Filter>Source Files\Codename Sandbox DLL</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\Multiplayer\multiplayer_animstate.cpp">
-      <Filter>Source Files\Combine Sandbox DLL</Filter>
+      <Filter>Source Files\Codename Sandbox DLL</Filter>
     </ClCompile>
     <ClCompile Include="..\..\game\shared\openmod\weapon_physgun.cpp">
-      <Filter>Source Files\Combine Sandbox DLL</Filter>
+      <Filter>Source Files\Codename Sandbox DLL</Filter>
     </ClCompile>
     <ClCompile Include="openmod\basemenu.cpp">
-      <Filter>Source Files\Combine Sandbox DLL\VGUI</Filter>
+      <Filter>Source Files\Codename Sandbox DLL\VGUI</Filter>
     </ClCompile>
     <ClCompile Include="openmod\spawnmenu.cpp">
-      <Filter>Source Files\Combine Sandbox DLL\VGUI</Filter>
+      <Filter>Source Files\Codename Sandbox DLL\VGUI</Filter>
     </ClCompile>
     <ClCompile Include="game_controls\basemodel_panel.cpp">
       <Filter>Source Files\game_controls</Filter>
