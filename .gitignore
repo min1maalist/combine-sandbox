@@ -73,3 +73,5 @@ src/lib/public/vgui_controls.lib
 src/game/server/server.vcxproj.vpc_crc
 *.vpc_crc
 *.filters
+*.vpc_crc
+*.filters
